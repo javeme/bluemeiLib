@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{493E3DAD-98AC-4D2F-841D-5A7F514D0A60}</ProjectGuid>
+    <RootNamespace>bluemeiLib</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\src\bLib;$(ProjectDir)\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;BLUEMEILIB_EXPORTS;SEND_LOG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\src\bLib;$(ProjectDir)\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;BLUEMEILIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="src\io\File.cpp" />
+    <ClCompile Include="src\io\FilePath.cpp" />
+    <ClCompile Include="src\io\IOException.cpp" />
+    <ClCompile Include="src\lang\Class.cpp" />
+    <ClCompile Include="src\lang\ClassField.cpp" />
+    <ClCompile Include="src\lang\Exception.cpp" />
+    <ClCompile Include="src\lang\Object.cpp" />
+    <ClCompile Include="src\lang\ObjectFactory.cpp" />
+    <ClCompile Include="src\lang\RuntimeException.cpp" />
+    <ClCompile Include="src\net\ClientSocket.cpp" />
+    <ClCompile Include="src\net\FtpConnection.cpp" />
+    <ClCompile Include="src\net\FtpException.cpp" />
+    <ClCompile Include="src\net\iocp\IOCompletionPort.cpp" />
+    <ClCompile Include="src\net\iocp\IOCompletionPortImplWin32.cpp" />
+    <ClCompile Include="src\net\iocp\IOCPModel.cpp" />
+    <ClCompile Include="src\net\ServerSocket.cpp" />
+    <ClCompile Include="src\net\SocketException.cpp" />
+    <ClCompile Include="src\net\SocketTools.cpp" />
+    <ClCompile Include="src\session\Application.cpp" />
+    <ClCompile Include="src\session\BeanContainer.cpp" />
+    <ClCompile Include="src\session\Context.cpp" />
+    <ClCompile Include="src\session\Session.cpp" />
+    <ClCompile Include="src\thread\CriticalLock.cpp" />
+    <ClCompile Include="src\thread\LambdaThread.cpp" />
+    <ClCompile Include="src\thread\MutexLock.cpp" />
+    <ClCompile Include="src\thread\ResourceLock.cpp" />
+    <ClCompile Include="src\thread\Thread.cpp" />
+    <ClCompile Include="src\thread\ThreadException.cpp" />
+    <ClCompile Include="src\thread\ThreadPool.cpp" />
+    <ClCompile Include="src\thread\Timer.cpp" />
+    <ClCompile Include="src\thread\WorkThread.cpp" />
+    <ClCompile Include="src\type\BString.cpp" />
+    <ClCompile Include="src\type\ByteBuffer.cpp" />
+    <ClCompile Include="src\type\DataBuffer.cpp" />
+    <ClCompile Include="src\type\Date.cpp" />
+    <ClCompile Include="src\type\KVPairTree.cpp" />
+    <ClCompile Include="src\type\LinkedList.cpp" />
+    <ClCompile Include="src\type\StringBuilder.cpp" />
+    <ClCompile Include="src\type\Vector.cpp" />
+    <ClCompile Include="src\utils\CallStackUtil.cpp" />
+    <ClCompile Include="src\utils\CodeUtil.cpp" />
+    <ClCompile Include="src\utils\Converter.cpp" />
+    <ClCompile Include="src\utils\ErrorHandler.cpp" />
+    <ClCompile Include="src\utils\Log.cpp" />
+    <ClCompile Include="src\utils\MemoryPool.cpp" />
+    <ClCompile Include="src\utils\ReferencePointer.cpp" />
+    <ClCompile Include="src\utils\SimpleCfgFile.cpp" />
+    <ClCompile Include="src\utils\SmartPtrManager.cpp" />
+    <ClCompile Include="src\utils\StackWalker.cpp" />
+    <ClCompile Include="src\utils\System.cpp" />
+    <ClCompile Include="src\utils\TypeManager.cpp" />
+    <ClCompile Include="src\utils\Util.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bluemeiLib.h" />
+    <ClInclude Include="src\io\File.h" />
+    <ClInclude Include="src\io\FilePath.h" />
+    <ClInclude Include="src\io\IOException.h" />
+    <ClInclude Include="src\lang\Class.h" />
+    <ClInclude Include="src\lang\ClassField.h" />
+    <ClInclude Include="src\lang\Exception.h" />
+    <ClInclude Include="src\lang\Object.h" />
+    <ClInclude Include="src\lang\ObjectFactory.h" />
+    <ClInclude Include="src\lang\RuntimeException.h" />
+    <ClInclude Include="src\net\ClientSocket.h" />
+    <ClInclude Include="src\net\FtpConnection.h" />
+    <ClInclude Include="src\net\FtpException.h" />
+    <ClInclude Include="src\net\iocp\IOCompletionPort.h" />
+    <ClInclude Include="src\net\iocp\IOCompletionPortImpl.h" />
+    <ClInclude Include="src\net\iocp\IOCompletionPortImplLinux.h" />
+    <ClInclude Include="src\net\iocp\IOCompletionPortImplWin32.h" />
+    <ClInclude Include="src\net\iocp\IOCPEvent.h" />
+    <ClInclude Include="src\net\iocp\IOCPException.h" />
+    <ClInclude Include="src\net\iocp\IOCPModel.h" />
+    <ClInclude Include="src\net\ServerSocket.h" />
+    <ClInclude Include="src\net\SocketException.h" />
+    <ClInclude Include="src\net\SocketTools.h" />
+    <ClInclude Include="src\session\Application.h" />
+    <ClInclude Include="src\session\BeanContainer.h" />
+    <ClInclude Include="src\session\Context.h" />
+    <ClInclude Include="src\session\Session.h" />
+    <ClInclude Include="src\thread\CriticalLock.h" />
+    <ClInclude Include="src\thread\LambdaThread.h" />
+    <ClInclude Include="src\thread\MessageThread.h" />
+    <ClInclude Include="src\thread\MutexLock.h" />
+    <ClInclude Include="src\thread\ResourceLock.h" />
+    <ClInclude Include="src\thread\Runnable.h" />
+    <ClInclude Include="src\thread\Task.h" />
+    <ClInclude Include="src\thread\Thread.h" />
+    <ClInclude Include="src\thread\ThreadException.h" />
+    <ClInclude Include="src\thread\ThreadParameter.h" />
+    <ClInclude Include="src\thread\ThreadPool.h" />
+    <ClInclude Include="src\thread\Timer.h" />
+    <ClInclude Include="src\thread\WorkThread.h" />
+    <ClInclude Include="src\type\ArrayList.h" />
+    <ClInclude Include="src\type\BString.h" />
+    <ClInclude Include="src\type\ByteBuffer.h" />
+    <ClInclude Include="src\type\DataBuffer.h" />
+    <ClInclude Include="src\type\Date.h" />
+    <ClInclude Include="src\type\Exceptions.h" />
+    <ClInclude Include="src\type\HashMap.h" />
+    <ClInclude Include="src\type\Iterator.h" />
+    <ClInclude Include="src\type\KVPairTree.h" />
+    <ClInclude Include="src\type\LinkedList.h" />
+    <ClInclude Include="src\type\MultiValueHashMap.h" />
+    <ClInclude Include="src\type\Pair.h" />
+    <ClInclude Include="src\type\SortArray.h" />
+    <ClInclude Include="src\type\StringBuilder.h" />
+    <ClInclude Include="src\type\Vector.h" />
+    <ClInclude Include="src\utils\AccurateTimeTicker.h" />
+    <ClInclude Include="src\utils\CallStackUtil.h" />
+    <ClInclude Include="src\utils\CodeUtil.h" />
+    <ClInclude Include="src\utils\Converter.h" />
+    <ClInclude Include="src\utils\ErrorHandler.h" />
+    <ClInclude Include="src\utils\Exceptions.h" />
+    <ClInclude Include="src\utils\HashCoder.h" />
+    <ClInclude Include="src\utils\Log.h" />
+    <ClInclude Include="src\utils\MemoryPool.h" />
+    <ClInclude Include="src\utils\MultiValueHashMap.h" />
+    <ClInclude Include="src\utils\Observer.h" />
+    <ClInclude Include="src\utils\ReferencePointer.h" />
+    <ClInclude Include="src\utils\SimpleCfgFile.h" />
+    <ClInclude Include="src\utils\SmartPtr.h" />
+    <ClInclude Include="src\utils\SmartPtrManager.h" />
+    <ClInclude Include="src\utils\SortArray.h" />
+    <ClInclude Include="src\utils\StackWalker.h" />
+    <ClInclude Include="src\utils\System.h" />
+    <ClInclude Include="src\utils\TypeManager.h" />
+    <ClInclude Include="src\utils\Util.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

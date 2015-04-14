@@ -1,0 +1,433 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="lang">
+      <UniqueIdentifier>{aecc0edb-2a13-43e9-ba26-63f69a75829b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="io">
+      <UniqueIdentifier>{0b90106f-4610-4c40-aeae-d7fbeb66c5b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thread">
+      <UniqueIdentifier>{3e951234-a3f9-405d-bd4f-d3f10e9bea3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{5ff3c785-69f5-4f4a-a6d6-ecb909db3be0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{cf3f8ca2-5f86-4b1d-a326-6a10dd78b420}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="proj">
+      <UniqueIdentifier>{a79de93e-5a90-412e-a9f0-3de8969c4fea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="session">
+      <UniqueIdentifier>{ad4cf896-2d1a-448f-b30c-096af2d964c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net\iocp">
+      <UniqueIdentifier>{f7282ea1-cccc-4385-aec7-9d5819ce3189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="type">
+      <UniqueIdentifier>{f2f3f7e8-adbb-4a93-abf8-ea96f62b768a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\lang\Exception.cpp">
+      <Filter>lang</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lang\ObjectFactory.cpp">
+      <Filter>lang</Filter>
+    </ClCompile>
+    <ClCompile Include="src\io\File.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\io\IOException.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread\CriticalLock.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread\Thread.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread\ThreadException.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread\ThreadPool.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread\WorkThread.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\Log.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\ReferencePointer.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\Util.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\ClientSocket.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\FtpConnection.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\FtpException.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\ServerSocket.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\SocketException.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\SocketTools.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lang\Object.cpp">
+      <Filter>lang</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>proj</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread\LambdaThread.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread\Timer.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread\ResourceLock.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\session\Application.cpp">
+      <Filter>session</Filter>
+    </ClCompile>
+    <ClCompile Include="src\session\BeanContainer.cpp">
+      <Filter>session</Filter>
+    </ClCompile>
+    <ClCompile Include="src\session\Context.cpp">
+      <Filter>session</Filter>
+    </ClCompile>
+    <ClCompile Include="src\session\Session.cpp">
+      <Filter>session</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\System.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\SmartPtrManager.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\StackWalker.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lang\Class.cpp">
+      <Filter>lang</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\CallStackUtil.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\CodeUtil.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\ErrorHandler.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lang\RuntimeException.cpp">
+      <Filter>lang</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\TypeManager.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\iocp\IOCompletionPort.cpp">
+      <Filter>net\iocp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\iocp\IOCompletionPortImplWin32.cpp">
+      <Filter>net\iocp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\iocp\IOCPModel.cpp">
+      <Filter>net\iocp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread\MutexLock.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\SimpleCfgFile.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lang\ClassField.cpp">
+      <Filter>lang</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\MemoryPool.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\type\BString.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="src\type\ByteBuffer.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="src\type\DataBuffer.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="src\type\Date.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="src\type\KVPairTree.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="src\type\LinkedList.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="src\type\StringBuilder.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="src\type\Vector.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\Converter.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\io\FilePath.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\lang\Exception.h">
+      <Filter>lang</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lang\ObjectFactory.h">
+      <Filter>lang</Filter>
+    </ClInclude>
+    <ClInclude Include="src\io\File.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="src\io\IOException.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\CriticalLock.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\Runnable.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\Task.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\Thread.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\ThreadException.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\ThreadParameter.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\ThreadPool.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\WorkThread.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Log.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\ReferencePointer.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Util.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\ClientSocket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\FtpConnection.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\FtpException.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\ServerSocket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\SocketException.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\SocketTools.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lang\Object.h">
+      <Filter>lang</Filter>
+    </ClInclude>
+    <ClInclude Include="bluemeiLib.h">
+      <Filter>proj</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>proj</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>proj</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\LambdaThread.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\Timer.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\ResourceLock.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\session\Application.h">
+      <Filter>session</Filter>
+    </ClInclude>
+    <ClInclude Include="src\session\BeanContainer.h">
+      <Filter>session</Filter>
+    </ClInclude>
+    <ClInclude Include="src\session\Context.h">
+      <Filter>session</Filter>
+    </ClInclude>
+    <ClInclude Include="src\session\Session.h">
+      <Filter>session</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\SmartPtr.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\System.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\SmartPtrManager.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Observer.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\CallStackUtil.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\StackWalker.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lang\Class.h">
+      <Filter>lang</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\SortArray.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\HashCoder.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\MultiValueHashMap.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\AccurateTimeTicker.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\CodeUtil.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\ErrorHandler.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lang\RuntimeException.h">
+      <Filter>lang</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\TypeManager.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\iocp\IOCompletionPort.h">
+      <Filter>net\iocp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\iocp\IOCompletionPortImpl.h">
+      <Filter>net\iocp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\iocp\IOCompletionPortImplLinux.h">
+      <Filter>net\iocp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\iocp\IOCompletionPortImplWin32.h">
+      <Filter>net\iocp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\iocp\IOCPEvent.h">
+      <Filter>net\iocp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\iocp\IOCPException.h">
+      <Filter>net\iocp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\iocp\IOCPModel.h">
+      <Filter>net\iocp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\MessageThread.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\MutexLock.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\SimpleCfgFile.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lang\ClassField.h">
+      <Filter>lang</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\MemoryPool.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Exceptions.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\ArrayList.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\BString.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\ByteBuffer.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\DataBuffer.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\Date.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\Exceptions.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\HashMap.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\Iterator.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\KVPairTree.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\LinkedList.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\MultiValueHashMap.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\Pair.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\SortArray.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\StringBuilder.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\Vector.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Converter.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\io\FilePath.h">
+      <Filter>io</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

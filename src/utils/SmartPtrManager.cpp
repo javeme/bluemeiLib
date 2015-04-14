@@ -1,0 +1,326 @@
+/************************************************************************
+*AUTHOR: Daniel Liu
+*FIRST CREATE: Dec.22 2005
+*contact: liulele@ee.buaa.edu.cn
+*
+*This software is free to use. If there's any problem or you have enhanced
+*it, please let me know.
+*License Type: MIT
+*你可以自由使用这部分代码，但请保留这段声明,无论你是否修改了该代码。
+************************************************************************/
+#include "SmartPtrManager.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <new.h>
+#include <set>
+#include <vector>
+#include "System.h"
+
+namespace bluemei{
+
+//static variable
+#ifdef WIN32
+static CRITICAL_SECTION Lock_cs;  // this variable is used by class Lock only
+static _PNH old_new_handler;
+static int old_new_mode;
+#else
+pthread_mutex_t GlobalMutexLock::mutex;
+typedef void (*_PNH)(void);
+static _PNH old_new_handler;
+#define _set_new_handler set_new_handler
+#endif
+
+
+//分配内存出错时调用的函数
+#ifdef WIN32
+int gc_new_handler(size_t sz)
+#else
+void gc_new_handler()
+#endif
+{
+	System::getInstance().gc();
+	if(!System::getInstance().gcCount())//there's no memory collected, make the defualt handler to deal with
+	{
+#ifdef WIN32
+		return old_new_handler(sz);
+#else
+		old_new_handler();
+#endif
+	}
+
+#ifdef WIN32
+	return System::getInstance().gcCount(); //GC has reclaimed some memory, do allocate again
+#endif
+}
+
+int WrapperManager::extraSize = -1;
+#ifdef WIN32
+///< Lock constructor
+GlobalMutexLock::GlobalMutexLock() 
+{
+	static bool inited = false;
+	if(!inited)
+	{
+		InitializeCriticalSection(&Lock_cs);//should call DeleteCriticalSection(&cs)
+		inited = true;
+	}
+	EnterCriticalSection(&Lock_cs); 
+}
+///< Lock destructor
+GlobalMutexLock::~GlobalMutexLock() 
+{ 
+	LeaveCriticalSection(&Lock_cs); 
+}
+
+#endif //WIN32
+
+
+//ObjectWrapper* WrapperManager::positionToInsert(void *pTarget)
+//{
+//	Lock l;
+//	ObjectWrapper* p= (ObjectWrapper*)pHead;
+//	while(p->pNext!=pTail)
+//	{
+//		if(	pTarget >= p->pTarget && pTarget < ((ObjectWrapper*)p->pNext)->pTarget)
+//		{
+//			return p;
+//		}
+//		p=(ObjectWrapper*)p->pNext;
+//	}
+//	return p;
+//}
+
+WrapperManager::WrapperManager()
+{
+	GlobalMutexLock l;
+	nullWrapper = new ObjectWrapper(NULL,NULL);
+	if(extraSize < 0)
+	{
+		int *p = new int;
+		extraSize = System::blockSize(p) - sizeof(int);//Windows,0; Linux, 4
+		delete p;
+	}
+}
+WrapperManager::~WrapperManager()
+{
+	destroy();
+}
+void WrapperManager::remove(ObjectWrapper* pWrapper)
+{
+	GlobalMutexLock l;
+	if(pWrapper==nullWrapper)
+		return;
+	if(System::getInstance().isCollecting())
+		return;
+	wrappers.erase(WrapperPointer(pWrapper));
+	delete pWrapper;
+}
+void WrapperManager::collect(ObjectWrapper* pWrapper)
+{
+	GlobalMutexLock l;
+	wrappers.erase(WrapperPointer(pWrapper));
+	delete pWrapper; //delete the wrapper. which also make memory reclaimed
+
+}
+/**
+ * return true if the ptr itself is located in the inner of other object managed by GC.
+ */
+bool WrapperManager::isEmbeddedPtr(void *pSmartPtr)
+{
+	GlobalMutexLock l;
+	ObjectWrapper tempWrapper(pSmartPtr, NULL, 1);
+	WrapperSet::const_iterator i = wrappers.find(WrapperPointer(&tempWrapper));//???
+	return i != wrappers.end();
+}
+WrapperManager* WrapperManager::getInstance()
+{	
+	return System::getWrapperManager();
+}
+
+void WrapperManager::destroy()
+{
+	ptrTrace("WrapperManager deconstructing...\r\n");
+	GlobalMutexLock l;
+	if(nullWrapper==nullptr)
+		return;
+	System::getInstance().setCollecting(true);
+
+	for(WrapperSet::iterator i=wrappers.begin(); i!=wrappers.end(); i++)
+	{
+		delete (*i).p;
+	}
+	wrappers.clear();
+	delete nullWrapper;
+	nullWrapper=nullptr;
+	System::getInstance().setCollecting(false);
+	ptrTrace("WrapperManager deconstructed\r\n");
+}
+
+
+
+SmartPtrManager* SmartPtrManager::getInstance()
+{
+	return System::getSmartPtrManager();
+}
+void SmartPtrManager::add(LinkNode* ptr)
+{
+	GlobalMutexLock l;
+	pHead->pNext->pPrev = ptr;
+	ptr->pNext = pHead->pNext;
+	pHead->pNext = ptr;
+	ptr->pPrev = pHead;
+
+}
+void SmartPtrManager::remove(LinkNode* ptr)
+{
+	GlobalMutexLock l;
+	ptr->pPrev->pNext = ptr->pNext;
+	ptr->pNext->pPrev = ptr->pPrev;
+}
+
+void SmartPtrManager::moveToUserPtr(LinkNode* ptr)
+{
+	GlobalMutexLock l;
+	ptr->pPrev->pNext = ptr->pNext;
+	ptr->pNext->pPrev = ptr->pPrev;
+
+	pUserPtrHead->pNext->pPrev = ptr;
+	ptr->pNext = pUserPtrHead->pNext;
+	pUserPtrHead->pNext = ptr;
+	ptr->pPrev = pUserPtrHead;
+
+}
+void SmartPtrManager::moveToEmbeddedPtr(LinkNode* ptr)
+{
+	GlobalMutexLock l;
+	ptr->pPrev->pNext = ptr->pNext;
+	ptr->pNext->pPrev = ptr->pPrev;
+
+	pEmbeddedPtrHead->pNext->pPrev = ptr;
+	ptr->pNext = pEmbeddedPtrHead->pNext;
+	pEmbeddedPtrHead->pNext = ptr;
+	ptr->pPrev = pEmbeddedPtrHead;
+
+}
+
+SmartPtrManager::SmartPtrManager()
+{
+	GlobalMutexLock l;
+	pHead = new LinkNode;
+	pTail = new LinkNode;
+	pHead->pNext = pTail;
+	pTail->pPrev = pHead;
+
+	pUserPtrHead = new LinkNode;
+	pUserPtrTail = new LinkNode;
+	pUserPtrHead->pNext = pUserPtrTail;
+	pUserPtrTail->pPrev = pUserPtrHead;
+
+	pEmbeddedPtrHead = new LinkNode;
+	pEmbeddedPtrTail = new LinkNode;
+	pEmbeddedPtrHead->pNext = pEmbeddedPtrTail;
+	pEmbeddedPtrTail->pPrev = pEmbeddedPtrHead;
+
+	//do gc initialize here
+	//System::getInstance().startGcThread(); //start a thread to collect garbage when system is in idle
+	old_new_handler = ::_set_new_handler(gc_new_handler); //set new handler, so 
+									//gc runs when there's no sufficient memory
+#ifdef WIN32
+	old_new_mode = ::_set_new_mode(1);
+#endif
+}
+SmartPtrManager::~SmartPtrManager()
+{
+	destroy();
+}
+
+void SmartPtrManager::destroy()
+{
+	GlobalMutexLock l;
+	//防止多次释放
+	if(pHead==nullptr)
+		return;
+	_set_new_handler(old_new_handler); //restore new handler
+#ifdef WIN32
+	_set_new_mode(old_new_mode);	   //and new mode
+#endif
+	//System::getInstance().quit();//静态析构时,线程已经被系统杀死???
+	delete pHead;
+	delete pTail;
+
+	delete pUserPtrHead;
+	delete pUserPtrTail;
+	delete pEmbeddedPtrHead;
+	delete pEmbeddedPtrTail;
+
+	pHead=nullptr;
+	pTail=nullptr;
+
+	pUserPtrHead=nullptr;
+	pUserPtrTail=nullptr;
+	pEmbeddedPtrHead=nullptr;
+	pEmbeddedPtrTail=nullptr;
+}
+
+
+ObjectWrapper::~ObjectWrapper()
+{
+	ptrTrace("Wrapper decon %p, target:%p\r\n",this,pTarget);
+	if(pTarget && destory)
+		destory( pTarget );
+}
+
+ObjectWrapper::ObjectWrapper(void * p,DESTORY_PROC destory,size_t memSize)
+{
+	ptrTrace("Wrapper con %p,destory:%p, target:%p\r\n",this,destory,p);
+	pTarget = p;
+	if(p==NULL)
+	{
+		size=0;
+	}
+	else
+	{
+		if(memSize)
+			size = memSize;
+		else
+		{
+			size =  System::blockSize(p) - WrapperManager::extraSize;
+			//ASSERT(size);
+		}
+	}
+	count = 1;
+	this->destory = destory;
+}
+
+void ObjectWrapper::attach()
+{
+	++count;
+};
+
+void ObjectWrapper::disattach()
+{
+	GlobalMutexLock l;
+	--count;
+	if(count==0)
+	{
+		WrapperManager::getInstance()->remove(this);
+	}
+}
+void* ObjectWrapper::getTarget()
+{
+	return pTarget;
+}
+
+void ObjectWrapper::setFinalizer(DESTORY_PROC finalize)
+{
+	destory = finalize;
+}
+
+bool ObjectWrapper::contain(void* point)
+{
+	unsigned char *address = (unsigned char*)point;
+	return (address >= pTarget && address<(unsigned char*)pTarget+size);
+}
+
+
+}//end of namespace bluemei

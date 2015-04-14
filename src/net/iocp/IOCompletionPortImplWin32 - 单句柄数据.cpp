@@ -1,0 +1,253 @@
+#include "stdafx.h"
+#include "IOCPException.h"
+#include "TimeoutException.h"
+#include "IOCompletionPortImplWin32.h"
+#include <mswsock.h> //微软扩展的类库
+
+namespace bluemei{
+
+IOCompletionPortImpl::IOCompletionPortImpl()
+{
+	m_hIOCompletionPort=NULL;
+	m_poolIOCPData=MemoryPoolManager::getMemoryPool<IOCPData>();
+}
+
+IOCompletionPortImpl::~IOCompletionPortImpl()
+{
+	if (m_hIOCompletionPort!=NULL)
+	{
+		close();
+	}
+	MemoryPoolManager::releaseMemoryPool(m_poolIOCPData);
+}
+
+void IOCompletionPortImpl::create()
+{
+	if(m_hIOCompletionPort==NULL)
+	{
+		m_hIOCompletionPort = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
+		if(m_hIOCompletionPort==NULL)
+			throw IOCPException("create iocp failed");
+	}
+}
+
+void IOCompletionPortImpl::close()
+{
+	if(!::CloseHandle(m_hIOCompletionPort))
+		throw IOCPException("close iocp failed");
+	m_hIOCompletionPort=NULL;
+}
+
+void IOCompletionPortImpl::registerEvents( int events,socket_t socket )
+{
+	//首次注册socket事件
+	if(events & EVENT_FIRST_SOCKET)
+	{
+		SocketHandle* socketHandle=new SocketHandle(socket);
+		HANDLE h=::CreateIoCompletionPort((HANDLE)socket,m_hIOCompletionPort,(ULONG_PTR)socketHandle,0);
+		if(h!=m_hIOCompletionPort)
+		{
+			throw IOCPException("register iocp events failed");
+		}
+	}
+
+	//投递一个接受连接请求
+	if(events & EVENT_ACCEPT)
+	{
+		socket_t client=::WSASocket(AF_INET,SOCK_STREAM,IPPROTO_TCP,NULL,0,WSA_FLAG_OVERLAPPED);
+
+		IOCPData* pPerIOData = (IOCPData*)m_poolIOCPData->get();//new IOCPData();
+		pPerIOData->operationType=EVENT_ACCEPT;
+		pPerIOData->para=client;
+		WSABUF buf;
+		buf.buf = pPerIOData->buf;
+		buf.len = pPerIOData->IOCP_BUFFER_SIZE; 
+		//AcceptEx
+		//获取函数地址(直接调用AcceptEx的话,每次Service Provider都得要通过WSAIoctl()获取一次该函数指针)
+		const static int ADDR_SIZE=(sizeof(SOCKADDR_IN)+16);
+		static LPFN_ACCEPTEX FuncAcceptEx=nullptr; //AcceptEx函数指针  
+		if(FuncAcceptEx==nullptr)
+		{
+			GUID GuidAcceptEx = WSAID_ACCEPTEX;//GUID,这个是识别AcceptEx函数必须的  
+			DWORD dwBytes = 0;    
+
+			if(::WSAIoctl(socket, SIO_GET_EXTENSION_FUNCTION_POINTER, &GuidAcceptEx,sizeof(GuidAcceptEx),   
+				&FuncAcceptEx,sizeof(FuncAcceptEx),&dwBytes,NULL,NULL)==INVALID_SOCKET) 
+			{
+				throw IOCPException(::WSAGetLastError());
+			}
+		}
+		//调用AcceptEx
+		BOOL succes = FuncAcceptEx(socket,client,pPerIOData->buf,
+			pPerIOData->IOCP_BUFFER_SIZE-ADDR_SIZE*2,//若不想接收第一次数据,可以设为0
+			ADDR_SIZE,//存放本地址地址信息的空间大小
+			ADDR_SIZE,//存放本远端地址信息的空间大小
+			&pPerIOData->lengthReceived,//接收到的数据大小
+			&pPerIOData->ol);
+		if(!succes)
+		{
+			int errorCode=::WSAGetLastError();
+			if(errorCode!=ERROR_IO_PENDING)
+				throw IOCPException(errorCode);
+		}
+	}	
+	//投递一个接收请求
+	else if(events & EVENT_READ)
+	{
+		IOCPData* pPerIOData = (IOCPData*)m_poolIOCPData->get();//new IOCPData();
+		pPerIOData->operationType=EVENT_READ_FINISH;
+		WSABUF buf;
+		buf.buf = pPerIOData->buf;
+		buf.len = pPerIOData->IOCP_BUFFER_SIZE;  
+		//WSARecv待加入错误处理
+		int rt=::WSARecv(socket, &buf, 1, &pPerIOData->lengthReceived, &pPerIOData->flags, &pPerIOData->ol, NULL);
+		if(rt==SOCKET_ERROR)
+		{
+			int errorCode=::WSAGetLastError();
+			if(errorCode!=ERROR_IO_PENDING)
+				throw IOCPException(errorCode);
+		}
+	}
+	//投递一个发送请求
+	if(events & EVENT_WRITE)
+	{
+		send(nullptr,0,socket);
+	}
+	//投递一个错误请求
+	if(events & EVENT_ERR)
+	{
+		;
+	}
+}
+
+void IOCompletionPortImpl::send(const byte* buffer, unsigned int len, socket_t sock)
+{
+	IOCPData* pPerIO = (IOCPData*)m_poolIOCPData->get();//new IOCPData();
+	pPerIO->operationType=EVENT_WRITE_FINISH;
+	WSABUF buf;
+	buf.buf = (char*)buffer;
+	buf.len = len;
+	int rt=::WSASend(sock, &buf, 1, &pPerIO->lengthSended, pPerIO->flags, &pPerIO->ol, NULL);
+	if(rt==SOCKET_ERROR)
+	{
+		int errorCode=::WSAGetLastError();
+		if(errorCode!=ERROR_IO_PENDING)
+		{
+			throw IOCPException(errorCode);
+		}
+	}
+}
+
+void IOCompletionPortImpl::unregisterEvents( int events,socket_t socket )
+{
+	//throw Exception("unsupported method:IOCompletionPortImpl::unregisterEvents");
+	;
+}
+
+void IOCompletionPortImpl::modifyEvents( int events,socket_t socket )
+{
+	events&=(~EVENT_FIRST_SOCKET);
+	return registerEvents(events,socket);
+}
+
+int IOCompletionPortImpl::waitEvent( IOEvent* events,int maxEvents,int timeout )
+{
+	int size=0;
+
+	if(maxEvents<=0)
+		return 0;
+	DWORD transLen=0;
+	SocketHandle* pPerHandle=nullptr;
+	IOCPData* pPerData=nullptr;
+	BOOL bOK = ::GetQueuedCompletionStatus(m_hIOCompletionPort,
+		&transLen, (LPDWORD)&pPerHandle, (LPOVERLAPPED*)&pPerData, timeout);//pPerData也可通过CONTAINING_RECORD转换
+
+	//在此套接字上有错误发生
+	if(!bOK || pPerHandle==nullptr || pPerData==nullptr)//失败                                                 
+	{
+		int errorCode=GetLastError();//WSAGetLastError		
+		if (errorCode==WAIT_TIMEOUT){//超时 WSAETIMEDOUT
+			throw TimeoutException(timeout);
+		}
+		else{
+			if(pPerHandle!=nullptr)
+				::closesocket(pPerHandle->socket);
+			delete pPerHandle;
+			m_poolIOCPData->release(pPerData);//delete pPerData;
+			throw IOCPException(errorCode);
+		}
+	}
+	else if(transLen==0 && pPerHandle==nullptr && pPerData==nullptr)//结束等待
+	{
+		size=0;
+	}
+	/*/套接字被对方关闭
+	else if(dwTransLen == 0 && pPerData!=nullptr                             
+		&& (pPerData->operationType == EVENT_READ_FINISH || pPerData->operationType == EVENT_WRITE_FINISH))    
+	{      
+		if(pPerHandle!=nullptr)
+			::closesocket(pPerHandle->socket);
+		delete pPerHandle;
+		delete pPerData;
+		;
+		return 0;
+	}//*/
+	else//成功
+	{
+		IOEvent& ev=events[0];
+		ev.events=pPerData->operationType;
+		ev.data.fd=pPerHandle->socket;
+		ev.data.ptr=pPerData->buf;
+		ev.data.u32=transLen;
+
+		//连接成功
+		if(ev.events==EVENT_ACCEPT)
+		{
+			socket_t clientSock=pPerData->para;
+			socket_t listenSock=pPerHandle->socket;
+			ev.data.fd=clientSock;
+			if(transLen>0)//已经读取到数据
+			{
+				ev.events|=EVENT_READ_FINISH;
+			}
+			//使用GetAcceptExSockaddrs函数,获得具体的各个地址参数.与listenSock建立关系,且之后可以用getpeername获取地址信息
+			if(::setsockopt(clientSock, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT,
+				(char*)&(listenSock), sizeof(listenSock))==SOCKET_ERROR)
+			{
+				//如何处理???
+				int errorCode=::WSAGetLastError();
+				if(errorCode!=0){
+					::closesocket(clientSock);
+					throw IOCPException(errorCode);
+				}
+			}
+			else
+			{
+				//ev.data.u64=addr;
+			}
+		}
+		//对方关闭连接
+		else if(transLen == 0 && pPerData!=nullptr                             
+			&& (pPerData->operationType == EVENT_READ_FINISH || pPerData->operationType == EVENT_WRITE_FINISH))
+		{
+			::closesocket(pPerHandle->socket);
+			delete pPerHandle;
+
+			ev.events=EVENT_CLOSED;
+		}
+
+
+		size=1;
+	}
+	m_poolIOCPData->release(pPerData);
+
+	return size;
+}
+
+bool IOCompletionPortImpl::cancelWait()
+{
+	return ::PostQueuedCompletionStatus(m_hIOCompletionPort,0,NULL,NULL)==TRUE;//结束等待
+}
+
+
+}//end of namespace bluemei
