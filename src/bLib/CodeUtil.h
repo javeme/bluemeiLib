@@ -54,6 +54,8 @@ public:
 	static string base64Decode(const char* str);
 public:	
 	static unsigned char char2hexChar(unsigned char x);
+	static bool isAlpha(int c);
+	static bool isNumber(int c);
 	static bool isAlphaOrNumber(int c);
 
 	static string urlEncodeComponent(const char* src);

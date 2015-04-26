@@ -121,6 +121,10 @@
     <ClCompile Include="src\session\BeanContainer.cpp" />
     <ClCompile Include="src\session\Context.cpp" />
     <ClCompile Include="src\session\Session.cpp" />
+    <ClCompile Include="src\template\FileTemplate.cpp" />
+    <ClCompile Include="src\template\StringTemplate.cpp" />
+    <ClCompile Include="src\template\TemplateLoader.cpp" />
+    <ClCompile Include="src\template\TemplateParser.cpp" />
     <ClCompile Include="src\thread\CriticalLock.cpp" />
     <ClCompile Include="src\thread\LambdaThread.cpp" />
     <ClCompile Include="src\thread\MutexLock.cpp" />
@@ -180,6 +184,12 @@
     <ClInclude Include="src\session\BeanContainer.h" />
     <ClInclude Include="src\session\Context.h" />
     <ClInclude Include="src\session\Session.h" />
+    <ClInclude Include="src\template\FileTemplate.h" />
+    <ClInclude Include="src\template\StringTemplate.h" />
+    <ClInclude Include="src\template\Template.h" />
+    <ClInclude Include="src\template\TemplateExpr.h" />
+    <ClInclude Include="src\template\TemplateLoader.h" />
+    <ClInclude Include="src\template\TemplateParser.h" />
     <ClInclude Include="src\thread\CriticalLock.h" />
     <ClInclude Include="src\thread\LambdaThread.h" />
     <ClInclude Include="src\thread\MessageThread.h" />
@@ -223,7 +233,6 @@
     <ClInclude Include="src\utils\SimpleCfgFile.h" />
     <ClInclude Include="src\utils\SmartPtr.h" />
     <ClInclude Include="src\utils\SmartPtrManager.h" />
-    <ClInclude Include="src\utils\SortArray.h" />
     <ClInclude Include="src\utils\StackWalker.h" />
     <ClInclude Include="src\utils\System.h" />
     <ClInclude Include="src\utils\TypeManager.h" />

@@ -4,17 +4,21 @@
 #include "Thread.h"
 #include "CodeUtil.h"
 #include "FilePath.h"
+#include "template/TemplateLoader.h"
 
 namespace bluemei{
 
 // name level time message thread process
-#define DFT_LOG_FRMT "%(time) - %(level)s - %(message)s"
+//#define DFT_LOG_FRMT "%(time)s - %(level)s - %(message)s"
+#define DFT_LOG_FRMT "$name - $time - $level - [Thread-$thread] $message"
 
 const Log::LogCtx Log::s_nullCtx;
 
 Log::Log(const String& name, const String& path, LogLevel level/*=LOG_INFO*/)
 	: m_name(name), m_path(path), m_level(level), m_formatter(DFT_LOG_FRMT)
 {
+	m_tmpl = null;
+
 	FilePath filePath(path);
 	if(!FileUtil::mkdirs(filePath.dirName()))
 	{
@@ -26,6 +30,7 @@ Log::Log(const String& name, const String& path, LogLevel level/*=LOG_INFO*/)
 
 Log::~Log()
 {
+	delete m_tmpl;
 	try{
 		m_file.close();
 	}catch(Exception& e){
@@ -93,12 +98,19 @@ Log::LogLevel Log::string2Level(const String& val)
 	return LOG_UNKNOWN;
 }
 
-String Log::format(const String& formatter, const LogCtx& ctx)
+void Log::updateFormatter(const String& val)
 {
-	StringBuilder sb(1024);
+	m_formatter = val;
+	if(m_tmpl != null)
+		delete m_tmpl;
+	TemplateLoader loader;
+	m_tmpl = loader.load(m_formatter);
+}
 
-	//@Todo formatter
-	//"%(time)s - %(level)s - %(message)s"
+String Log::format(const LogCtx& ctx)
+{
+	/*StringBuilder sb(1024);
+		
 	sb.append(ctx.getDefault("name", ""));
 	sb.append(" - ");
 	sb.append(ctx.getDefault("time", ""));
@@ -110,7 +122,15 @@ String Log::format(const String& formatter, const LogCtx& ctx)
 	sb.append("]  ");
 	sb.append(ctx.getDefault("message", ""));
 
-	return sb.toString();
+	return sb.toString();*/
+
+	if(m_tmpl == null)
+	{
+		TemplateLoader loader;
+		m_tmpl = loader.load(m_formatter);
+	}
+	String rs = m_tmpl->render(ctx);
+	return rs;
 }
 
 void Log::log(LogLevel level, const String& msg, const LogCtx& ctx)
@@ -131,7 +151,7 @@ void Log::log(LogLevel level, const String& msg, const LogCtx& ctx)
 	newCtx.put("thread", CodeUtil::int2Str(Thread::currentThreadId()));
 	newCtx.put("process", "0");
 
-	this->printLine(format(m_formatter, newCtx));
+	this->printLine(format(newCtx));
 }
 
 Log* Log::getLogger(const String& name)
@@ -139,7 +159,8 @@ Log* Log::getLogger(const String& name)
 	return LogManager::instance().getLogger(name);
 }
 
-///////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////
 //LogManager
 LogManager::LogManager()
 {

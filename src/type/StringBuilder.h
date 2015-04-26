@@ -423,6 +423,12 @@ public:
 	{
 		return deleteSub(index, index + 1);
 	}
+	
+	StringBuilder& pop()
+	{
+		return deleteCharAt(length()-1);
+	}
+	
 
 	/**
 	 * Replace characters between index <code>start</code> (inclusive) and

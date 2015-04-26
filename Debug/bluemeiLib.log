@@ -1,0 +1,97 @@
+﻿生成启动时间为 2015/4/27 1:28:41。
+     1>项目“D:\c++\C++vs2010\bluemeiLib\bluemeiLib.vcxproj”在节点 2 上(build 个目标)。
+     1>InitializeBuildStatus:
+         正在创建“Debug\bluemeiLib.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+       ClCompile:
+         G:\VS2010\VC\bin\CL.exe /c /ID:\c++\C++vs2010\bluemeiLib\ /ID:\c++\C++vs2010\bluemeiLib\\src\bLib /ID:\c++\C++vs2010\bluemeiLib\\src /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D BLUEMEILIB_EXPORTS /D SEND_LOG /D _WINDLL /D _UNICODE /D UNICODE /GF /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt src\net\iocp\IOCPModel.cpp src\template\FileTemplate.cpp src\template\StringTemplate.cpp src\template\TemplateLoader.cpp src\template\TemplateParser.cpp src\thread\ThreadPool.cpp src\thread\WorkThread.cpp src\utils\Log.cpp
+         WorkThread.cpp
+         ThreadPool.cpp
+         IOCPModel.cpp
+         正在生成代码...
+         正在编译...
+         Log.cpp
+     1>d:\c++\c++vs2010\bluemeilib\src\utils\log.cpp(143): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 g:\vs2010\vc\include\time.inl(112) : 参见“localtime”的声明
+         正在生成代码...
+         正在编译...
+         TemplateParser.cpp
+         TemplateLoader.cpp
+         StringTemplate.cpp
+         FileTemplate.cpp
+         正在生成代码...
+       ManifestResourceCompile:
+         所有输出均为最新。
+       Link:
+         G:\VS2010\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\c++\C++vs2010\sln\Debug\bluemeiLib.dll" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\bluemeiLib.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\c++\C++vs2010\sln\Debug\bluemeiLib.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\c++\C++vs2010\sln\Debug\bluemeiLib.lib" /MACHINE:X86 /DLL Debug\bluemeiLib.dll.embed.manifest.res
+         Debug\dllmain.obj
+         Debug\File.obj
+         Debug\FilePath.obj
+         Debug\IOException.obj
+         Debug\Class.obj
+         Debug\ClassField.obj
+         Debug\Exception.obj
+         Debug\Object.obj
+         Debug\ObjectFactory.obj
+         Debug\RuntimeException.obj
+         Debug\ClientSocket.obj
+         Debug\FtpConnection.obj
+         Debug\FtpException.obj
+         Debug\IOCompletionPort.obj
+         Debug\IOCompletionPortImplWin32.obj
+         Debug\IOCPModel.obj
+         Debug\ServerSocket.obj
+         Debug\SocketException.obj
+         Debug\SocketTools.obj
+         Debug\Application.obj
+         Debug\BeanContainer.obj
+         Debug\Context.obj
+         Debug\Session.obj
+         Debug\FileTemplate.obj
+         Debug\StringTemplate.obj
+         Debug\TemplateLoader.obj
+         Debug\TemplateParser.obj
+         Debug\CriticalLock.obj
+         Debug\LambdaThread.obj
+         Debug\MutexLock.obj
+         Debug\ResourceLock.obj
+         Debug\Thread.obj
+         Debug\ThreadException.obj
+         Debug\ThreadPool.obj
+         Debug\Timer.obj
+         Debug\WorkThread.obj
+         Debug\BString.obj
+         Debug\ByteBuffer.obj
+         Debug\DataBuffer.obj
+         Debug\Date.obj
+         Debug\KVPairTree.obj
+         Debug\LinkedList.obj
+         Debug\StringBuilder.obj
+         Debug\Vector.obj
+         Debug\CallStackUtil.obj
+         Debug\CodeUtil.obj
+         Debug\Converter.obj
+         Debug\ErrorHandler.obj
+         Debug\Log.obj
+         Debug\MemoryPool.obj
+         Debug\ReferencePointer.obj
+         Debug\SimpleCfgFile.obj
+         Debug\SmartPtrManager.obj
+         Debug\StackWalker.obj
+         Debug\System.obj
+         Debug\TypeManager.obj
+         Debug\Util.obj
+            正在创建库 D:\c++\C++vs2010\sln\Debug\bluemeiLib.lib 和对象 D:\c++\C++vs2010\sln\Debug\bluemeiLib.exp
+       Manifest:
+         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\bluemeiLib.dll.embed.manifest" /manifest Debug\bluemeiLib.dll.intermediate.manifest
+         所有输出均为最新。
+       LinkEmbedManifest:
+         所有输出均为最新。
+         bluemeiLib.vcxproj -> D:\c++\C++vs2010\sln\Debug\bluemeiLib.dll
+       FinalizeBuildStatus:
+         正在删除文件“Debug\bluemeiLib.unsuccessfulbuild”。
+         正在对“Debug\bluemeiLib.lastbuildstate”执行 Touch 任务。
+     1>已完成生成项目“D:\c++\C++vs2010\bluemeiLib\bluemeiLib.vcxproj”(build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:26.64

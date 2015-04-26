@@ -32,6 +32,9 @@
     <Filter Include="type">
       <UniqueIdentifier>{f2f3f7e8-adbb-4a93-abf8-ea96f62b768a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="template">
+      <UniqueIdentifier>{c5704819-27d7-4446-99ae-107b64c6f468}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -196,6 +199,18 @@
     <ClCompile Include="src\io\FilePath.cpp">
       <Filter>io</Filter>
     </ClCompile>
+    <ClCompile Include="src\template\FileTemplate.cpp">
+      <Filter>template</Filter>
+    </ClCompile>
+    <ClCompile Include="src\template\StringTemplate.cpp">
+      <Filter>template</Filter>
+    </ClCompile>
+    <ClCompile Include="src\template\TemplateLoader.cpp">
+      <Filter>template</Filter>
+    </ClCompile>
+    <ClCompile Include="src\template\TemplateParser.cpp">
+      <Filter>template</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\lang\Exception.h">
@@ -315,9 +330,6 @@
     <ClInclude Include="src\lang\Class.h">
       <Filter>lang</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\SortArray.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="src\utils\HashCoder.h">
       <Filter>utils</Filter>
     </ClInclude>
@@ -428,6 +440,24 @@
     </ClInclude>
     <ClInclude Include="src\io\FilePath.h">
       <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="src\template\FileTemplate.h">
+      <Filter>template</Filter>
+    </ClInclude>
+    <ClInclude Include="src\template\StringTemplate.h">
+      <Filter>template</Filter>
+    </ClInclude>
+    <ClInclude Include="src\template\Template.h">
+      <Filter>template</Filter>
+    </ClInclude>
+    <ClInclude Include="src\template\TemplateExpr.h">
+      <Filter>template</Filter>
+    </ClInclude>
+    <ClInclude Include="src\template\TemplateLoader.h">
+      <Filter>template</Filter>
+    </ClInclude>
+    <ClInclude Include="src\template\TemplateParser.h">
+      <Filter>template</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

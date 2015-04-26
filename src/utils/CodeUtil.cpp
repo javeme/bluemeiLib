@@ -305,10 +305,23 @@ unsigned char CodeUtil::char2hexChar(unsigned char x)
 	return (unsigned char)(x > 9 ? x + 55 : x + 48); 
 } 
 
+bool CodeUtil::isAlpha(int c)
+{
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		return true; 
+	return false;
+}
+
+bool CodeUtil::isNumber(int c)
+{
+	if (c >= '0' && c <= '9')
+		return true; 
+	return false;
+}
+
 bool CodeUtil::isAlphaOrNumber(int c)
 { 
-	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') 
-		|| (c >= '0' && c <= '9')) 
+	if (isAlpha(c) || isNumber(c)) 
 		return true; 
 	return false; 
 } 
