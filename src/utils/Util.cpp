@@ -1,7 +1,16 @@
 #include "Util.h"
 #include "RuntimeException.h"
+#include "Date.h"
+#include "HashCoder.h"
+#include "CriticalLock.h"
+
+#ifdef WIN32
+#include <winsock.h>
 #include <ShellApi.h>
-#include <time.h>
+#include <objbase.h>
+#else
+#include <uuid/uuid.h>
+#endif
 
 namespace bluemei{
 
@@ -211,8 +220,185 @@ bluemei::string Util::float2Str(double f)
 
 int Util::random()
 {
-	srand((unsigned int)time(NULL));//设定随机数种子
+	//time(NULL)
+	static bool notSetSeed = true;
+	if(notSetSeed){
+		notSetSeed = false;
+		long long time = Date::getCurrentTime().getTotalMillSecond();
+		srand((unsigned int)time);//set seed
+	}
 	return rand();
+}
+
+//generate a random uuid
+string Util::uuid4()
+{
+	/*from:
+	* http://www.ietf.org/rfc/rfc4122.txt
+	* http://stackoverflow.com/questions/2174768/generating-random-uuids-in-linux
+	*/
+	
+	char strUuid[40] = {0};
+	sprintf_s(strUuid, "%04x%04x-%04x-%04x-%04x-%04x%04x%04x", 
+		random(), random(),                 // Generates a 64-bit Hex number
+		random(),                           // Generates a 32-bit Hex number
+		((random() & 0x0fff) | 0x4000),     // Generates a 32-bit Hex number of the form 4xxx (4 indicates the UUID version)
+		((random() & 0x3fff) | 0x8000),     // Generates a 32-bit Hex number in the range [0x8000, 0xbfff]
+		random(), random(), random());      // Generates a 96-bit Hex number
+	
+	return strUuid;
+}
+
+////////////////////////////////////////////////////////////////
+//class Uuid1Generater
+class Uuid1Generater : public Object
+{
+public:
+	typedef unsigned short   uint16;
+	typedef unsigned int     uint32;
+	typedef __int64          int64;
+	typedef unsigned __int64 uint64;
+
+	/* microsecond per second. 1s=1000000us=1000000000ns*/
+	#define USec_Per_Sec        (1000*1000)
+	#define USec_Per_MSec       1000
+	#define NSec100_Per_Sec     (USec_Per_Sec*10)
+	#define NSec100_Per_MSec    (USec_Per_MSec*10)
+	#define NSec100_Since_1582     ((uint64)(0x01B21DD213814000))
+	
+public:
+	Uuid1Generater(){ initialize(); }
+	virtual ~Uuid1Generater(){}
+private:
+	Uuid1Generater(const Uuid1Generater& other)
+	{
+		this->operator=(other);
+	}
+	Uuid1Generater& operator=(const Uuid1Generater& other)
+	{ 
+		return *this;
+	}
+public:
+	/* generate uuid version 1
+	* from:
+	* http://www.ietf.org/rfc/rfc4122.txt
+	* http://www.tuicool.com/articles/MNrYVri
+	* http://www.cnblogs.com/lidabo/p/3483128.html
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|                          time_low                             |
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|       time_mid                |         time_hi_and_version   |
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|clk_seq_hi_res |  clk_seq_low  |         node (0-1)            |
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|                         node (2-5)                            |
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	*/
+	std::string generate()
+	{
+		lock.getLock();
+
+		int64 time = Date::getCurrentTime().getTotalMillSecond(); // ms
+		time = time * NSec100_Per_MSec + NSec100_Since_1582; // unit of 100ns
+
+		if (time < timestamp) 
+		{
+			timestamp = time;
+			advance = 0;
+			clockseq++;
+		} 
+		else if (time == timestamp) 
+		{
+			advance++;
+			time += advance;
+		} 
+		else 
+		{
+			timestamp = time;
+			advance = 0;
+		}
+
+		uint16 nowseq = clockseq;
+
+		lock.releaseLock();
+
+		uint32 timelow = (uint32) time;
+		uint16 timemid = (uint16) ((time >> 32) & 0xffff);
+		uint16 timehighver = (uint16) (((time >> 48) & 0x0fff) | 0x1000);
+		uint16 clockseqvar = (uint16) ((nowseq & 0x3fff) | 0x8000);//Variant 10x1 1111 1111 1111
+
+		char strUuid[40] = {0};
+		sprintf_s(strUuid, "%08x-%04x-%04x-%04x-%04x%08x",
+			timelow, timemid, timehighver,
+			clockseqvar,
+			nodehigh, nodelow);
+
+		return strUuid;
+	}
+	void initialize()
+	{
+		/*
+		#ifdef _USE_32BIT_TIME_T
+			assert(0);
+		#endif
+		*/
+
+		int64 time = Date::getCurrentTime().getTotalMillSecond(); // ms
+		time = time * NSec100_Per_MSec + NSec100_Since_1582; // unit of 100ns
+
+		timestamp = time;
+		advance = 0;
+		clockseq = (uint16)Util::random();
+
+		char hostname[256] = {0};
+		if(gethostname(hostname, sizeof(hostname)) == 0)
+		{
+			size_t len = strlen(hostname);
+			nodehigh = (uint16)hashCode<cstring>(&hostname[len/2]);
+			nodelow = (uint32)hashCode<cstring>(hostname);
+		}
+		else
+		{
+			nodehigh = Util::random() | 0x0100;
+			nodelow = Util::random();
+		}
+	}
+private:
+	int64     timestamp;
+	uint32    advance;
+	uint16    clockseq;
+	uint16    nodehigh;
+	uint32    nodelow;
+
+	CriticalLock lock;
+};
+
+//generate a uuid version 1
+string Util::uuid1()
+{
+	static Uuid1Generater generater;
+	return generater.generate();
+}
+
+//generate a guid
+bluemei::string Util::guid()
+{
+	GUID guid = {0};
+
+#ifdef WIN32
+	CoCreateGuid(&guid);//::UuidCreate(&guid);
+#else
+	uuid_generate(reinterpret_cast<unsigned char *>(&guid));
+#endif
+	char strUuid[40] = {0};
+	sprintf_s(strUuid, "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+		guid.Data1, guid.Data2, guid.Data3,
+		guid.Data4[0], guid.Data4[1],
+		guid.Data4[2], guid.Data4[3],
+		guid.Data4[4], guid.Data4[5],
+		guid.Data4[6], guid.Data4[7]);
+
+	return strUuid;
 }
 
 }//end of namespace bluemei

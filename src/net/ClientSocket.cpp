@@ -5,6 +5,8 @@
 
 namespace bluemei{
 
+const int ClientSocket::LINE_BUFFER_SIZE = 4096;
+
 ClientSocket::ClientSocket()
 {
 	m_bClose=true;
@@ -116,19 +118,24 @@ void ClientSocket::skip(unsigned long len)
 {
 	if(len==0)
 		return;
+	const static int BUF_LEN = 1024;
 	int count=0,wantLen;
-	char buffer[32];
+	char buffer[BUF_LEN];
 	do{
 		wantLen=len-count;
-		if(wantLen>32)
-			wantLen=32;
+		if(wantLen>BUF_LEN)
+			wantLen=BUF_LEN;
 		count+=readBytes(buffer,wantLen);
 	}while(count!=len);
 }
 //读字节,返回读取字节数
 int ClientSocket::readBytes(char buffer[],int maxLength,int flags)
 {
-	int length=::recv(this->m_hSocket,buffer,maxLength,0);
+	if(maxLength<=0)
+		return 0;
+
+	int length=::recv(this->m_hSocket,buffer,maxLength,flags);
+	//printf("==========ClientSocket::readBytes,len=%d\n", length);
 	if(length==SOCKET_ERROR)
 	{
 		int errorCode=WSAGetLastError();
@@ -141,7 +148,7 @@ int ClientSocket::readBytes(char buffer[],int maxLength,int flags)
 	}
 	else if(length==0)
 	{
-		throw SocketException("closed by peer,"+toString());
+		throw SocketClosedException("closed by peer,"+toString());
 	}
 	else if(length<0)
 	{
@@ -153,10 +160,10 @@ int ClientSocket::readBytes(char buffer[],int maxLength,int flags)
 int ClientSocket::readEnoughBytes(char buffer[],int length)
 {	
 	int count=0;
-	/*do{
+	do{
 		count+=readBytes(buffer+count,length-count);//EINTR
-	}while(count!=length);*/
-	count=readBytes(buffer,length,MSG_WAITALL);
+	}while(count!=length);
+	//count=readBytes(buffer,length,MSG_WAITALL);// return error WSAEOPNOTSUPP on win7?
 	if(count!=length)
 		throw SocketException("have not read enough data,"+toString());
 	return count;
@@ -198,15 +205,16 @@ unsigned char ClientSocket::readByte()
 }
 
 //读取一行数据,网络数据为gbk编码形式,返回gbk编码
-String ClientSocket::readLineByGbk()
+String ClientSocket::readLine()
 {
 	int count=0;
-	const unsigned int bufLen = BUFFER_SIZE;
+	const unsigned int bufLen = LINE_BUFFER_SIZE;
 	char buffer[bufLen];
 	char receivedChar;
 	do{
 		count+=readBytes(&buffer[count],1);
-		receivedChar=buffer[count-1];//count已经加了1
+		receivedChar=buffer[count-1];//减去1因为count已经加了1
+		//printf("==%c\n",receivedChar);
 	}while(receivedChar!='\n' && count<bufLen);
 	buffer[count-1]='\0';
 	if(count>1 && buffer[count-2]=='\r')
@@ -238,7 +246,7 @@ String ClientSocket::readUtfString()
 int ClientSocket::writeBytes(const char buffer[],int length,int flags)
 {
 	int size=0;
-	size=::send(this->m_hSocket,buffer,length,0);
+	size=::send(this->m_hSocket,buffer,length,flags);
 	if(size==SOCKET_ERROR)
 	{
 		int errorCode=::WSAGetLastError();
@@ -263,10 +271,10 @@ int ClientSocket::writeBytes(const char buffer[],int length,int flags)
 int ClientSocket::writeEnoughBytes(const char buffer[],int length)
 {	
 	int count=0;
-	/*do{
+	do{
 		count+=writeBytes(buffer+count,length-count);//EINTR
-	}while(count!=length);*/
-	count=writeBytes(buffer,length,MSG_WAITALL);
+	}while(count!=length);
+	//count=writeBytes(buffer,length,MSG_WAITALL);
 	if(count!=length)
 		throw SocketException("have not send enough data,"+toString());
 	return count;

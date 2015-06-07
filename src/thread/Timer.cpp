@@ -40,7 +40,7 @@ void Timer::schedule(Runnable* pTask,unsigned long delay,unsigned long period,bo
 	m_nextTime=GetTickCount()+delay;
 	m_nPeriod=period;
 	//Ö´ÐÐÏß³Ì
-	Thread *pThread=new LambdaThread([&,autoDestroyTask](void* pUserParameter){
+	Thread *pThread=new LambdaThread([&,autoDestroyTask](){
 		m_bGoOn=true;
 		while(m_bGoOn){
 			executeTask();
@@ -72,7 +72,7 @@ void Timer::executeTask()
 	}
 	if(isTimeout)
 	{
-		m_pTask->run(nullptr);
+		m_pTask->run();
 		m_nextTime=m_nextTime+m_nPeriod;
 	}
 	if(m_nPeriod==0)

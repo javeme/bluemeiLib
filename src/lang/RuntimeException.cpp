@@ -1,4 +1,5 @@
 #include "RuntimeException.h"
+#include "Date.h"
 
 namespace bluemei{
 
@@ -142,7 +143,25 @@ String OutOfMemoryException::name()const
 //TimeoutException
 TimeoutException::TimeoutException(long long time)
 {
-	this->setExceptionMsg(String::format("%d ms",time));
+	cstring unit = "ms";
+	double ftime = (double)time;
+	if(time > SECOND_MSECOND){
+		ftime /= SECOND_MSECOND;
+		unit = "s";
+	}
+	else if(time > MINUTE_MSECOND){
+		ftime /= MINUTE_MSECOND;
+		unit = "min";
+	}
+	else if(time > HOUR_MSECOND){
+		ftime /= HOUR_MSECOND;
+		unit = "h";
+	}
+	else if(time > DAY_MSECOND){
+		ftime /= DAY_MSECOND;
+		unit = "day";
+	}
+	this->setExceptionMsg(String::format("%0.2f %s", ftime, unit));
 }
 
 String TimeoutException::name()const

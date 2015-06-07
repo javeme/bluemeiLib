@@ -1,20 +1,5 @@
 #include "FilePath.h"
 
-#ifdef _WIN32
-#include <direct.h>
-#include <io.h>
-#elif _LINUX
-#include <stdarg.h>
-#include <sys/stat.h>
-#endif
-
-#ifdef _WIN32
-#define ACCESS _access
-#define MKDIR(a) _mkdir((a))
-#elif _LINUX
-#define ACCESS access
-#define MKDIR(a) mkdir((a),0755)
-#endif
 
 namespace bluemei{
 
@@ -65,45 +50,47 @@ String FilePath::toString() const
 	return m_path.toString();
 }
 
-
-///////////////////////////////////////////////////
-//FileUtil
-bool FileUtil::exists(const String& path)
+bool FilePath::exists() const
 {
-	return ACCESS(path.c_str(), 0) == 0;
+	return FileUtil::exists(this->toString());
 }
 
-bool FileUtil::mkdir(const String& dir)
+bool FilePath::readable() const
 {
-	return MKDIR(dir) == 0;
+	return FileUtil::readable(this->toString());
 }
 
-bool FileUtil::mkdirs(const String& dir)
+bool FilePath::writable() const
 {
-	if(exists(dir))
-		return true;
+	return FileUtil::writable(this->toString());
+}
 
-	String dirSeprt = dir.replace("\\", PATH_SEPARATOR);
-	auto list = dirSeprt.splitWith(PATH_SEPARATOR);
-	//String ssss=list.toString();
+bool FilePath::executable() const
+{
+	return FileUtil::executable(this->toString());
+}
 
-	FilePath path;
-	if(dirSeprt.startWith(PATH_SEPARATOR))
-		path.append(PATH_SEPARATOR);
-	for(unsigned int i=0; i<list.size(); i++)
+bool FilePath::isfile() const
+{
+	return FileUtil::isfile(this->toString());
+}
+
+bool FilePath::isdir() const
+{
+	return FileUtil::isdir(this->toString());
+}
+
+ArrayList<FilePath> FilePath::list() const
+{
+	ArrayList<FilePath> files;
+	if(this->isdir())
 	{
-		//remove empty string
-		if(list[i].empty())
-			continue;
-		//append to parent path
-		path.append(list[i]);
-		if(!exists(path))
-		{
-			if(!mkdir(path))
-				return false;
+		ArrayList<String> paths= FileUtil::list(this->toString());
+		for(unsigned int i=0; i<paths.size(); i++){			 
+			files.add(FilePath(*this).append(paths[i]));
 		}
 	}
-	return true;
+	return files;
 }
 
 }//namespace bluemei

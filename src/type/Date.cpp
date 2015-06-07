@@ -242,7 +242,9 @@ String Date::toString() const
 
 void Date::setToCurrentTime()
 {
-	ftime(&m_time);
+	//ftime(&m_time);
+	_ftime_s(&m_time);
+
 	//m_dateInfo=*localtime(&m_time.time);
 }
 

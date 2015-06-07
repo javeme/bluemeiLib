@@ -67,5 +67,14 @@ void BeanContainer::clear(bool autoRelease)
 		m_beanMap.clear();
 }
 
+Object* BeanContainer::operator[](const string& key)const 
+{ 
+	return get(key);
+}
+
+Object*& BeanContainer::operator[](const string& key)
+{
+	return m_beanMap[key];
+}
 
 }//end of namespace bluemei

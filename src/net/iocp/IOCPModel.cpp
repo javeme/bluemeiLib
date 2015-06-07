@@ -31,7 +31,7 @@ public:
 		;
 	}
 
-	virtual void beforeTask() 
+	virtual void taskStarted() 
 	{
 		;
 	}
@@ -41,7 +41,7 @@ public:
 		return 0;
 	}
 
-	virtual void taskFinish() 
+	virtual void taskFinished() 
 	{
 		delete this;
 	}
@@ -51,7 +51,7 @@ public:
 		return m_bRunning;
 	}
 
-	virtual void run(ThreadParameter *pThreadParameter)
+	virtual void run()
 	{
 		m_bRunning=true;
 
@@ -189,7 +189,7 @@ void IOCPModel::start()
 	m_pIOThreadPool=new ThreadPool();
 	
 	//负责轮询事件
-	m_pEventThread=new LambdaThread([&](void* pUserParameter){
+	m_pEventThread=new LambdaThread([&](){
 		m_bRunning=true;
 		const int MAX_EV_NUM=32;
 		IOEvent events[MAX_EV_NUM];

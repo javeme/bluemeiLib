@@ -6,6 +6,8 @@
 
 namespace bluemei{
 
+typedef Object Self;
+
 Object::Object(void)
 {
 }

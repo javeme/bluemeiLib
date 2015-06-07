@@ -116,13 +116,14 @@ String SocketTools::getWinsockErrorMsg(int errCode)
 		case WSA_QOS_GENERIC_ERROR: str=("WSA_QOS_GENERIC_ERROR"); break;
 		default:
 		{
-			HLOCAL hLocalAddress=NULL;  
+			LPVOID lpMsgBuf=NULL;
 			int len=FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_IGNORE_INSERTS|FORMAT_MESSAGE_FROM_SYSTEM,
-				NULL,errCode,0,(PSTR)&hLocalAddress,0,NULL);  
+				NULL,errCode,0,(LPSTR)&lpMsgBuf,0,NULL);  
 			if(len>0)
-				str=(char*)hLocalAddress; 
+				str=(cstring)lpMsgBuf; 
 			else
 				str="no description";
+			LocalFree(lpMsgBuf);
 			break;//ร่ส๖
 		}
 	}

@@ -211,6 +211,9 @@
     <ClCompile Include="src\template\TemplateParser.cpp">
       <Filter>template</Filter>
     </ClCompile>
+    <ClCompile Include="src\io\FileUtil.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\lang\Exception.h">
@@ -238,9 +241,6 @@
       <Filter>thread</Filter>
     </ClInclude>
     <ClInclude Include="src\thread\ThreadException.h">
-      <Filter>thread</Filter>
-    </ClInclude>
-    <ClInclude Include="src\thread\ThreadParameter.h">
       <Filter>thread</Filter>
     </ClInclude>
     <ClInclude Include="src\thread\ThreadPool.h">
@@ -387,9 +387,6 @@
     <ClInclude Include="src\utils\MemoryPool.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\Exceptions.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="src\type\ArrayList.h">
       <Filter>type</Filter>
     </ClInclude>
@@ -458,6 +455,9 @@
     </ClInclude>
     <ClInclude Include="src\template\TemplateParser.h">
       <Filter>template</Filter>
+    </ClInclude>
+    <ClInclude Include="src\io\FileUtil.h">
+      <Filter>io</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

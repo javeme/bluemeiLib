@@ -101,6 +101,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="src\io\File.cpp" />
     <ClCompile Include="src\io\FilePath.cpp" />
+    <ClCompile Include="src\io\FileUtil.cpp" />
     <ClCompile Include="src\io\IOException.cpp" />
     <ClCompile Include="src\lang\Class.cpp" />
     <ClCompile Include="src\lang\ClassField.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="bluemeiLib.h" />
     <ClInclude Include="src\io\File.h" />
     <ClInclude Include="src\io\FilePath.h" />
+    <ClInclude Include="src\io\FileUtil.h" />
     <ClInclude Include="src\io\IOException.h" />
     <ClInclude Include="src\lang\Class.h" />
     <ClInclude Include="src\lang\ClassField.h" />
@@ -199,7 +201,6 @@
     <ClInclude Include="src\thread\Task.h" />
     <ClInclude Include="src\thread\Thread.h" />
     <ClInclude Include="src\thread\ThreadException.h" />
-    <ClInclude Include="src\thread\ThreadParameter.h" />
     <ClInclude Include="src\thread\ThreadPool.h" />
     <ClInclude Include="src\thread\Timer.h" />
     <ClInclude Include="src\thread\WorkThread.h" />
@@ -223,7 +224,6 @@
     <ClInclude Include="src\utils\CodeUtil.h" />
     <ClInclude Include="src\utils\Converter.h" />
     <ClInclude Include="src\utils\ErrorHandler.h" />
-    <ClInclude Include="src\utils\Exceptions.h" />
     <ClInclude Include="src\utils\HashCoder.h" />
     <ClInclude Include="src\utils\Log.h" />
     <ClInclude Include="src\utils\MemoryPool.h" />

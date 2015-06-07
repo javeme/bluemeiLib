@@ -138,9 +138,10 @@ void Log::log(LogLevel level, const String& msg, const LogCtx& ctx)
 	if (level > m_level)
 		return;
 
-	char strTime[64];
+	const size_t BUF_LEN = 128;
+	char strTime[BUF_LEN];
 	time_t currentTime=time(NULL);
-	strftime(strTime,128,"%H:%M:%S(%Y-%m-%d)",localtime(&currentTime));//localtime_s
+	strftime(strTime,BUF_LEN,"%H:%M:%S(%Y-%m-%d)",localtime(&currentTime));//localtime_s
 
 	LogCtx newCtx = ctx;
 	//name level time message thread process

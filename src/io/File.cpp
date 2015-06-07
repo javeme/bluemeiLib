@@ -6,7 +6,7 @@
 
 namespace bluemei{
 
-File::File(unsigned long bufferSize)
+File::File(size_t bufferSize)
 {
 	init("","",bufferSize);
 }
@@ -16,7 +16,7 @@ File::File(string path,string openMode)
 	this->File::File(path,openMode,BUFFER_SIZE);
 }
 */
-File::File(String path,String openMode,unsigned long bufferSize)
+File::File(String path,String openMode,size_t bufferSize)
 {
 	init(path,openMode,bufferSize);
 }
@@ -30,7 +30,7 @@ File::~File()
 	if(buffer)
 		delete[]buffer;
 }
-void File::init(String path,String openMode,unsigned long bufferSize)
+void File::init(String path,String openMode,size_t bufferSize)
 {
 	m_bCloseAble=false;
 	m_nBufferSize=bufferSize;
@@ -60,7 +60,7 @@ void File::openFile(String path,String openMode)
 	m_bCloseAble=true;
 	m_strPath=path;
 }
-unsigned long File::writeBytes(const char buf[],unsigned long length)
+size_t File::writeBytes(const char buf[],size_t length)
 {
 	if(m_nUsedBufLength<0)
 	{
@@ -69,7 +69,7 @@ unsigned long File::writeBytes(const char buf[],unsigned long length)
 	else if(length>(m_nBufferSize>>1))//大于二分之一缓冲区大小
 	{
 		flush();
-		unsigned int nReturn=::fwrite(buf,sizeof(char),length,m_pFile);
+		size_t nReturn=::fwrite(buf,sizeof(char),length,m_pFile);
 		if(nReturn!=length)
 		{
 			String str=String::format("fwrite %d but return %d",length,nReturn);
@@ -79,7 +79,7 @@ unsigned long File::writeBytes(const char buf[],unsigned long length)
 	}
 	else//小于二分之一缓冲区大小
 	{
-		unsigned long emptyLen=0;
+		size_t emptyLen=0;
 		if(m_nUsedBufLength+length>m_nBufferSize)//如果溢出,则先存入部分
 		{
 			emptyLen=m_nBufferSize-m_nUsedBufLength;
@@ -121,17 +121,17 @@ void File::writeInt(int value)
 	writeBytes(buf,sizeof(int));
 }
 
-unsigned int File::readBytes(char buf[],unsigned long length)
+size_t File::readBytes(char buf[],size_t length)
 {
-	unsigned int nReturn=::fread(buf,sizeof(char),length,m_pFile);
+	size_t nReturn=::fread(buf,sizeof(char),length,m_pFile);
 	if(nReturn<0)
 	{
-		String str=String::format("- want read %d but return %d",length,nReturn);
-		throw IOException("read bytes from file ["+m_strPath+"] failed "+str);
+		String str=String::format("expected %d actual %d",length,nReturn);
+		throw IOException("failed to read bytes from ["+m_strPath+"]: "+str);
 	}
 	return nReturn;
 }
-unsigned int File::readLine(String& line)
+size_t File::readLine(String& line)
 {
 	int readedLen=0,tmp;
 	char buf[BUFFER_SIZE]="";
@@ -160,10 +160,10 @@ unsigned int File::readLine(String& line)
 	return readedLen+1;
 }
 
-unsigned int File::readLine(std::string& line)
+size_t File::readLine(std::string& line)
 {
 	String str;
-	unsigned int len=readLine(str);
+	size_t len=readLine(str);
 	line=str.c_str();
 	return len;
 }
@@ -181,7 +181,7 @@ int File::readInt()
 	return value;
 }
 
-unsigned int File::readAll(char buf[],unsigned long bufSize)
+size_t File::readAll(char buf[],size_t bufSize)
 {
 	if(bufSize<getSize())
 	{
@@ -190,7 +190,7 @@ unsigned int File::readAll(char buf[],unsigned long bufSize)
 	return this->readBytes(buf,getSize());
 }
 
-unsigned int File::currentPos()const
+size_t File::currentPos()const
 {
 	//return ftell(m_pFile);
 	fpos_t pos=0;
@@ -199,10 +199,10 @@ unsigned int File::currentPos()const
 		String str=String::format("get file position failed,error:%d",errno);
 		throw IOException(str+m_strPath);
 	}
-	return (unsigned int)pos;
+	return (size_t)pos;
 }
 
-void File::setPos(unsigned int pos)
+void File::setPos(size_t pos)
 {
 	fpos_t fpos=pos;
 	if(::fsetpos(m_pFile,&fpos)!=0)
@@ -212,12 +212,12 @@ void File::setPos(unsigned int pos)
 	}
 }
 
-unsigned int File::getSize()
+size_t File::getSize()
 {
 	if(::fseek(m_pFile,0,SEEK_END)==0) 
 	{
 		//int length=ftell(m_pFile);
-		unsigned int length=currentPos();
+		size_t length=currentPos();
 		::rewind(m_pFile);//重定位到开头
 		return length;
 	}
@@ -233,21 +233,23 @@ void File::seek(long offset)
 	}
 }
 
-unsigned int File::write(const byte* buffer,unsigned int length)
+size_t File::write(const byte* buffer,size_t length)
 {
-	return ::fwrite(buffer,sizeof(char),length,m_pFile);
+	//return ::fwrite(buffer,sizeof(byte),length,m_pFile);
+	size_t nReturn=::fwrite(buffer,sizeof(byte),length,m_pFile);
+	if(nReturn!=length)
+	{
+		String str=String::format("expected %d actual %d",length,nReturn);
+		throw IOException("failed to write bytes into ["+m_strPath+"]: "+str);
+	}
+	return nReturn;
 }
 
 void File::flush()
 {
 	if(m_nUsedBufLength==0)
 		return;
-	unsigned int nReturn=::fwrite(buffer,sizeof(char),m_nUsedBufLength,m_pFile);
-	if(nReturn!=m_nUsedBufLength)
-	{
-		String str=String::format("fwrite %d but return %d",m_nUsedBufLength,nReturn);
-		throw IOException("write bytes into ["+m_strPath+"] failed -"+str);
-	}
+	(void)this->write((const byte*)buffer, m_nUsedBufLength);	
 	m_nUsedBufLength=0;
 }
 

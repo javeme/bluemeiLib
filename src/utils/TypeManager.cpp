@@ -22,6 +22,17 @@ void TypeManager::releaseInstance()
 	thisInstance=nullptr;
 }
 
+bool TypeManager::hasRegister(Object* p)
+{
+	if (p==nullptr)
+		return true;
+	auto conver=typeMap.get(getTypeInfo(p));
+	if(conver==nullptr)
+		return false;
+	else
+		return true;
+}
+
 void TypeManager::destroy()
 {
 	auto i=typeMap.iterator();
@@ -32,6 +43,5 @@ void TypeManager::destroy()
 	typeMap.releaseIterator(i);
 	typeMap.clear();
 }
-
 
 }//end of namespace bluemei

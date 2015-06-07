@@ -18,7 +18,7 @@ WorkThread::~WorkThread(void)
 {
 	;
 }
-void WorkThread::run(ThreadParameter *pThreadParameter)
+void WorkThread::run()
 {	
 	try{
 		Task* pTask=NULL;
@@ -30,10 +30,10 @@ void WorkThread::run(ThreadParameter *pThreadParameter)
 			if(pTask!=NULL)
 			{
 				m_pCurrentTask=pTask;
-				m_pCurrentTask->beforeTask();
-				m_pCurrentTask->run(NULL);
+				m_pCurrentTask->taskStarted();
+				m_pCurrentTask->run();
 				//m_pTaskPool->onFinishTask(m_pCurrentTask);
-				m_pCurrentTask->taskFinish();
+				m_pCurrentTask->taskFinished();
 				m_pCurrentTask=NULL;
 			}
 			m_bIsIdle=true;

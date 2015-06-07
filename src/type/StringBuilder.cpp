@@ -2,7 +2,84 @@
 
 namespace bluemei{
 
-bool StringBuilder::ensureCapacity( unsigned int minimumCapacity )
+StringBuilder::StringBuilder(unsigned int capacity/*=DEFAULT_CAPACITY*/)
+{
+	this->buffer = new char_t[capacity];
+	this->capacity = capacity;
+	this->avail = 0;
+}
+
+StringBuilder::StringBuilder(const String& str)
+{
+	// Unfortunately, because the size is 16 larger, we cannot share.
+	this->avail = str.length();
+	this->capacity = avail + DEFAULT_CAPACITY;
+	this->buffer = new char_t[this->capacity];
+	copyData<char_t>(buffer, str.c_str(), str.length());
+}
+
+StringBuilder::~StringBuilder()
+{
+	delete[] buffer;
+	avail=0;
+}
+
+StringBuilder::StringBuilder(const StringBuilder &src)
+{
+	buffer = null;
+	capacity=0;
+	avail=0;
+
+	*this = src;
+}
+
+StringBuilder::StringBuilder(StringBuilder&& src)
+{
+	buffer = null;
+	capacity=0;
+	avail=0;
+
+	*this = src;
+}
+
+StringBuilder& StringBuilder::operator=(const StringBuilder &src)
+{
+	if(buffer){
+		delete[] buffer;
+		buffer = null;
+	}
+	this->avail = src.avail;
+	this->capacity = src.capacity;
+	this->buffer = new char_t[this->capacity];
+	copyData<char_t>(buffer, src.buffer, src.length());
+
+	return *this;
+}
+
+StringBuilder& StringBuilder::operator=(StringBuilder&& src)
+{
+	if(buffer){
+		delete[] buffer;
+		buffer = null;
+	}
+
+	this->avail = src.avail;
+	this->capacity = src.capacity;
+	this->buffer = src.buffer;
+
+	src.avail = 0;
+	src.capacity = 0;
+	src.buffer = null;
+
+	return *this;
+}
+
+bool StringBuilder::operator==(const StringBuilder& other) const
+{
+	return toString() == other.toString();
+}
+
+bool StringBuilder::ensureCapacity(unsigned int minimumCapacity)
 {
 	if(minimumCapacity > capacity)
 	{
@@ -19,7 +96,7 @@ bool StringBuilder::ensureCapacity( unsigned int minimumCapacity )
 	return false;
 }
 
-void StringBuilder::setLength( unsigned int newLength )
+void StringBuilder::setLength(unsigned int newLength)
 {
 	unsigned int valueLength = capacity;
 
@@ -53,7 +130,7 @@ void StringBuilder::clear()
 	setLength(0);
 }
 
-void StringBuilder::getChars( unsigned int start, unsigned int end, char_t dst[], unsigned int dstOffset/*=0*/ ) const
+void StringBuilder::getChars(unsigned int start, unsigned int end, char_t dst[], unsigned int dstOffset/*=0*/) const
 {
 	checkBound(start);
 
@@ -67,7 +144,7 @@ void StringBuilder::getChars( unsigned int start, unsigned int end, char_t dst[]
 	copyData<char_t>(dst+dstOffset,buffer+start,end-start);
 }
 
-void StringBuilder::setCharAt( unsigned int index, char_t ch )
+void StringBuilder::setCharAt(unsigned int index, char_t ch)
 {
 	checkBound(index);
 	// Call ensureCapacity to enforce copy-on-write.
@@ -75,7 +152,7 @@ void StringBuilder::setCharAt( unsigned int index, char_t ch )
 	buffer[index] = ch;
 }
 
-StringBuilder& StringBuilder::append( const String& str )
+StringBuilder& StringBuilder::append(const String& str)
 {
 	unsigned int len = str.length();
 	ensureCapacity(avail + len);
@@ -85,7 +162,7 @@ StringBuilder& StringBuilder::append( const String& str )
 	return *this;
 }
 
-StringBuilder& StringBuilder::append( const StringBuilder& stringBuffer )
+StringBuilder& StringBuilder::append(const StringBuilder& stringBuffer)
 {
 	unsigned int len = stringBuffer.avail;
 	ensureCapacity(avail + len);
@@ -96,7 +173,7 @@ StringBuilder& StringBuilder::append( const StringBuilder& stringBuffer )
 	return *this;
 }
 
-StringBuilder& StringBuilder::append( const char_t data[], unsigned int offset, unsigned int count )
+StringBuilder& StringBuilder::append(const char_t data[], unsigned int offset, unsigned int count)
 {
 	//if (offset+count > data.length)
 	//	throwpe(OutOfBoundException(index,avail));
@@ -108,14 +185,14 @@ StringBuilder& StringBuilder::append( const char_t data[], unsigned int offset, 
 	return *this;
 }
 
-StringBuilder& StringBuilder::append( char_t ch )
+StringBuilder& StringBuilder::append(char_t ch)
 {
 	ensureCapacity(avail + 1);
 	buffer[avail++] = ch;
 	return *this;
 }
 
-StringBuilder& StringBuilder::deleteSub( unsigned int start, unsigned int end )
+StringBuilder& StringBuilder::deleteSub(unsigned int start, unsigned int end)
 {
 	checkBound(start);
 
@@ -137,7 +214,7 @@ StringBuilder& StringBuilder::deleteSub( unsigned int start, unsigned int end )
 	return *this;
 }
 
-StringBuilder& StringBuilder::replace( unsigned int start, unsigned int end, const String& str )
+StringBuilder& StringBuilder::replace(unsigned int start, unsigned int end, const String& str)
 {
 	checkBound(start);
 
@@ -163,7 +240,7 @@ StringBuilder& StringBuilder::replace( unsigned int start, unsigned int end, con
 	return *this;
 }
 
-String StringBuilder::substring( unsigned int start, unsigned int end ) const
+String StringBuilder::substring(unsigned int start, unsigned int end) const
 {
 	if(start == 0 && avail == 0)//empty
 		return "";
@@ -182,7 +259,7 @@ String StringBuilder::substring( unsigned int start, unsigned int end ) const
 	return String(buffer+start, len);
 }
 
-StringBuilder& StringBuilder::insert( unsigned int offset, const char_t str[], unsigned int strOffset, unsigned int len )
+StringBuilder& StringBuilder::insert(unsigned int offset, const char_t str[], unsigned int strOffset, unsigned int len)
 {
 	if(offset > length())
 		offset = length();
@@ -195,21 +272,21 @@ StringBuilder& StringBuilder::insert( unsigned int offset, const char_t str[], u
 	return *this;
 }
 
-int StringBuilder::indexOf( const String& str, unsigned int fromIndex ) const
+int StringBuilder::indexOf(const String& str, unsigned int fromIndex) const
 {
 	if (fromIndex < 0)
 		fromIndex = 0;
 	unsigned int limit = avail - str.length();
-	for ( ; fromIndex <= limit; fromIndex++)
+	for (; fromIndex <= limit; fromIndex++)
 		if (regionMatches(fromIndex, str))
 			return fromIndex;
 	return -1;
 }
 
-int StringBuilder::lastIndexOf( const String& str, unsigned int fromIndex ) const
+int StringBuilder::lastIndexOf(const String& str, unsigned int fromIndex) const
 {
 	int index = min(fromIndex, avail - str.length());
-	for ( ; index >= 0; index--)
+	for (; index >= 0; index--)
 		if (regionMatches(index, str))
 			return index;
 	return -1;
@@ -240,7 +317,7 @@ void StringBuilder::trimToSize()
 	}
 }
 
-bool StringBuilder::regionMatches( unsigned int offset, const String& other ) const
+bool StringBuilder::regionMatches(unsigned int offset, const String& other) const
 {
 	unsigned int len = other.length();
 	cstring s = other.c_str();
@@ -259,6 +336,5 @@ bool StringBuilder::regionMatches( unsigned int offset, const String& other ) co
 	int result=memcmp(buffer+offset,s,len*sizeof(char_t));
 	return result==0;
 }
-
 
 }//end of namespace bluemei

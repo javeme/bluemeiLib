@@ -29,7 +29,7 @@ String::String(const char *src)
 {
 	m_nLength = strlen(src);
 	m_charBuffer = new char[m_nLength+1);
-	strcpy(m_charBuffer , src);
+	strcpy(m_charBuffer, src);
 }*/
 String::String(cstring src, int len)
 {
@@ -37,12 +37,12 @@ String::String(cstring src, int len)
 	if(len<0)
 		len = strlen(src);
 	init(len);
-	memcpy(m_charBuffer , src , m_nLength);
+	memcpy(m_charBuffer, src, m_nLength);
 }
 String::String(const std::string &src)
 {
 	init(src.length());
-	memcpy(m_charBuffer , src.c_str() , m_nLength);
+	memcpy(m_charBuffer, src.c_str(), m_nLength);
 }
 String::String(const String &src)
 {
@@ -90,7 +90,7 @@ String& String::operator = (cstring src)
 		delete[]m_charBuffer;
 	verdictNull(src);
 	init(strlen(src));
-	memcpy(m_charBuffer , src , m_nLength);
+	memcpy(m_charBuffer, src, m_nLength);
 	return *this;
 }
 String& String::operator= (const String &src)
@@ -136,13 +136,13 @@ String::operator std::string() const
 // const char *ToString()
 // char GetAt(int index)
 // int Len()
-// int FindFirstSub(String substr , int start = 0)
+// int FindFirstSub(String substr, int start = 0)
 // bool InStr(String substr)
 // String Trim(int part)
 // String Left()
 // String Right()
 // String Mid()
-// void Replace(String strNeedReplaced , String strReplace)
+// void Replace(String strNeedReplaced, String strReplace)
 
 String String::toString() const
 {
@@ -160,10 +160,10 @@ String& String::append(const String &add)
 	int lenAdd = add.length();
 	int lenTotal = m_nLength + lenAdd;
 	char *buf = new char[lenTotal+1];
-	//strcpy(buf , m_charBuffer);
-	//strcat(buf+m_nLength , (const char*)add);
-	memcpy(buf , m_charBuffer, m_nLength);
-	memcpy(buf+m_nLength , (const char*)add, lenAdd);
+	//strcpy(buf, m_charBuffer);
+	//strcat(buf+m_nLength, (const char*)add);
+	memcpy(buf, m_charBuffer, m_nLength);
+	memcpy(buf+m_nLength, (const char*)add, lenAdd);
 	buf[lenTotal] = '\0';
 	delete[]m_charBuffer;
 	m_charBuffer=buf;
@@ -189,12 +189,13 @@ unsigned int String::length() const
 }
 
 //得到start后（含）子串substr的索引
-int String::find(const String& substr , unsigned int start/* = 0*/) const
+int String::find(const String& substr, unsigned int start/* = 0*/) const
 {
 	if(start == 0 && this->empty())
 		return substr.empty() ? 0 : -1;
-	else
-		checkBound(start);
+	//else
+	//	checkBound(start);
+
 #if 0
 	for(int i = start ; i <= m_nLength - substr.length() ; i++)
 	{
@@ -265,10 +266,16 @@ bool String::startWith(const String& substr) const
 	return this->find(substr) == 0;
 }
 
+bool String::endWith(const String& substr) const
+{
+	int offset = length() - substr.length();
+	return offset >= 0 && offset == this->rfind(substr);
+}
+
 //去前导、后导空格
 String String::trim(int part) const
 {
-	unsigned int begin=0 , end=m_nLength-1;
+	unsigned int begin=0, end=m_nLength-1;
 
 	if(part == TRIM_LEFT || part == TRIM_BOTH)
 	{
@@ -305,7 +312,7 @@ String String::getRightSub(unsigned int sublen) const
 }
 //
 //字符串中间从start开始长度为sublen的子串
-String String::substring(unsigned int start ,unsigned int sublen) const
+String String::substring(unsigned int start,unsigned int sublen) const
 {
 	if(start == 0 && this->empty())
 		return "";
@@ -330,17 +337,17 @@ String String::substring(unsigned int start) const
 
 //
 //将字符串中所有形如strNeedReplaced的子串替换为strReplace
-String String::replace(const String& strNeedReplaced , const String& strReplace) const
+String String::replace(const String& strNeedReplaced, const String& strReplace) const
 {
 	String temp;
 	int start = 0;
-	int index = find(strNeedReplaced , start);
+	int index = find(strNeedReplaced, start);
 	while(index >= 0)
 	{
-		temp = temp + substring(start , index - start) + strReplace;
+		temp = temp + substring(start, index - start) + strReplace;
 
 		start = index + strNeedReplaced.length();
-		index = find(strNeedReplaced , start);
+		index = find(strNeedReplaced, start);
 	}
 
 	temp = temp + getRightSub(m_nLength - start);
@@ -363,14 +370,14 @@ ArrayList<String> String::splitWith(const String& separator) const
 	{
 		int start = 0;
 		int end = 0;
-		while((end = find(separator , start)) >= 0)
+		while((end = find(separator, start)) >= 0)
 		{
 			if(end >= start )
-				list.add(substring(start , end - start));
+				list.add(substring(start, end - start));
 
 			start = end + separator.length();
 
-			if(start >= length())
+			if((unsigned int)start >= length())
 				break;
 		}
 		list.add(getRightSub(m_nLength - start));

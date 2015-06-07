@@ -9,18 +9,17 @@
 *你可以自由使用这部分代码，但请保留这段声明,无论你是否修改了该代码。
 ************************************************************************/
 #include "SmartPtrManager.h"
+#include "System.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <new.h>
 #include <set>
 #include <vector>
-#include "System.h"
 
 namespace bluemei{
 
 //static variable
 #ifdef WIN32
-static CRITICAL_SECTION Lock_cs;  // this variable is used by class Lock only
 static _PNH old_new_handler;
 static int old_new_mode;
 #else
@@ -53,58 +52,67 @@ void gc_new_handler()
 #endif
 }
 
-int WrapperManager::extraSize = -1;
+
+
 #ifdef WIN32
+
+static CRITICAL_SECTION mutex;  // this variable is used by class Lock only
+
 ///< Lock constructor
 GlobalMutexLock::GlobalMutexLock() 
 {
 	static bool inited = false;
 	if(!inited)
 	{
-		InitializeCriticalSection(&Lock_cs);//should call DeleteCriticalSection(&cs)
+		InitializeCriticalSection(&mutex);//should call DeleteCriticalSection(&cs)
 		inited = true;
 	}
-	EnterCriticalSection(&Lock_cs); 
+	EnterCriticalSection(&mutex); 
 }
+
 ///< Lock destructor
 GlobalMutexLock::~GlobalMutexLock() 
 { 
-	LeaveCriticalSection(&Lock_cs); 
+	LeaveCriticalSection(&mutex); 
 }
 
 #endif //WIN32
 
 
-//ObjectWrapper* WrapperManager::positionToInsert(void *pTarget)
-//{
-//	Lock l;
-//	ObjectWrapper* p= (ObjectWrapper*)pHead;
-//	while(p->pNext!=pTail)
-//	{
-//		if(	pTarget >= p->pTarget && pTarget < ((ObjectWrapper*)p->pNext)->pTarget)
-//		{
-//			return p;
-//		}
-//		p=(ObjectWrapper*)p->pNext;
-//	}
-//	return p;
-//}
+
+///////////////////////////////////////////////////////////////////////
+//class WrapperManager
+ObjectWrapper* WrapperManager::nullWrapper = nullptr;
+int WrapperManager::extraSize = -1;
+int WrapperManager::arrayHeadSize = 0;
 
 WrapperManager::WrapperManager()
 {
 	GlobalMutexLock l;
-	nullWrapper = new ObjectWrapper(NULL,NULL);
+
+	if(nullWrapper == nullptr){
+		static ObjectWrapper nullObjectWrapper(nullptr, nullptr);
+		nullWrapper = &nullObjectWrapper;
+	}
+
 	if(extraSize < 0)
 	{
 		int *p = new int;
-		extraSize = System::blockSize(p) - sizeof(int);//Windows,0; Linux, 4
+		extraSize = System::blockSize(p) - sizeof(int);//Windows, 0; Linux, 4.
 		delete p;
 	}
 }
+
 WrapperManager::~WrapperManager()
 {
 	destroy();
 }
+
+WrapperManager* WrapperManager::getInstance()
+{	
+	return System::getWrapperManager();
+}
+
 void WrapperManager::remove(ObjectWrapper* pWrapper)
 {
 	GlobalMutexLock l;
@@ -115,6 +123,7 @@ void WrapperManager::remove(ObjectWrapper* pWrapper)
 	wrappers.erase(WrapperPointer(pWrapper));
 	delete pWrapper;
 }
+
 void WrapperManager::collect(ObjectWrapper* pWrapper)
 {
 	GlobalMutexLock l;
@@ -132,9 +141,45 @@ bool WrapperManager::isEmbeddedPtr(void *pSmartPtr)
 	WrapperSet::const_iterator i = wrappers.find(WrapperPointer(&tempWrapper));//???
 	return i != wrappers.end();
 }
-WrapperManager* WrapperManager::getInstance()
-{	
-	return System::getWrapperManager();
+
+bool WrapperManager::existPtr(void* pTarget) const
+{
+	GlobalMutexLock l;
+	if(pTarget == NULL)
+		return true;
+
+	ObjectWrapper tempWrapper(pTarget, NULL, 1);//destory=null,size=1
+
+	WrapperSet::const_iterator i = wrappers.find(&tempWrapper);
+	if(i == wrappers.end())
+		return false;
+	else
+		return true;
+}
+
+ObjectWrapper* WrapperManager::attachWrapper(void* pTarget, DESTORY_PROC destory, size_t memSize)
+{
+	GlobalMutexLock l;
+	if(pTarget == NULL)
+		return nullWrapper;
+
+	// a non zero memSize make the ObjectWrapper use this size instead of calculate size itself
+	// which save the computer resource
+	ObjectWrapper tempWrapper(pTarget, NULL, 1);//destory=null,size=1
+	
+	WrapperSet::const_iterator i = wrappers.find(&tempWrapper);
+	if(i == wrappers.end())
+	{
+		//Wrapper with addr and finalizer
+		ObjectWrapper* pW = new ObjectWrapper(pTarget, destory, memSize);
+		wrappers.insert(pW);
+		return pW;
+	}
+	else
+	{
+		(*i).p->attach();
+		return (*i).p;
+	}
 }
 
 void WrapperManager::destroy()
@@ -150,14 +195,14 @@ void WrapperManager::destroy()
 		delete (*i).p;
 	}
 	wrappers.clear();
-	delete nullWrapper;
-	nullWrapper=nullptr;
+
 	System::getInstance().setCollecting(false);
 	ptrTrace("WrapperManager deconstructed\r\n");
 }
 
 
-
+///////////////////////////////////////////////////////////////////////
+//class SmartPtrManager
 SmartPtrManager* SmartPtrManager::getInstance()
 {
 	return System::getSmartPtrManager();
@@ -263,13 +308,8 @@ void SmartPtrManager::destroy()
 }
 
 
-ObjectWrapper::~ObjectWrapper()
-{
-	ptrTrace("Wrapper decon %p, target:%p\r\n",this,pTarget);
-	if(pTarget && destory)
-		destory( pTarget );
-}
-
+///////////////////////////////////////////////////////////////////////
+//class ObjectWrapper
 ObjectWrapper::ObjectWrapper(void * p,DESTORY_PROC destory,size_t memSize)
 {
 	ptrTrace("Wrapper con %p,destory:%p, target:%p\r\n",this,destory,p);
@@ -290,6 +330,13 @@ ObjectWrapper::ObjectWrapper(void * p,DESTORY_PROC destory,size_t memSize)
 	}
 	count = 1;
 	this->destory = destory;
+}
+
+ObjectWrapper::~ObjectWrapper()
+{
+	ptrTrace("Wrapper decon %p, target:%p\r\n",this,pTarget);
+	if(pTarget && destory)
+		destory(pTarget);
 }
 
 void ObjectWrapper::attach()
@@ -319,7 +366,7 @@ void ObjectWrapper::setFinalizer(DESTORY_PROC finalize)
 bool ObjectWrapper::contain(void* point)
 {
 	unsigned char *address = (unsigned char*)point;
-	return (address >= pTarget && address<(unsigned char*)pTarget+size);
+	return (pTarget <= address && address < (unsigned char*)pTarget+size);
 }
 
 

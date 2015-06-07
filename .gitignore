@@ -45,3 +45,7 @@ Temporary Items
 *.tlog
 *.pdb
 *.idb
+*.log
+Release/bluemeiLib.dll.intermediate.manifest
+Release/bluemeiLib.lastbuildstate
+Release/bluemeiLib.vcxprojResolveAssemblyReference.cache

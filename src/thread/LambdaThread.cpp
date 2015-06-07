@@ -2,7 +2,8 @@
 
 namespace bluemei{
 
-LambdaThread::LambdaThread(const ThreadFunction& f,void* pUserParameter ):Thread(pUserParameter),m_lambdaFun(f)
+LambdaThread::LambdaThread(const ThreadFunction& f,void* pUserParameter)
+	:Thread(pUserParameter), m_lambdaFun(f)
 {
 	//m_pFun=new Function(move(f));
 	this->setAutoDestroy(true);
@@ -14,10 +15,10 @@ LambdaThread::~LambdaThread()
 	//	delete m_pFun;
 }
 
-void LambdaThread::run( ThreadParameter *pThreadParameter )
+void LambdaThread::run()
 {
 	//(*m_pFun)(pThreadParameter->pUserParameter);
-	m_lambdaFun(pThreadParameter->pUserParameter);
+	m_lambdaFun();
 }
 
 }//end of namespace bluemei

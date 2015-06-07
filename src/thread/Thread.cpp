@@ -3,18 +3,26 @@
 #include <process.h>
 
 namespace bluemei{
+ 
+//创建线程后回调,表示开始执行新线程了
+unsigned int WINAPI callBackOfStartThread(void* pVoid)
+{
+	return ((Thread*)pVoid)->callBackStartThread();
+}
 
+////////////////////////////////////////////////////////////
+//Thread
+Thread::Thread(void* pUserParameter/*=NULL*/)
+{
+	this->m_pObject=this;
+	this->m_pUserParameter=pUserParameter;
+	init();
+}
 Thread::Thread(Runnable* pTarget,void* pUserParameter)
 {
 	//this->m_pThreadParameter=new ThreadParameter();
-	this->m_threadParameter.pObject=pTarget;
-	this->m_threadParameter.pUserParameter=pUserParameter;
-	init();
-}
-//Thread::Thread(ThreadParameter *pThreadParameter)
-Thread::Thread(const ThreadParameter& threadParameter)
-{
-	this->m_threadParameter=threadParameter;
+	this->m_pObject=pTarget;
+	this->m_pUserParameter=pUserParameter;
 	init();
 }
 Thread::~Thread()
@@ -34,6 +42,14 @@ void Thread::init()
 void Thread::setAutoDestroy(bool bAutoDestroy)
 {
 	m_bAutoDestroyObj=bAutoDestroy;
+}
+bool Thread::isAutoDestroyObj() const
+{
+	return m_bAutoDestroyObj;
+}
+void* Thread::getUserParameter() const
+{
+	return m_pUserParameter;
 }
 //开始执行
 void Thread::start()
@@ -100,32 +116,34 @@ void Thread::destroy()
 	//m_criticalLock.releaseLock();
 }
 //调用pObject(需要实现Runnable接口)的run函数
-void Thread::callBackStartThread()
+int Thread::callBackStartThread()
 {
+	int ret=0;
+	m_bRunning=true;
+
 	try{
 		m_lock.signal();
-		m_bRunning=true;	
+
+		if(this->m_pObject)
+			this->m_pObject->run();
 	}catch(Exception& e)//发生异常该如何处理???
 	{
-		m_bRunning=false;
-		printf("Thread: %s\n",e.toString().c_str());
+		//printf("Thread: %s\n",e.toString().c_str());
 		ErrorHandler::handle(e);
+		ret=-1;
 	}
-	if(m_bRunning){
-		m_threadParameter.pObject->run(&m_threadParameter);	
-		if(m_threadParameter.pObject!=this)
-			this->run(&m_threadParameter);
-		m_bRunning=false;	
-	}	
-
+	
 	if(m_bAutoDestroyObj)
 	{
 		//destroy();
 		delete this;
 	}
+
+	m_bRunning=false;
+	return ret;
 }
 //执行
-void Thread::run(ThreadParameter *pThreadParameter)
+void Thread::run()
 {
 	;
 }
@@ -145,12 +163,5 @@ unsigned int Thread::currentThreadId()
 	return GetCurrentThreadId();
 }
 
-
-//创建线程后回调,表示开始执行新线程了
-unsigned int WINAPI callBackOfStartThread(void* pVoid)
-{
-	((Thread*)pVoid)->callBackStartThread();
-	return true;
-}
 
 }//end of namespace bluemei

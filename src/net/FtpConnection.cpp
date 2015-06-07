@@ -48,7 +48,7 @@ bool FtpConnection::connectServer(const char *username,const char *password)
 	String line;
 
 	//recvedLen=m_cmdSocket.readBytes(buff, sizeof(buff));
-	line=m_cmdSocket.readLineByGbk();
+	line=m_cmdSocket.readLine();
 	pos=line.find("220");
 	if (pos<0) {
 		throw FtpException(REFUSE,"connection refused by remote ftp server");
@@ -58,7 +58,7 @@ bool FtpConnection::connectServer(const char *username,const char *password)
     sprintf_s(buff, "USER %s\r\n", username);
 	m_cmdSocket.writeBytes(buff,strlen(buff));
 
-    line=m_cmdSocket.readLineByGbk();
+    line=m_cmdSocket.readLine();
 	pos=line.find("331");
     if (pos<0){
 		throw FtpException(REFUSE,"connection refused by remote ftp server,cause:"+line);
@@ -67,7 +67,7 @@ bool FtpConnection::connectServer(const char *username,const char *password)
     sprintf_s(buff, "PASS %s\r\n", password);
     m_cmdSocket.writeBytes(buff,strlen(buff));
 
-	line=m_cmdSocket.readLineByGbk();
+	line=m_cmdSocket.readLine();
 	pos=line.find("230");
 	if (pos<0) {
 		throw FtpException(PASSWORD_EEROR,"username and password not matched");
@@ -80,7 +80,7 @@ bool FtpConnection::connectServer(const char *username,const char *password)
 	//设置传输类型
     sprintf_s(buff, "TYPE I\r\n");
 	m_cmdSocket.writeBytes(buff,strlen(buff));
-    line=m_cmdSocket.readLineByGbk();
+    line=m_cmdSocket.readLine();
 	pos=line.find("200");
 	if (pos<0) {
 		throw FtpException(SET_BINARY_FAILED,"set type binary failed,cause:"+line);
@@ -92,10 +92,10 @@ bool FtpConnection::closeFtpConnection()
 	m_cmdSocket.skip(m_cmdSocket.availableBytes());//清空接收队列
 	String line="QUIT\r\n";
 	m_cmdSocket.writeString(line);
-    line=m_cmdSocket.readLineByGbk();
+    line=m_cmdSocket.readLine();
 	int pos=line.find("221");
 	if (pos<0) {		
-		line+=m_cmdSocket.readLineByGbk();
+		line+=m_cmdSocket.readLine();
 		throw FtpException(CLOSE_CON_FAILED,"close ftp connection:"+line);
     }
 	m_cmdSocket.close();
@@ -129,7 +129,7 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 		//请求被动模式
 		sprintf_s(buff, "PASV \r\n");
 		m_cmdSocket.writeBytes(buff,strlen(buff));
-		line=m_cmdSocket.readLineByGbk();
+		line=m_cmdSocket.readLine();
 		pos=line.find("227");
 		if (pos<0) {//进入被动模式失败
 			throw FtpException(SET_PASV_FAILED,"set type PASV failed,cause by:"+line);
@@ -185,7 +185,7 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 		sprintf_s(buff, "PORT %s,%d,%d\r\n", "127,0,0,1",listenDataPort/256, listenDataPort%256);
 		//sprintf(buff, "PORT %d,%d\r\n", localport / 256, localport % 256);		
 		m_cmdSocket.writeBytes(buff,strlen(buff));
-		line=m_cmdSocket.readLineByGbk();
+		line=m_cmdSocket.readLine();
 		pos=line.find("200");
 		if (pos<0) {//设置主动模式失败
 			throw FtpException(SET_PORT_FAILED,"set type PORT failed,cause:"+line);
@@ -197,7 +197,7 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 		//发送上传命令
 		sprintf_s(buff, "REST %d\r\n", uploadSize);
 		m_cmdSocket.writeBytes(buff,strlen(buff));
-		line=m_cmdSocket.readLineByGbk();
+		line=m_cmdSocket.readLine();
 		pos=line.find("350");
 		if (pos<0) 
 		{
@@ -207,7 +207,7 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 	//发送上传命令
     sprintf_s(buff, "STOR %s\r\n", savePath);
     m_cmdSocket.writeBytes(buff,strlen(buff));
-	line=m_cmdSocket.readLineByGbk();
+	line=m_cmdSocket.readLine();
 	pos=line.find("150");
 	if (pos<0) {
 		throw FtpException(SET_STOR_FAILED,"unable to STOR,cause:"+line);
@@ -241,7 +241,7 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 		line=m_cmdSocket.readLineByGbk();
 		pos=line.find("226");
 	}while(pos<0); */  
-	line=m_cmdSocket.readLineByGbk();
+	line=m_cmdSocket.readLine();
 	pos=line.find("226");
 	if(pos<0)
 	{

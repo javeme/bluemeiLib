@@ -30,7 +30,7 @@ void System::startGcThread()
 
 	if(m_pGcThread!=nullptr)
 		return;
-	m_pGcThread=new LambdaThread([&](void* pUserParameter){
+	m_pGcThread=new LambdaThread([&](){
 		idleCollect();
 	},nullptr);
 	m_pGcThread->setAutoDestroy(false);
@@ -229,7 +229,7 @@ void System::idleCollect()
 void System::mark(SmartPtr<void>* ptr)
 {
 	GlobalMutexLock l;
-	ObjectWrapper* pWrapper = ptr->pWrapper;
+	ObjectWrapper* pWrapper = ptr->wrapper;
 	pWrapper->isInUse = true;
 	SmartPtrManager* ptrManager = SmartPtrManager::getInstance();
 	LinkNode * p= (LinkNode*)ptrManager->pEmbeddedPtrHead->pNext;
@@ -239,7 +239,7 @@ void System::mark(SmartPtr<void>* ptr)
 		//++markCount;
 		//SmartPtr<void>* point = static_cast<SmartPtr<void>*>(p);
 		SmartPtr<void>* point = (SmartPtr<void>*)p;
-		if(!(point->pWrapper->isInUse) && pWrapper->contain(point))
+		if(!(point->wrapper->isInUse) && pWrapper->contain(point))
 		{
 			//point is in scope of ptr
 			mark(point);
@@ -256,16 +256,16 @@ void System::gc()
 	ptrTrace("to collect garbage\r\n");
 	SmartPtrManager* ptrManager = getSmartPtrManager();
 	WrapperManager *wrapManager = getWrapperManager();
-	LinkNode * p= (LinkNode*)ptrManager->pHead->pNext;
-	//update Ptr's state  that are new created
-	while(p!=ptrManager->pTail)
+	LinkNode* node = (LinkNode*)ptrManager->pHead->pNext;
+	//update Ptr's state that are new created
+	while(node!=ptrManager->pTail)
 	{
-		SmartPtr<void>* ptr = static_cast<SmartPtr<void>*>(p);
-		p=p->pNext;
-		if(wrapManager->isEmbeddedPtr(reinterpret_cast<void*>(ptr)))//是否为嵌入对象(在其他对象内部的对象)
-			ptrManager->moveToEmbeddedPtr(ptr);
+		void* ptr = reinterpret_cast<void*>(node);
+		if(wrapManager->isEmbeddedPtr(ptr))//是否为嵌入对象(在其他对象内部的对象)
+			ptrManager->moveToEmbeddedPtr(node);
 		else
-			ptrManager->moveToUserPtr(ptr);
+			ptrManager->moveToUserPtr(node);
+		node = node->pNext;
 	}
 
 	//mark all point as nouse
@@ -275,11 +275,11 @@ void System::gc()
 	}
 
 	//markup all used points
-	p= (LinkNode*)ptrManager->pUserPtrHead->pNext;
-	while(p!=ptrManager->pUserPtrTail)
+	node= (LinkNode*)ptrManager->pUserPtrHead->pNext;
+	while(node!=ptrManager->pUserPtrTail)
 	{
-		mark(static_cast<SmartPtr<void>*>(p));
-		p=p->pNext;
+		mark(static_cast<SmartPtr<void>*>(node));
+		node=node->pNext;
 	}
 	
 	//LOG_FATAL("Finish mark. %d ptr processed, total %d objects", markCount, WrapperManager::getInstance()->wrappers.size());
