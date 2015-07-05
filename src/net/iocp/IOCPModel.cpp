@@ -117,7 +117,6 @@ protected:
 };
 
 
-
 IOCPModel::IOCPModel()
 {
 	m_pIOCPEventHandler=nullptr;

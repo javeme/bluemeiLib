@@ -42,7 +42,7 @@ int ServerSocket::createSocket(int nPort)
 	}
 	//Ìî³äµØÖ·
 	sockaddr_in serverAddr;
-	int lenOfServerAddr=sizeof(serverAddr);
+	const int lenOfServerAddr=sizeof(serverAddr);
 	memset(&serverAddr,0,lenOfServerAddr);
 	serverAddr.sin_family=AF_INET;
 	serverAddr.sin_port=htons(m_sPort);
@@ -55,7 +55,8 @@ int ServerSocket::createSocket(int nPort)
 		return WSAGetLastError();
 	}
 	//¼àÌý
-	nRetCode=::listen(sockS,SOMAXCONN);
+	int maxWaitCon = SOMAXCONN-1;
+	nRetCode=::listen(sockS,maxWaitCon);
 	if(nRetCode==SOCKET_ERROR)
 	{
 		return WSAGetLastError();
@@ -94,7 +95,7 @@ void ServerSocket::listen(int nPort)
 {
 	int nReturn=createSocket(nPort);
 	if(nReturn!=0)
-		throw SocketException(nReturn,"create socket failed");
+		throw SocketException(nReturn,"failed to create socket");
 }
 
 //¹Ø±Õ

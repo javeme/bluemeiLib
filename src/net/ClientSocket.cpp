@@ -95,9 +95,9 @@ void ClientSocket::setTimeout(int ms)//ºÁÃë
 		throw SocketException(WSAGetLastError(),toString());
 }
 
-void ClientSocket::setNoDelay( bool b )
+void ClientSocket::setNoDelay(bool noDelay)
 {
-	 int flag = b;
+	 int flag = noDelay;
      int ret = setsockopt(m_hSocket,IPPROTO_TCP,TCP_NODELAY,(char*)&flag,sizeof(flag));
 	 if(ret==SOCKET_ERROR)
 		 throw SocketException(WSAGetLastError(),toString());
@@ -321,16 +321,6 @@ int ClientSocket::writeUtfString(const String& str)
 	int size=this->writeEnoughBytes(str.c_str(),length);	
 	return size;
 }
-//Ð´×Ö·û´®,Ô´Êý¾ÝÎªgbk±àÂë,ÍøÂçÊý¾ÝÒÔunicode±àÂëÐÎÊ½´«ËÍ
-int ClientSocket::writeUnicodeString(const String& str)
-{	
-	wstring wstr;
-	const char* buf=str.c_str();//new char[length];
-	int length=SocketTools::gbkToUnicode(wstr,buf);	//gb2312ToUnicode
-	this->writeShort(length);
-	int size=this->writeEnoughBytes((const char*)wstr.c_str(),length);			
-	return size;
-}
 ////Ð´×Ö·û´®,ÍøÂçÊý¾ÝÒÔÄ¬ÈÏ±àÂë´«ËÍ
 int ClientSocket::writeString(const String& str)
 {
@@ -357,7 +347,7 @@ String ClientSocket::toString()const
 	return str;
 }
 
-void ClientSocket::attach( socket_t s )
+void ClientSocket::attach(socket_t s)
 {
 	m_bClose=false;
 	this->m_hSocket=s;
