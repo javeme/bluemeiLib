@@ -62,7 +62,7 @@ void Log::print(const String& str)
 
 String Log::level2String(LogLevel val)
 {
-	static String logLevel[LOG_LEVEL_SIZE];
+	static cstring logLevel[LOG_LEVEL_SIZE];
 	static bool init = false;
 	if(!init)
 	{
@@ -139,9 +139,10 @@ void Log::log(LogLevel level, const String& msg, const LogCtx& ctx)
 		return;
 
 	const size_t BUF_LEN = 128;
-	char strTime[BUF_LEN];
-	time_t currentTime=time(NULL);
-	strftime(strTime,BUF_LEN,"%H:%M:%S(%Y-%m-%d)",localtime(&currentTime));//localtime_s
+	char strTime[BUF_LEN] = {0};
+	time_t currentTime = time(NULL);
+	tm* localTime = localtime(&currentTime);
+	strftime(strTime, BUF_LEN,"%H:%M:%S(%Y-%m-%d)", localTime);
 
 	LogCtx newCtx = ctx;
 	//name level time message thread process
@@ -170,17 +171,22 @@ LogManager::LogManager()
 
 LogManager::~LogManager()
 {
-	auto i = m_loggers.iterator();
-	while(i->hasNext()) {
-		delete i->next().value;
-	}
-	m_loggers.releaseIterator(i);
+	this->destroyLoggers();
 }
+
+LogManager* LogManager::s_manager = new LogManager();
 
 LogManager& LogManager::instance()
 {
-	static LogManager manager;
-	return manager;
+	checkNullPtr(s_manager);
+	return *s_manager;
+}
+
+void LogManager::destroy()
+{
+	LogManager* manager = LogManager::s_manager;
+	LogManager::s_manager = null;
+	delete manager;
 }
 
 Log* LogManager::getLogger(const String& name)
@@ -212,5 +218,16 @@ Log* LogManager::initLogger(const String& name, const String& path, Log::LogLeve
 	return logger;
 }
 
+void LogManager::destroyLoggers()
+{
+	m_default = "";
+
+	auto i = m_loggers.iterator();
+	while(i->hasNext()) {
+		delete i->next().value;
+	}
+	m_loggers.releaseIterator(i);
+	m_loggers.clear();
+}
 
 }//end of namespace bluemei

@@ -118,7 +118,7 @@ void MessageThread::finish()
 	}
 }
 
-void MessageThread::run( ThreadParameter *pThreadParameter )
+void MessageThread::run()
 {
 	doMessageLoop();
 }

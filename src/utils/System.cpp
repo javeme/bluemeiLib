@@ -2,13 +2,14 @@
 #include "smartptr.h"
 #include "LambdaThread.h"
 #include "ObjectFactory.h"
+#include "Log.h"
 #include <algorithm>
 
 namespace bluemei{
 	
-CriticalLock System::g_instanceLock;
-WrapperManager* System::g_instanceWrapperManager=nullptr;
-SmartPtrManager* System::g_instanceSmartPtrManager=nullptr;
+CriticalLock System::s_instanceLock;
+WrapperManager* System::s_instanceWrapperManager=nullptr;
+SmartPtrManager* System::s_instanceSmartPtrManager=nullptr;
 
 System::System()
 {
@@ -382,7 +383,7 @@ void System::addGarbage(ObjectWrapper * pWrap, vector<WrapperPointer>& garbageLi
 }
 
 
-System& System::getInstance()
+System& System::instance()
 {
 	static System sys;
 	return sys;
@@ -392,20 +393,20 @@ WrapperManager* System::getWrapperManager()
 {
 	//static WrapperManager instance;
 	//return &instance;
-	ScopedLock sl(g_instanceLock);
-	if(g_instanceWrapperManager==nullptr)
-		g_instanceWrapperManager=new WrapperManager();
-	return g_instanceWrapperManager;
+	ScopedLock sl(s_instanceLock);
+	if(s_instanceWrapperManager==nullptr)
+		s_instanceWrapperManager=new WrapperManager();
+	return s_instanceWrapperManager;
 }
 
 SmartPtrManager* System::getSmartPtrManager()
 {
 	//static SmartPtrManager instance;
 	//return &instance;
-	ScopedLock sl(g_instanceLock);
-	if(g_instanceSmartPtrManager==nullptr)
-		g_instanceSmartPtrManager=new SmartPtrManager();
-	return g_instanceSmartPtrManager;
+	ScopedLock sl(s_instanceLock);
+	if(s_instanceSmartPtrManager==nullptr)
+		s_instanceSmartPtrManager=new SmartPtrManager();
+	return s_instanceSmartPtrManager;
 }
 
 
@@ -446,7 +447,9 @@ void System::destroy()
 	
 	TypeManager::releaseInstance();
 
-	ObjectFactory::instance().clear();
+	ObjectFactory::destroy();
+
+	LogManager::destroy();
 }
 
 void System::debugInfo(const char* str , ...)

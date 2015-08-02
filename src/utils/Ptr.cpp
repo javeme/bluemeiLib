@@ -1,24 +1,24 @@
 #include "stdafx.h"
-#include "ReferencePointer.h"
+#include "Ptr.h"
 
 namespace bluemei{
 
 
-ReferencePointer::ReferencePointer(void)
+PointerReference::PointerReference(void)
 {
 	m_nPtrRefCount=1;
 }
 
 
-ReferencePointer::~ReferencePointer(void)
+PointerReference::~PointerReference(void)
 {
 }
 
-void ReferencePointer::attach()
+void PointerReference::attach()
 {
 	m_nPtrRefCount++;
 }
-ReferencePointer* ReferencePointer::disattach()
+PointerReference* PointerReference::disattach()
 {
 	m_nPtrRefCount--;
 	if(m_nPtrRefCount<=0)

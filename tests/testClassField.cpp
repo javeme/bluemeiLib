@@ -1,3 +1,4 @@
+
 #include "ClassField.h"
 
 class TestField : public Object
@@ -20,6 +21,24 @@ public:
 	TestField(): oval(null) {}
 	int ff();
 };
+
+namespace bluemei{
+
+	template <>
+	struct Converter<brpc::Double>
+	{
+		static inline brpc::Double valueOf(Object* obj)
+		{
+			brpc::Number* number = cast2noAndCheck(obj, "double", brpc::PRED_DOUBLE);
+			return number->toDouble();
+		}
+		static inline Object* toObject(const brpc::Double& val)
+		{
+			return new brpc::Double(val);
+		}
+	};
+
+}
 
 REGISTER_CLASS(TestField);
 REG_CLS_FIELD(TestField, bb);

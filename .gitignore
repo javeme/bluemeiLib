@@ -49,3 +49,4 @@ Temporary Items
 Release/bluemeiLib.dll.intermediate.manifest
 Release/bluemeiLib.lastbuildstate
 Release/bluemeiLib.vcxprojResolveAssemblyReference.cache
+*.cache

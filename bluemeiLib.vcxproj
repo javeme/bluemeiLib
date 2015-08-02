@@ -149,7 +149,7 @@
     <ClCompile Include="src\utils\ErrorHandler.cpp" />
     <ClCompile Include="src\utils\Log.cpp" />
     <ClCompile Include="src\utils\MemoryPool.cpp" />
-    <ClCompile Include="src\utils\ReferencePointer.cpp" />
+    <ClCompile Include="src\utils\Ptr.cpp" />
     <ClCompile Include="src\utils\SimpleCfgFile.cpp" />
     <ClCompile Include="src\utils\SmartPtrManager.cpp" />
     <ClCompile Include="src\utils\StackWalker.cpp" />
@@ -229,7 +229,8 @@
     <ClInclude Include="src\utils\MemoryPool.h" />
     <ClInclude Include="src\utils\MultiValueHashMap.h" />
     <ClInclude Include="src\utils\Observer.h" />
-    <ClInclude Include="src\utils\ReferencePointer.h" />
+    <ClInclude Include="src\utils\PriorityQueue.h" />
+    <ClInclude Include="src\utils\Ptr.h" />
     <ClInclude Include="src\utils\SimpleCfgFile.h" />
     <ClInclude Include="src\utils\SmartPtr.h" />
     <ClInclude Include="src\utils\SmartPtrManager.h" />

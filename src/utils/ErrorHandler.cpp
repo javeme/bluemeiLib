@@ -11,7 +11,7 @@ void ErrorHandler::handle( Exception& e )
 		;
 	}
 	else
-		System::getInstance().debugInfo("%s\n",e.toString().c_str());
+		System::instance().debugInfo("%s\n",e.toString().c_str());
 }
 
 void ErrorHandler::setHandler(IErrorHandler* handler)

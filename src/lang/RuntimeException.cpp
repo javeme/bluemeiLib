@@ -7,12 +7,10 @@ namespace bluemei{
 //RuntimeException
 RuntimeException::RuntimeException(cstring str):Exception(str)
 {
-	;
 }
 
 RuntimeException::~RuntimeException()
 {
-	;
 }
 
 String RuntimeException::name()const
@@ -25,13 +23,11 @@ String RuntimeException::name()const
 //TypeException
 TypeException::TypeException(cstring msg) : RuntimeException(msg)
 {
-	;
 }
 
 TypeException::TypeException(cstring instance, cstring cls) 
 	: RuntimeException(String::format("object %s is not an instance of class %s", instance, cls))
 {
-	;
 }
 
 String TypeException::name() const
@@ -43,7 +39,6 @@ String TypeException::name() const
 //BadCastException
 BadCastException::BadCastException(cstring str):RuntimeException(str)
 {
-	;
 }
 
 BadCastException::BadCastException(cstring from, cstring to)
@@ -62,7 +57,6 @@ String BadCastException::name()const
 //NotFoundException
 NotFoundException::NotFoundException(cstring msg) : RuntimeException(msg)
 {
-	;
 }
 
 NotFoundException::~NotFoundException(void)
@@ -78,7 +72,6 @@ String NotFoundException::name() const
 //ClassNotFoundException
 ClassNotFoundException::ClassNotFoundException(cstring msg) : NotFoundException(msg)
 {
-	;
 }
 
 ClassNotFoundException::~ClassNotFoundException(void)
@@ -95,7 +88,6 @@ String ClassNotFoundException::name()const
 AttributeNotFoundException::AttributeNotFoundException(cstring cls, cstring attr) 
 	: NotFoundException(String::format("Attribute '%s' not found in class %s", attr, cls))
 {
-	;
 }
 
 AttributeNotFoundException::~AttributeNotFoundException(void)
@@ -108,10 +100,39 @@ String AttributeNotFoundException::name()const
 }
 
 ///////////////////////////////////////////////////////////////////////
+//ExistException
+ExistException::ExistException(cstring msg) : RuntimeException(msg)
+{
+}
+
+ExistException::~ExistException(void)
+{
+}
+
+String ExistException::name() const
+{
+	return "ExistException";
+}
+
+///////////////////////////////////////////////////////////////////////
+//KeyExistException
+KeyExistException::KeyExistException(cstring msg) : ExistException(msg)
+{
+}
+
+KeyExistException::~KeyExistException(void)
+{
+}
+
+String KeyExistException::name() const
+{
+	return "KeyExistException";
+}
+
+///////////////////////////////////////////////////////////////////////
 //OutOfBoundException
 OutOfBoundException::~OutOfBoundException()
 {
-	;
 }
 
 OutOfBoundException::OutOfBoundException(int out,int size)
@@ -168,6 +189,5 @@ String TimeoutException::name()const
 {
 	return "TimeoutException";
 }
-
 
 }//end of namespace bluemei

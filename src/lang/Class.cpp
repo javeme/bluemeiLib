@@ -3,17 +3,15 @@
 #include "blib/BString.h"
 #include "blib/RuntimeException.h"
 #include "blib/ClassField.h"
+#include "blib/ObjectFactory.h"
 #include "blib/ArrayList.h"
 #include "blib/HashMap.h"
+#include "blib/Ptr.h"
+
 
 namespace bluemei{
-/*
-static Class* thisClass(){ \
-	static Class theClass(_T2STR(className),className::createObject); \
-	return &theClass; \
-}\ 
-*/
-Class::Class() : m_fields(*new HashMap<std::string, FieldInfo*>())
+
+Class::Class()
 {
 	m_name="undefined";
 	m_pCreateFun=nullptr;
@@ -22,7 +20,6 @@ Class::Class() : m_fields(*new HashMap<std::string, FieldInfo*>())
 }
 
 Class::Class(cstring name,CreateFun* pFun,const Class* superClass)
-	 : m_fields(*new HashMap<std::string, FieldInfo*>())
 {
 	this->m_name=name;
 	this->m_pCreateFun=pFun;
@@ -32,13 +29,13 @@ Class::Class(cstring name,CreateFun* pFun,const Class* superClass)
 
 Class::~Class()
 {
-	auto itor = m_fields.iterator();
-	while(itor->hasNext())
+	FieldMap::iterator iter = m_fields.begin();
+	for(; iter != m_fields.end(); ++iter)
 	{
-		delete itor->next().value;
+		delete iter->second;
+		iter->second = null;
 	}
-	m_fields.releaseIterator(itor);
-	delete &this->m_fields;
+	m_fields.clear();
 }
 
 cstring Class::getName() const
@@ -157,46 +154,89 @@ bool Class::isMyInstance(const Object* pObj)const
 
 bool Class::putField(const FieldInfo& fld)
 {
-	return m_fields.put(fld.name(), fld.clone());
+	//return m_fields.put(fld.name(), fld.clone());
+	return m_fields.insert(std::make_pair(fld.name(), fld.clone())).second;
 }
 
 bool Class::removeField(cstring fldName)
 {
-	FieldInfo* fld = null;
-	bool success = m_fields.remove(fldName, fld);
+	FieldMap::iterator iter = m_fields.find(fldName);
+	if(iter == m_fields.end())
+		return false;
+	FieldInfo* fld = iter->second;
+	m_fields.erase(iter);
 	delete fld;
-	return success;
+	return true;
 }
 
 ArrayList<const FieldInfo*> Class::allFields() const
 {
 	ArrayList<const FieldInfo*> list;
-	auto itor = m_fields.iterator();
-	while(itor->hasNext())
+	FieldMap::const_iterator iter = m_fields.begin();
+	for(; iter != m_fields.end(); ++iter)
 	{
-		list.add(itor->next().value);
+		list.add(iter->second);
 	}
-	m_fields.releaseIterator(itor);
 	return list;
 }
 
 const FieldInfo* Class::getField(cstring fldName) const
 {
-	const FieldInfo* fldInfo = m_fields.getDefault(fldName, null);
-	if(fldInfo == null)
+	FieldMap::const_iterator iter = m_fields.find(fldName);
+	if(iter == m_fields.end())
 		throw AttributeNotFoundException(getName(), fldName);
-	return fldInfo;
+	return iter->second;
 }
 
 bool Class::hasField(cstring fldName) const
 {
-	return m_fields.contain(fldName);
+	return m_fields.find(fldName) != m_fields.end();
+}
+
+const Class* Class::undefined()
+{
+	static Class cls;
+	return &cls;
+}
+
+void Class::registerClass(Class* cls)
+{
+	ObjectFactory::instance().registerClass(cls);
+}
+
+Class* Class::registerClass(cstring name,CreateFun* pFun,const Class* superClass)
+{
+	if(!ObjectFactory::instance().exist(name))
+	{
+		ScopePointer<Class> cls = new Class(name, pFun, superClass);
+		registerClass(cls);
+		return cls.detach();
+	}
+	else
+	{
+		String msg = String::format("Exists class '%s'", name);
+		throwpe(ExistException(msg));
+	}
+}
+
+Class* Class::registerClassIfNotExist(cstring name,CreateFun* pFun,const Class* superClass)
+{
+	Class* exist = ObjectFactory::instance().exist(name);
+	if(!exist)
+	{
+		ScopePointer<Class> cls = new Class(name, pFun, superClass);
+		registerClass(cls);
+		return cls.detach();
+	}
+	else
+	{
+		return exist;
+	}
 }
 
 void Class::throwRuntimeException(cstring msg) throw(RuntimeException)//static
 {
 	throw RuntimeException(msg);
 }
-
 
 }//end of namespace bluemei

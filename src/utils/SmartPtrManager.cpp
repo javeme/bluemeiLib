@@ -37,8 +37,8 @@ int gc_new_handler(size_t sz)
 void gc_new_handler()
 #endif
 {
-	System::getInstance().gc();
-	if(!System::getInstance().gcCount())//there's no memory collected, make the defualt handler to deal with
+	System::instance().gc();
+	if(!System::instance().gcCount())//there's no memory collected, make the defualt handler to deal with
 	{
 #ifdef WIN32
 		return old_new_handler(sz);
@@ -48,7 +48,7 @@ void gc_new_handler()
 	}
 
 #ifdef WIN32
-	return System::getInstance().gcCount(); //GC has reclaimed some memory, do allocate again
+	return System::instance().gcCount(); //GC has reclaimed some memory, do allocate again
 #endif
 }
 
@@ -118,7 +118,7 @@ void WrapperManager::remove(ObjectWrapper* pWrapper)
 	GlobalMutexLock l;
 	if(pWrapper==nullWrapper)
 		return;
-	if(System::getInstance().isCollecting())
+	if(System::instance().isCollecting())
 		return;
 	wrappers.erase(WrapperPointer(pWrapper));
 	delete pWrapper;
@@ -188,7 +188,7 @@ void WrapperManager::destroy()
 	GlobalMutexLock l;
 	if(nullWrapper==nullptr)
 		return;
-	System::getInstance().setCollecting(true);
+	System::instance().setCollecting(true);
 
 	for(WrapperSet::iterator i=wrappers.begin(); i!=wrappers.end(); i++)
 	{
@@ -196,7 +196,7 @@ void WrapperManager::destroy()
 	}
 	wrappers.clear();
 
-	System::getInstance().setCollecting(false);
+	System::instance().setCollecting(false);
 	ptrTrace("WrapperManager deconstructed\r\n");
 }
 

@@ -41,8 +41,8 @@ void Object::release()
 
 const Class* Object::thisClass()
 {
-	static Class theClass("Object",Self::createObject,null); 
-	return &theClass;
+	//@TODO: does it need to throw exception if exists the class
+	return Class::registerClassIfNotExist("Object",Self::createObject,null);
 }
 
 Object* Object::createObject()

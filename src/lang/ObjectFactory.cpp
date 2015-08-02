@@ -3,8 +3,6 @@
 
 namespace bluemei{
 
-ObjectFactory ObjectFactory::sFactory;
-
 ObjectFactory::ObjectFactory(void)
 {
 	;
@@ -15,12 +13,22 @@ ObjectFactory::~ObjectFactory(void)
 	clear();
 }
 
+ObjectFactory* ObjectFactory::s_objectFactory = new ObjectFactory();
+
 ObjectFactory& ObjectFactory::instance()
 {
-	return sFactory;
+	checkNullPtr(s_objectFactory);
+	return *s_objectFactory;
 }
 
-Object* ObjectFactory::createObject(const char* className)
+void ObjectFactory::destroy()
+{
+	ObjectFactory* objectFactory = ObjectFactory::s_objectFactory;
+	ObjectFactory::s_objectFactory = null;
+	delete objectFactory;
+}
+
+Object* ObjectFactory::createObject(cstring className)
 {
 	ClassMap::iterator iter=m_classMap.find(className);
 	if(iter!=m_classMap.end())
@@ -28,20 +36,26 @@ Object* ObjectFactory::createObject(const char* className)
 		const Class* pClass=iter->second;
 		return pClass->createObject();//Invoke
 	}
-	String str="ObjectFactory: have not found class '";
-	str+=className;
-	str+="'";
-	throw ClassNotFoundException(str.c_str());
+	String str = String::format("ObjectFactory: have not found class '%s'", className);
+	throwpe(ClassNotFoundException(str));
 }
 
-void ObjectFactory::registerClass(const Class* pClass)
+void ObjectFactory::registerClass(Class* pClass)
 {
 	cstring className=pClass->getName();
-	if(!m_classMap.insert( ClassMap::value_type(className,pClass)).second)
+	if(!m_classMap.insert(std::make_pair(className,pClass)).second)
 	{
 		String str=String::format("ObjectFactory: have registered class '%s'",className);
-		throwpe(Exception(str));//have register
+		throwpe(KeyExistException(str));//have register
 	}
+}
+
+Class* ObjectFactory::exist(cstring className)
+{
+	ClassMap::iterator iter=m_classMap.find(className);
+	if(iter != m_classMap.end())
+		return iter->second;
+	return null;
 }
 
 void ObjectFactory::clear()
@@ -49,11 +63,8 @@ void ObjectFactory::clear()
 	ClassMap::iterator iter=m_classMap.begin();
 	for(;iter!=m_classMap.end();++iter)
 	{
-		if(iter->second!=NULL)
-		{
-			//delete iter->second;
-			iter->second=NULL;
-		}
+		delete iter->second;
+		iter->second=null;
 	}
 	m_classMap.clear();
 }

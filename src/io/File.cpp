@@ -103,12 +103,12 @@ size_t File::writeBytes(const char buf[],size_t length)
 void File::writeLine(cstring value)
 {
 	writeBytes(value, strlen(value));
-	writeBytes(CRLF,strlen(CRLF));
+	writeBytes(EOL,strlen(EOL));
 }
 void File::writeLine(const String& value)
 {
 	writeBytes(value.c_str(),value.length());
-	writeBytes(CRLF,strlen(CRLF));
+	writeBytes(EOL,strlen(EOL));
 }
 
 void File::writeInt(int value)
