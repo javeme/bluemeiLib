@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#pragma once
 #include "Ptr.h"
 
 namespace bluemei{

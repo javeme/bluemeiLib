@@ -15,17 +15,17 @@ ThreadPool::~ThreadPool()
 {
 	//销毁未执行任务
 	Task* pTask=NULL;
-	while(!taskQueue.empty())
+	while(!m_taskQueue.empty())
 	{
-		pTask=taskQueue.front();
-		taskQueue.pop();
+		pTask=m_taskQueue.front();
+		m_taskQueue.pop();
 		delete pTask;		
 	}	
 	//销毁线程
-	int size=threadList.size();
+	int size=m_threadList.size();
 	for(int i=0;i<size;i++)
 	{
-		delete threadList[i];
+		delete m_threadList[i];
 	}
 }
 
@@ -34,7 +34,7 @@ void ThreadPool::addThread(int threadCount)
 	for(int i=0;i<threadCount;i++)
 	{
 		WorkThread *p=new WorkThread(this);
-		threadList.addToLast(p);
+		m_threadList.addToLast(p);
 		p->start();
 	}
 	m_nThreadCount+=threadCount;
@@ -42,18 +42,18 @@ void ThreadPool::addThread(int threadCount)
 
 int ThreadPool::addTask(Task *pTask)
 {
-	ScopedLock scopedLock(mutexLock);
+	ScopedLock scopedLock(m_mutexLock);
 
 	if(!m_bIsStop)
 	{
-		/*bool needNofity=taskQueue.empty();
-		taskQueue.push(pTask);
+		/*bool needNofity=m_taskQueue.empty();
+		m_taskQueue.push(pTask);
 		if(needNofity)//通知 taskLock.getWaitCount()>0
-			taskLock.notify();*/
-		taskQueue.push(pTask);
-		taskLock.signal();
+			m_taskLock.notify();*/
+		m_taskQueue.push(pTask);
+		m_taskLock.signal();
 	}
-	return taskQueue.size();
+	return m_taskQueue.size();
 }
 
 Task* ThreadPool::getTask()
@@ -61,21 +61,21 @@ Task* ThreadPool::getTask()
 	if(m_bIsStop)
 		return NULL;
 	
-	//if(taskQueue.empty()) //如果在此时插入了一个任务,可能wait错过时机,没有通知到
-	//	taskLock.waitTask();//等待
-	taskLock.waitTask();
+	//if(m_taskQueue.empty()) //如果在此时插入了一个任务,可能wait错过时机,没有通知到
+	//	m_taskLock.waitTask();//等待
+	m_taskLock.waitTask();
 	
 	Task* pTask=NULL;
 	if(!m_bIsStop){
-		mutexLock.getLock();
+		m_mutexLock.getLock();
 
-		if(!taskQueue.empty()){
-			pTask=taskQueue.front();
-			taskQueue.pop();
+		if(!m_taskQueue.empty()){
+			pTask=m_taskQueue.front();
+			m_taskQueue.pop();
 			//doingThreadList.addToLast(p);
 		}
 
-		mutexLock.releaseLock();
+		m_mutexLock.releaseLock();
 	}
 
 	return pTask;
@@ -88,25 +88,26 @@ void ThreadPool::onFinishTask(Task* pTask)
 
 void ThreadPool::stop()
 {
-	ScopedLock scopedLock(mutexLock);
+	ScopedLock scopedLock(m_mutexLock);
 
-	//mutexLock.getLock();
+	if(m_bIsStop)
+		return;
+	//设置m_bIsStop之后，ThreadPool::getTask()将返回null
 	m_bIsStop=true;
-	//mutexLock.releaseLock();
 
-	taskLock.notifyAll();
-	auto i=threadList.iterator();
+	m_taskLock.notifyAll();
+	auto i=m_threadList.iterator();
 	while(i->hasNext())
 	{
 		i->next()->stopAndWait();
 	}
-	threadList.releaseIterator(i);
+	m_threadList.releaseIterator(i);
 }
 
 int ThreadPool::addMoreThread(int num)
 {
 	addThread(num);
-	return threadList.size();
+	return m_threadList.size();
 }
 
 ThreadPool* ThreadPool::getInstance(int threadCount)//static
@@ -121,20 +122,20 @@ void ThreadPool::destroy(ThreadPool* pThreadPool)//static
 
 int ThreadPool::remainTask()
 {
-	ScopedLock scopedLock(mutexLock);
+	ScopedLock scopedLock(m_mutexLock);
 
-	return taskQueue.size();
+	return m_taskQueue.size();
 }
 
 int ThreadPool::totalThread() const
 {
-	return threadList.size();
+	return m_threadList.size();
 }
 
 int ThreadPool::idleThread()
 {
 	int count=0;
-	for(auto i=threadList.iterator();i->hasNext();)
+	for(auto i=m_threadList.iterator();i->hasNext();)
 	{
 		if(i->next()->isIdle())
 			count++;

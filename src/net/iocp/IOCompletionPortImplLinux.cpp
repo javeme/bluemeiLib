@@ -98,4 +98,9 @@ bool IOCompletionPortImpl::cancelWait()
 	return false;
 }
 
+void IOCompletionPortImpl::releaseEventBuffer(IOEvent* event)
+{
+	;
+}
+
 }//end of namespace bluemei

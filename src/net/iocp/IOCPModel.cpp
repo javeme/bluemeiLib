@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 #include "IOCPModel.h"
 #include "LambdaThread.h"
 #include "RuntimeException.h"
@@ -33,7 +32,7 @@ public:
 
 	virtual void taskStarted() 
 	{
-		;
+		m_bRunning=true;
 	}
 
 	virtual int getId() 
@@ -43,6 +42,7 @@ public:
 
 	virtual void taskFinished() 
 	{
+		m_bRunning=false;
 		delete this;
 	}
 
@@ -53,8 +53,6 @@ public:
 
 	virtual void run()
 	{
-		m_bRunning=true;
-
 		socket_t sock=ioEvent.data.fd;
 		int events=ioEvent.events;
 
@@ -83,6 +81,11 @@ public:
 		{
 			continueEvent&=eventHandle->onWriteFinish(ioEvent);
 		}
+		else if(events & EVENT_ACCEPT)
+		{
+			continueEvent&=eventHandle->onAccepted(ioEvent);
+			continueEvent=false;
+		}
 		else if(events & EVENT_ERR)
 		{
 			continueEvent&=eventHandle->onError(ioEvent);
@@ -97,6 +100,10 @@ public:
 			continueEvent=false;
 		}
 
+		//释放缓冲区
+		ioCompPort->releaseEventBuffer(&ioEvent);
+
+		//注册下一次事件
 		if(continueEvent)
 		{
 			try
@@ -128,53 +135,66 @@ IOCPModel::IOCPModel()
 
 	m_pEventThread=nullptr;
 	m_bRunning=false;
+	m_nTimeout=1000*10;//10s
 }
 
 IOCPModel::~IOCPModel()
 {
 	m_pIOCPEventHandler=nullptr;
+	stop();
 }
 
-void IOCPModel::listen( int port )
+void IOCPModel::listen(int port)
 {
 	listenSocket.listen(port);
-	m_oIOCompletionPort.registerEvents(EVENT_FIRST_SOCKET|EVENT_ACCEPT|EVENT_ALL,listenSocket);//EPOLLIN|EPOLLET
+	m_oIOCompletionPort.registerEvents(EVENT_FIRST_SOCKET|EVENT_ACCEPT|EVENT_ALL,
+		listenSocket);//EPOLLIN|EPOLLET
 
 	start();
 }
 
 void IOCPModel::unlisten()
 {
-	m_oIOCompletionPort.unregisterEvents(EVENT_ACCEPT|EVENT_ALL,listenSocket);//EPOLLIN|EPOLLET
+	if(!m_bRunning)
+		return;
+	m_oIOCompletionPort.unregisterEvents(EVENT_ACCEPT|EVENT_ALL,
+		listenSocket);//EPOLLIN|EPOLLET
 	listenSocket.close();
 
+	closeAllClients();
 	stop();
 }
 
-void IOCPModel::connect( cstring ip,int port )
+socket_t IOCPModel::connect(cstring ip,int port)
 {
 	ClientSocket sock;
 	sock.connect(ip,port);
 	socket_t s=sock.detach();
 	clientSockets.put(s,s);
 
-	m_oIOCompletionPort.registerEvents(EVENT_ALL,s);
-
 	start();
+	m_oIOCompletionPort.registerEvents(EVENT_FIRST_SOCKET|EVENT_ALL,s);
+
+	return s;
 }
 
 void IOCPModel::disconnect()
 {
+	if(!m_bRunning)
+		return;
+	closeAllClients();
 	stop();
 }
 
-void IOCPModel::setEventHandle( IOCPEventHandle *e )
+void IOCPModel::setEventHandle(IOCPEventHandle *e)
 {
 	m_pIOCPEventHandler=e;
 }
 
-void IOCPModel::send( const byte* buf,unsigned int len,socket_t sock )
+void IOCPModel::send(const byte* buf,unsigned int len,socket_t sock)
 {
+	if(!m_bRunning)
+		throw IOCPException("Can't send any data after IOCP stopped.");
 	//m_oIOCompletionPort.registerEvents(EVENT_WRITE,sock);	
 	m_oIOCompletionPort.send(buf,len,sock);
 }
@@ -183,10 +203,79 @@ void IOCPModel::start()
 {
 	if(m_bRunning)
 		return;
+	m_bRunning=true;
+	
+	/**
+	 * 连接处理函数
+	 * 注意: 这种局部函数(变量)在外层方法结束时会被释放,为了避免非法访问错误:
+	 *  1.利用值传递到其它函数中去.
+	 *  2.定义为static变量,再利用引用传递.
+	 */
+	static auto handleAccept=[this](IOEvent& ev) {
+		//继续监听
+		m_oIOCompletionPort.registerEvents(EVENT_ACCEPT|EVENT_ALL,listenSocket);
+
+		socket_t sock=0;
+
+		//已建立新的连接
+		if(ev.events & EVENT_ACCEPT)
+		{
+			sock=(socket_t)ev.data.u64;//新的连接
+			ev.data.fd=sock;
+		}
+		//还没有建立新的连接
+		else
+		{
+			std::auto_ptr<ClientSocket> client(listenSocket.accept());
+			sock=client->detach();
+			ev.data.fd=sock;
+			ev.events |= EVENT_ACCEPT;
+		}
+
+		//notify event: EVENT_ACCEPT
+		IOTask* task=new IOTask(ev,m_pIOCPEventHandler,&m_oIOCompletionPort);
+		m_pIOThreadPool->addTask(task);
+
+		//注册读事件,将client添加到监听队列中
+		addClient(sock);
+		m_oIOCompletionPort.registerEvents(EVENT_FIRST_SOCKET|EVENT_ALL,sock);
+	};
+
+	//事件处理函数
+	static auto handleEvents=[&](IOEvent* events, int size) {
+		int eventNum=m_oIOCompletionPort.waitEvent(events, size, m_nTimeout);
+
+		for(int i=0;i<eventNum;i++)
+		{
+			IOEvent& ev=events[i];
+			//有新的连接需要(或已)建立
+			if(ev.data.fd==listenSocket)
+			{
+				try {
+					handleAccept(ev);
+				} catch (Exception& e) {
+					m_bRunning&=notifyException(e);
+				}				
+			}
+			//处理数据读写
+			else
+			{
+				IOTask* task=new IOTask(ev,m_pIOCPEventHandler,&m_oIOCompletionPort);
+				m_pIOThreadPool->addTask(task);
+				if(ev.events & EVENT_CLOSED)
+				{
+					socket_t sock=ev.data.fd;
+					removeClient(sock);
+					ClientSocket s(sock);
+					s.close();
+				}
+			}
+		}
+	};
 
 	//负责IO读写操作
-	m_pIOThreadPool=new ThreadPool();
-	
+	m_pIOThreadPool=new ThreadPool(4);
+
 	//负责轮询事件
 	m_pEventThread=new LambdaThread([&](){
 		m_bRunning=true;
@@ -195,76 +284,7 @@ void IOCPModel::start()
 		while(m_bRunning)
 		{
 			try{
-				int eventNum=m_oIOCompletionPort.waitEvent(events,MAX_EV_NUM,1000*4);
-
-				for(int i=0;i<eventNum;i++)
-				{
-					IOEvent& ev=events[i];
-					if(ev.data.fd==listenSocket)//有新的连接需要建立或已建立
-					{
-						/*struct sockaddr_in clientAddr;
-						int addrLen=sizeof(clientAddr);
-						socket_t client = accept(listenSocket,(sockaddr *)&clientAddr, &addrLen); //accept这个连接
-						if(client=SOCKET_ERROR)
-						{
-							notifyException(SocketException(getLastError()));
-							continue;
-						}*/
-
-						try
-						{
-							//继续监听
-							m_oIOCompletionPort.registerEvents(EVENT_ACCEPT|EVENT_ALL,listenSocket);
-
-							socket_t sock=0;
-							//已建立新的连接
-							if(ev.events & EVENT_ACCEPT)
-							{
-								sock=(socket_t)ev.data.u64;//新的连接
-
-								ev.data.fd=sock;								
-								m_pIOThreadPool->addTask(new IOTask(ev,m_pIOCPEventHandler,&m_oIOCompletionPort));
-							}
-							//还没有建立新的连接
-							else
-							{
-								bool connected=false;
-								std::auto_ptr<ClientSocket> client;
-								if(m_pIOCPEventHandler!=nullptr)
-								{
-									ClientSocket* s=nullptr;
-									connected=m_pIOCPEventHandler->onAccept(s,ev);
-									client=std::auto_ptr<ClientSocket>(s);
-								}						
-
-								if(!connected)
-								{
-									client=std::auto_ptr<ClientSocket>(listenSocket.accept());
-								}
-																
-								sock=client->detach();
-							}
-							//注册读事件,将client添加到监听队列中
-							addClient(sock);
-							m_oIOCompletionPort.registerEvents(EVENT_FIRST_SOCKET|EVENT_ALL,sock);//EPOLLIN|EPOLLET	
-						}
-						catch (Exception& e)
-						{
-							m_bRunning&=notifyException(e);
-						}				
-					}					
-					else
-					{
-						m_pIOThreadPool->addTask(new IOTask(ev,m_pIOCPEventHandler,&m_oIOCompletionPort));
-						if(ev.events & EVENT_CLOSED)
-						{
-							socket_t sock=ev.data.fd;
-							removeClient(sock);
-							ClientSocket s(sock);
-							s.close();
-						}
-					}
-				}
+				handleEvents(events, MAX_EV_NUM);
 			}catch(TimeoutException& e){
 				notifyException(e);
 			}catch(IOCPForceCloseException& e){
@@ -283,16 +303,22 @@ void IOCPModel::start()
 
 void IOCPModel::stop()
 {
+	if(!m_bRunning)
+		return;
+
+	// stop event-pull thread
 	if(m_bRunning && m_pEventThread!=nullptr)
 	{
 		m_bRunning=false;
+		m_oIOCompletionPort.cancelWait();
 		m_pEventThread->wait();
 		
 		delete m_pEventThread;
 		m_pEventThread=nullptr;
 	}
 
-	if(m_pIOThreadPool!=nullptr)
+	// stop task workers
+	if(m_pEventThread==nullptr && m_pIOThreadPool!=nullptr)
 	{
 		m_pIOThreadPool->stop();
 
@@ -301,7 +327,7 @@ void IOCPModel::stop()
 	}
 }
 
-bool IOCPModel::notifyException( Exception& e )
+bool IOCPModel::notifyException(Exception& e)
 {
 	if(m_pIOCPEventHandler==nullptr)
 		return false;
@@ -315,6 +341,35 @@ int IOCPModel::getLastError()
 #else //#elif defined()
 	return errno;
 #endif
+}
+
+bool IOCPModel::addClient(socket_t sock)
+{
+	socket_t v=sock;
+	return clientSockets.put(sock,v);
+}
+
+bool IOCPModel::removeClient(socket_t sock)
+{
+	m_oIOCompletionPort.unregisterEvents(EVENT_ACCEPT|EVENT_ALL,sock);
+	socket_t v;
+	return clientSockets.remove(sock,v);
+}
+
+void IOCPModel::closeAllClients()
+{
+	auto iter = clientSockets.iterator();
+	while (iter->hasNext())
+	{
+		socket_t sock = iter->next().key;
+		try {
+			ClientSocket client(sock);
+			client.close();
+		} catch (Exception& e) {
+			notifyException(e);
+		}
+	}
+	clientSockets.releaseIterator(iter);
 }
 
 

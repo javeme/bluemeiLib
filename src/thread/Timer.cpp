@@ -1,5 +1,6 @@
-#include "stdafx.h"
+#pragma once
 #include "Timer.h"
+#include "RuntimeException.h"
 
 namespace bluemei{
 
@@ -27,7 +28,8 @@ void Timer::schedule(Class& taskClass,unsigned long delay,unsigned long period)
 	schedule(pTask,delay,period,true);
 }
 
-void Timer::schedule(Runnable* pTask,unsigned long delay,unsigned long period,bool autoDestroyTask)
+void Timer::schedule(Runnable* pTask,unsigned long delay,
+	unsigned long period,bool autoDestroyTask)
 {
 	if(m_pTask!=nullptr)
 	{
@@ -102,5 +104,19 @@ bool Timer::isRunning()const
 	return m_bGoOn;
 }
 
+
+bool Waiter::wait(unsigned int interval/*=1000*/)
+{
+	if(interval == 0)
+		interval = 1;
+	unsigned int times = this->timeout / interval;
+	for(unsigned int i = 0; !this->condition(); i++)
+	{
+		Thread::sleep(interval);
+		if(this->timeout > 0 && i >= times)
+			throw TimeoutException(this->timeout);
+	}
+	return true;
+}
 
 }//end of namespace bluemei

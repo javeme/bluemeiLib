@@ -4,6 +4,8 @@
 #include "SocketTools.h"
 using namespace bluemei;
 
+
+// test for server
 class IOCPTester : public IOCPEventHandle
 {
 public:
@@ -132,6 +134,7 @@ void main()
 }
 
 
+// test for client
 #include "LambdaThread.h"
 
 void test()

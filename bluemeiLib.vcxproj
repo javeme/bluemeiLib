@@ -95,6 +95,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\bamqp-client\amqpcpp\src\Makefile">
+      <FileType>Document</FileType>
+    </None>
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>

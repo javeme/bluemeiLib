@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include "BString.h"
@@ -337,7 +336,8 @@ String String::substring(unsigned int start) const
 
 //
 //将字符串中所有形如strNeedReplaced的子串替换为strReplace
-String String::replace(const String& strNeedReplaced, const String& strReplace) const
+String String::replace(const String& strNeedReplaced,
+	const String& strReplace) const
 {
 	String temp;
 	int start = 0;
@@ -355,29 +355,30 @@ String String::replace(const String& strNeedReplaced, const String& strReplace) 
 }
 
 //将字符串按分隔符拆分为若干段
-ArrayList<String> String::splitWith(const String& separator) const
+ArrayList<String> String::splitWith(const String& separator,
+	unsigned int max/*=-1*/) const
 {
 	ArrayList<String> list;
 
 	if(separator.empty())
 	{
-		for(unsigned int i=0; i<length(); i++)
+		for(unsigned int i=0; i<length() && i < max; i++)
 		{
 			list.add(substring(i, 1));
 		}
 	}
 	else
 	{
-		int start = 0;
-		int end = 0;
-		while((end = find(separator, start)) >= 0)
+		unsigned int start = 0;
+		unsigned int end = 0;
+		while((end = find(separator, start)) != -1  && list.size() < max-1)
 		{
-			if(end >= start )
+			if(end >= start)
 				list.add(substring(start, end - start));
 
 			start = end + separator.length();
 
-			if((unsigned int)start >= length())
+			if(start >= m_nLength)
 				break;
 		}
 		list.add(getRightSub(m_nLength - start));
@@ -387,7 +388,8 @@ ArrayList<String> String::splitWith(const String& separator) const
 }
 
 //将list的元素用本字符串拼接起来: "-".join(["a", "b"]) => "a-b"
-String String::join(const ArrayList<String>& list, unsigned int from, unsigned int to) const
+String String::join(const ArrayList<String>& list,
+	unsigned int from, unsigned int to) const
 {
 	unsigned int size = list.size();
 	if (to == -1)

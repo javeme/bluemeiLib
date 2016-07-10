@@ -29,7 +29,7 @@ void ClientSocket::createSocket()
 	int nReturn=m_hSocket;
 	if(nReturn==SOCKET_ERROR)
 	{
-		throw SocketException(WSAGetLastError(),toString());
+		throw SocketException(WSAGetLastError(),"Failed to init socket");
 	}
 }
 //连接服务器
@@ -333,17 +333,18 @@ void ClientSocket::close()
 {
 	if(m_bClose)
 		return;
+	m_bClose=true;
 	int nReturnCode=closesocket(this->m_hSocket);
 	if(nReturnCode==SOCKET_ERROR)
 	{
 		throw SocketException(::WSAGetLastError(),toString());
 	}
-	m_bClose=true;
 }
 //返回描述
 String ClientSocket::toString()const
 {
-	String str=String::format("Socket[peer address is %s:%d]",getPeerHost().c_str(),getPeerPort());
+	String str=String::format("Socket[peer address is %s:%d]",
+		getPeerHost().c_str(),getPeerPort());
 	return str;
 }
 

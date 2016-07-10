@@ -5,7 +5,7 @@ namespace bluemei{
 	
 IErrorHandler* ErrorHandler::s_errorHandler=nullptr;
 
-void ErrorHandler::handle( Exception& e )
+void ErrorHandler::handle(Exception& e)
 {
 	if(s_errorHandler!=nullptr && s_errorHandler->handle(e)){
 		;

@@ -90,7 +90,7 @@ void Thread::wait()
 		{
 			int error=::GetLastError();
 			String str=String::format("wait for thread object failed : %d",error);
-			throw Exception(str);
+			throwpe(ThreadException(str));
 		}
 		detach();
 	}

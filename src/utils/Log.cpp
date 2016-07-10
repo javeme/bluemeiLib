@@ -197,8 +197,14 @@ Log* LogManager::getLogger(const String& name)
 	else
 		logger = m_loggers.getDefault(name, null);
 
-	if(logger == null)
-		throw NotFoundException("no Logger named: " + name);
+	if(logger == null) {
+		cstring logName = "";
+		if (name.empty())
+			logName = m_default.empty() ? "<default>" : m_default;
+		else
+			logName = name;
+		throw NotFoundException(String("No Logger named: ") + logName);
+	}
 	return logger;
 }
 

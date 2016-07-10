@@ -45,13 +45,17 @@ void WorkThread::run()
 }
 void WorkThread::stopAndWait()
 {
+	if(Thread::currentThreadId() == this->getThreadId()) {
+		throwpe(ThreadException("Can't stop/wait for self thread."));
+	}
+
 	m_bRunning=false;
 		
 	//未结束任务时中断掉
 	if(m_pCurrentTask!=NULL && m_pCurrentTask->isRunning())//是否应该互斥访问?
 		m_pCurrentTask->stop();//结束任务 
 		
-	this->wait();//等待本线程结束	
+	this->wait();//当前等待该(this)线程结束	
 }
 
 bool WorkThread::isIdle() const

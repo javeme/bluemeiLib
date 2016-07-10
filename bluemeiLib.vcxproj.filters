@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+    <None Include="..\bamqp-client\amqpcpp\src\Makefile" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\lang\Exception.cpp">
