@@ -1,4 +1,3 @@
-#pragma once
 #include "ThreadPool.h"
 
 namespace bluemei{

@@ -98,9 +98,6 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>proj</Filter>
     </ClCompile>
-    <ClCompile Include="src\thread\LambdaThread.cpp">
-      <Filter>thread</Filter>
-    </ClCompile>
     <ClCompile Include="src\thread\Timer.cpp">
       <Filter>thread</Filter>
     </ClCompile>
@@ -215,6 +212,12 @@
     <ClCompile Include="src\utils\Ptr.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\thread\LambdaThread.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread\MessageThread.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\lang\Exception.h">
@@ -239,9 +242,6 @@
       <Filter>thread</Filter>
     </ClInclude>
     <ClInclude Include="src\thread\Thread.h">
-      <Filter>thread</Filter>
-    </ClInclude>
-    <ClInclude Include="src\thread\ThreadException.h">
       <Filter>thread</Filter>
     </ClInclude>
     <ClInclude Include="src\thread\ThreadPool.h">
@@ -457,11 +457,17 @@
     <ClInclude Include="src\io\FileUtil.h">
       <Filter>io</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\PriorityQueue.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="src\utils\Ptr.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\type\PriorityQueue.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\UniqueLock.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\ThreadException.h">
+      <Filter>thread</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

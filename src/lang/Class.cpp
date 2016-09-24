@@ -219,7 +219,8 @@ Class* Class::registerClass(cstring name,CreateFun* pFun,const Class* superClass
 	}
 }
 
-Class* Class::registerClassIfNotExist(cstring name,CreateFun* pFun,const Class* superClass)
+Class* Class::registerClassIfNotExist(cstring name,CreateFun* pFun,
+	const Class* superClass)
 {
 	Class* exist = ObjectFactory::instance().exist(name);
 	if(!exist)
@@ -234,7 +235,8 @@ Class* Class::registerClassIfNotExist(cstring name,CreateFun* pFun,const Class* 
 	}
 }
 
-void Class::throwRuntimeException(cstring msg) throw(RuntimeException)//static
+//static method
+void Class::throwRuntimeException(cstring msg) throw(RuntimeException)
 {
 	throw RuntimeException(msg);
 }

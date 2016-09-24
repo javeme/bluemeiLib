@@ -250,8 +250,9 @@ void Date::setToCurrentTime()
 
 DateInfo Date::getDateInfo()const
 {
-	DateInfo m_dateInfo=*localtime(&m_time.time);
-	return m_dateInfo;
+	DateInfo dateInfo;
+	localtime_s(&dateInfo, &m_time.time);
+	return dateInfo;
 }
 
 long long Date::getTotalMillSecond()const

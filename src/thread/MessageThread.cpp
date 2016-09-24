@@ -1,7 +1,9 @@
-#include "stdafx.h"
-#include "MessageThread.h"
+//#include "MessageThread.h"
 #include "CodeUtil.h"
-#include "utils\System.h"
+#include "System.h"
+//TODO: why error C2011 if include "MessageThread.h" before include "System.h"
+#include "MessageThread.h"
+
 
 namespace bluemei{
 
@@ -20,7 +22,7 @@ MessageThread::~MessageThread()
 	clearMessage();
 }
 
-void MessageThread::addMessage( Message* msg )
+void MessageThread::addMessage(Message* msg)
 {
 	ScopedLock scopedLock(m_queueLock);
 
@@ -78,11 +80,21 @@ Message* MessageThread::waitMessage()
 	ScopedLock scopedLock(m_queueLock);
 
 	Message* msg=nextMessage();
-	if(msg==nullptr)//while
+	while(msg==nullptr) //用while替代if防止虚假唤醒
 	{
-		//不锁m_queueLock的话,可能会在上述判断与等待之间插入了一条数据,而不会再notify!!!
+		//如果根据m_messageLock.getWaitCount()>0来判断是否notify, 那么
+		//不锁m_queueLock的话,可能会在上述判断与等待之间插入了一条数据,而不会再notify!
+		//这里wait那一刻才释放m_queueLock,可确保不会出现上述情况(此语句处时刻插入数据)
 		m_messageLock.wait(m_queueLock);
+
+		//当wait到信号后, m_queueLock可能被其它线程获得而取走Message, 导致本处取不到
+		//或者也有可能是虚假唤醒
 		msg=nextMessage();
+		if(msg==nullptr){
+			static int count=0;
+			System::debugInfo("MessageThread::waitMessage:Message is null(%d).\n",
+				++count);
+		}
 	}
 
 	return msg;
@@ -98,12 +110,6 @@ void MessageThread::doMessageLoop()
 	while(isRunning()){
 		Message* msg=waitMessage();
 		onMessage(msg);
-		/*if (hasMessage()){
-			Message* msg=nextMessage();
-			onMessage(msg);
-		}
-		else
-			sleep(1);//如何处理好??? */
 	}
 }
 
@@ -123,7 +129,7 @@ void MessageThread::run()
 	doMessageLoop();
 }
 
-void MessageThread::onMessage( Message* msg )
+void MessageThread::onMessage(Message* msg)
 {
 	if(msg!=nullptr){
 		m_msgFun(msg);
@@ -131,73 +137,9 @@ void MessageThread::onMessage( Message* msg )
 	}
 	else{
 		static int count=0;
-		System::debugInfo("MessageThread::onMessage:Message is null(%d).\n",++count);
+		System::debugInfo("MessageThread::onMessage:Message is null(%d).\n",
+			++count);
 	}
 }
 
 }//end of namespace bluemei
-
-/*
-//test MessageThread
-#include "MessageThread.h"
-static bluemei::MessageThread msgThread([](Message* msg){
-	TRACE(">>>>Message: %d\n",msg->getId());
-});
-msgThread.start();
-
-msgThread.addMessage(new Message(100,0,0,new Exception(e)));
-msgThread.addMessage(new Message(101,1));
-msgThread.addMessage(new Message(102,2));
-msgThread.addMessage(new Message(1022,2));
-msgThread.addMessage(new Message(1021,2));
-msgThread.addMessage(new Message(1020,2));
-msgThread.addMessage(new Message(108,8));
-msgThread.addMessage(new Message(103,3));
-msgThread.addMessage(new Message(1031,3));
-msgThread.addMessage(new Message(1030,3));
-*/
-/*
-//test MessageThread
-#include "MessageThread.h"
-#include "LambdaThread.h"
-#include "MessageHandler.h"
-
-void testMessageThread(MainFrame* _this)
-{
-	static MessageHandler mh(_this);
-
-	static bluemei::MessageThread msgThread([=](Message* msg){
-		String str=String::format(">>>>Message: %5d [%s] (%s)\n",msg->getId(),
-			Date(msg->getTimestamp()).toString().c_str(),
-			msg->getObject()->toString().c_str());
-		TRACE(str.c_str());
-		mh.PostRunnable([=](void* para){ _this->OutputMessage((CString)CONVSTR(str)); });
-
-		Sleep(1);
-	});
-
-	msgThread.start();
-
-	mh.PostDelay(1000*5,[_this](void* para){ 
-		msgThread.finish();		
-		String str=String::format(">>>>>>>>Message Thread finish (remained message: %s)\n",
-			String(String("")+msgThread.hasMessage()).c_str());
-		_this->OutputMessage((CString)CONVSTR(str));
-	});
-
-	static int count=0;
-	for(int i=0;i<10;i++)
-	{
-		Thread* thread=new LambdaThread([i](void* para){
-			for(int j=0;j<1000;j++)
-			{
-				int pri=j;
-				msgThread.addMessage(new Message(count++,pri,0,0,new String(String("test@")+pri)));
-				Sleep(10);
-			}
-			TRACE(">>>>>>>>>>>>>>>>Work Thread %d finished\n",i);
-		},nullptr);
-		thread->start();
-	}
-}
-*/

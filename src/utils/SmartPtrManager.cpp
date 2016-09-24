@@ -18,17 +18,18 @@
 
 namespace bluemei{
 
+///////////////////////////////////////////////////////////////////////
+// new handler
+
 //static variable
 #ifdef WIN32
 static _PNH old_new_handler;
 static int old_new_mode;
 #else
-pthread_mutex_t GlobalMutexLock::mutex;
 typedef void (*_PNH)(void);
 static _PNH old_new_handler;
 #define _set_new_handler set_new_handler
 #endif
-
 
 //分配内存出错时调用的函数
 #ifdef WIN32
@@ -38,7 +39,8 @@ void gc_new_handler()
 #endif
 {
 	System::instance().gc();
-	if(!System::instance().gcCount())//there's no memory collected, make the defualt handler to deal with
+	//there's no memory collected, make the defualt handler to deal with
+	if(!System::instance().gcCount())
 	{
 #ifdef WIN32
 		return old_new_handler(sz);
@@ -48,36 +50,44 @@ void gc_new_handler()
 	}
 
 #ifdef WIN32
-	return System::instance().gcCount(); //GC has reclaimed some memory, do allocate again
+	//GC has reclaimed some memory, do allocate again
+	return System::instance().gcCount();
+#endif
+}
+
+static void initNewHandler()
+{
+	//set new handler, so gc runs when there's no sufficient memory
+	old_new_handler = ::_set_new_handler(gc_new_handler);
+#ifdef WIN32
+	old_new_mode = ::_set_new_mode(1);
+#endif
+}
+
+static void restoreNewHandler()
+{
+	_set_new_handler(old_new_handler); //restore new handler
+#ifdef WIN32
+	_set_new_mode(old_new_mode);	   //and new mode
 #endif
 }
 
 
-
-#ifdef WIN32
-
-static CRITICAL_SECTION mutex;  // this variable is used by class Lock only
+///////////////////////////////////////////////////////////////////////
+//class GlobalMutexLock
+MutexLock GlobalMutexLock::s_globalMutex;
 
 ///< Lock constructor
 GlobalMutexLock::GlobalMutexLock() 
 {
-	static bool inited = false;
-	if(!inited)
-	{
-		InitializeCriticalSection(&mutex);//should call DeleteCriticalSection(&cs)
-		inited = true;
-	}
-	EnterCriticalSection(&mutex); 
+	s_globalMutex.getLock();
 }
 
 ///< Lock destructor
 GlobalMutexLock::~GlobalMutexLock() 
 { 
-	LeaveCriticalSection(&mutex); 
+	s_globalMutex.releaseLock();
 }
-
-#endif //WIN32
-
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -131,6 +141,7 @@ void WrapperManager::collect(ObjectWrapper* pWrapper)
 	delete pWrapper; //delete the wrapper. which also make memory reclaimed
 
 }
+
 /**
  * return true if the ptr itself is located in the inner of other object managed by GC.
  */
@@ -138,7 +149,8 @@ bool WrapperManager::isEmbeddedPtr(void *pSmartPtr)
 {
 	GlobalMutexLock l;
 	ObjectWrapper tempWrapper(pSmartPtr, NULL, 1);
-	WrapperSet::const_iterator i = wrappers.find(WrapperPointer(&tempWrapper));//???
+	//SmartPtr的地址是否在某个指针里面？
+	WrapperSet::const_iterator i = wrappers.find(WrapperPointer(&tempWrapper));
 	return i != wrappers.end();
 }
 
@@ -157,14 +169,15 @@ bool WrapperManager::existPtr(void* pTarget) const
 		return true;
 }
 
-ObjectWrapper* WrapperManager::attachWrapper(void* pTarget, DESTORY_PROC destory, size_t memSize)
+ObjectWrapper* WrapperManager::attachWrapper(void* pTarget, DESTORY_PROC destory,
+	size_t memSize)
 {
 	GlobalMutexLock l;
 	if(pTarget == NULL)
 		return nullWrapper;
 
-	// a non zero memSize make the ObjectWrapper use this size instead of calculate size itself
-	// which save the computer resource
+	// a non zero memSize make the ObjectWrapper use this size instead of
+	//calculate size itself, which save the computer resource
 	ObjectWrapper tempWrapper(pTarget, NULL, 1);//destory=null,size=1
 	
 	WrapperSet::const_iterator i = wrappers.find(&tempWrapper);
@@ -233,8 +246,8 @@ void SmartPtrManager::moveToUserPtr(LinkNode* ptr)
 	ptr->pNext = pUserPtrHead->pNext;
 	pUserPtrHead->pNext = ptr;
 	ptr->pPrev = pUserPtrHead;
-
 }
+
 void SmartPtrManager::moveToEmbeddedPtr(LinkNode* ptr)
 {
 	GlobalMutexLock l;
@@ -245,7 +258,6 @@ void SmartPtrManager::moveToEmbeddedPtr(LinkNode* ptr)
 	ptr->pNext = pEmbeddedPtrHead->pNext;
 	pEmbeddedPtrHead->pNext = ptr;
 	ptr->pPrev = pEmbeddedPtrHead;
-
 }
 
 SmartPtrManager::SmartPtrManager()
@@ -267,13 +279,11 @@ SmartPtrManager::SmartPtrManager()
 	pEmbeddedPtrTail->pPrev = pEmbeddedPtrHead;
 
 	//do gc initialize here
-	//System::getInstance().startGcThread(); //start a thread to collect garbage when system is in idle
-	old_new_handler = ::_set_new_handler(gc_new_handler); //set new handler, so 
-									//gc runs when there's no sufficient memory
-#ifdef WIN32
-	old_new_mode = ::_set_new_mode(1);
-#endif
+	//start a thread to collect garbage when system is in idle
+	//System::getInstance().startGcThread();
+	initNewHandler();
 }
+
 SmartPtrManager::~SmartPtrManager()
 {
 	destroy();
@@ -285,11 +295,9 @@ void SmartPtrManager::destroy()
 	//防止多次释放
 	if(pHead==nullptr)
 		return;
-	_set_new_handler(old_new_handler); //restore new handler
-#ifdef WIN32
-	_set_new_mode(old_new_mode);	   //and new mode
-#endif
-	//System::getInstance().quit();//静态析构时,线程已经被系统杀死???
+
+	restoreNewHandler();
+
 	delete pHead;
 	delete pTail;
 

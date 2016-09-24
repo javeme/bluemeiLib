@@ -2,7 +2,7 @@
 #include "System.h"
 
 namespace bluemei{
-	
+
 IErrorHandler* ErrorHandler::s_errorHandler=nullptr;
 
 void ErrorHandler::handle(Exception& e)

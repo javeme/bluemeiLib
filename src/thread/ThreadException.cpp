@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "ThreadException.h"
 
 namespace bluemei{

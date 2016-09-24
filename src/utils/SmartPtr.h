@@ -74,7 +74,7 @@ public:
 		ptrTrace("SmartPtr con (T* pObj) %p\r\n",this);
 		getWrapper(pObj);
 
-		targetObj =pObj;
+		targetObj = pObj;
 		reserved = 0;
 	}
 		
@@ -83,6 +83,7 @@ public:
 		GlobalMutexLock l;
 		ptrTrace("SmartPtr decon %p\r\n",this);
 		SmartPtrManager::getInstance()->remove(this);
+		//maybe not exists this scenarios due to GlobalMutexLock
 		if(System::instance().isCollecting())
 			return;
 		wrapper->disattach();

@@ -83,7 +83,7 @@ void String::checkBound(unsigned int offset) const
 // String operator + (String &add2)
 // operator char *()
 
-String& String::operator = (cstring src)
+String& String::operator= (cstring src)
 {
 	if(m_charBuffer!=nullptr)
 		delete[]m_charBuffer;
@@ -152,7 +152,6 @@ cstring String::c_str() const
 {
 	return m_charBuffer;
 }
-
 
 String& String::append(const String &add)
 {

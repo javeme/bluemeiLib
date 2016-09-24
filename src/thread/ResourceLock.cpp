@@ -59,18 +59,23 @@ bool ResourceLock::wait(unsigned long mSecond/*=INFINITE*/)
 	return result!=WAIT_TIMEOUT;//没有超时
 }
 
-bool ResourceLock::wait(MutexLock& mutex,unsigned long mSecond/*=INFINITE*/) throw(Exception)
+//类似条件变量的等待： http://blog.csdn.net/metasearch/article/details/18677193
+bool ResourceLock::wait(MutexLock& mutex,unsigned long mSecond/*=INFINITE*/)
+	throw(Exception)
 {
 	InterlockedIncrement(&waitCount);//原子操作
-	//解锁mutex,等待信号semaphoreHandle
-	unsigned long result=::SignalObjectAndWait(mutex.mutex,semaphoreHandle,mSecond,FALSE);//原子操作
+	//解锁mutex,等待信号semaphoreHandle（原子操作）
+	unsigned long result=::SignalObjectAndWait(mutex.mutex,semaphoreHandle,
+		mSecond,FALSE);
 	//重新锁定mutex
 	mutex.getLock();
 	//错误检测
-	if(result==WAIT_FAILED || result==WAIT_ABANDONED)//bAlertable为TRUE时可能发生错误WAIT_IO_COMPLETION
+	//SignalObjectAndWait bAlertable为TRUE时可能发生错误WAIT_IO_COMPLETION
+	if(result==WAIT_FAILED || result==WAIT_ABANDONED)
 	{
 		int error=::GetLastError();
-		String str=String::format("ResourceLock::wait: wait for object failed : %d",error);
+		String str=String::format("ResourceLock::wait: wait for object failed"\
+			": %d", error);
 		throw Exception(str);
 	}
 	InterlockedDecrement(&waitCount);
@@ -80,11 +85,13 @@ bool ResourceLock::wait(MutexLock& mutex,unsigned long mSecond/*=INFINITE*/) thr
 long ResourceLock::signal() throw(Exception)
 {
 	long previousCount=0;
-	BOOL isSuccess=::ReleaseSemaphore(semaphoreHandle,1,&previousCount);//增加一个信号
+	//增加一个信号
+	BOOL isSuccess=::ReleaseSemaphore(semaphoreHandle,1,&previousCount);
 	if(!isSuccess)
 	{
 		int error=::GetLastError();
-		String str=String::format("ResourceLock::notify: release semaphore failed (error=%d)",error);
+		String str=String::format("ResourceLock::notify: release semaphore "\
+			"failed (error=%d)",error);
 		throw Exception(str);
 	}
 	return previousCount+1;
@@ -101,15 +108,19 @@ void ResourceLock::notify() throw(Exception)
 void ResourceLock::notifyAll()
 {
 	long previousCount=0;
-	int count=waitCount;//此时的waitCount可能多于真实的等待线程数(比如信号量为1时,有一个线程正好将要进入或过去等待状态,waitCount等于1)
+	//此时的waitCount可能多于真实的等待线程数(比如信号量为1时,
+	//有一个线程正好将要进入或过去等待状态,waitCount等于1)
+	int count=waitCount;
 	if(count<=0)
 		return;
 	
-	bool isSuccess=::ReleaseSemaphore(semaphoreHandle,count,&previousCount)==TRUE;//增加count个信号	
+	//增加count个信号	
+	bool isSuccess=::ReleaseSemaphore(semaphoreHandle,count,&previousCount)==TRUE;
 	if(!isSuccess)
 	{
 		int error=::GetLastError();
-		String str=String::format("ResourceLock::notifyAll: release semaphore failed (error=%d)",error);
+		String str=String::format("ResourceLock::notifyAll: release semaphore "\
+			"failed (error=%d)",error);
 		throw Exception(str);
 	}
 }
@@ -121,5 +132,8 @@ long ResourceLock::getWaitCount() const
 	bool isSuccess=::ReleaseSemaphore(semaphoreHandle,0,&count);	
 	return count;*/
 }
+
+//linux implement: http://linux.die.net/man/3/pthread_mutexattr_init
+//TODO
 
 }//end of namespace bluemei

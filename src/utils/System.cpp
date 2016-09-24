@@ -68,25 +68,22 @@ bool System::isSystemIdle()
 	static PDH_RAW_COUNTER lastrawdata;
 	static bool first = true;
 
-
-	TCHAR           szCounterPath[] = 
-		TEXT("\\Processor(_Total)\\% Processor Time");
+	TCHAR szCounterPath[] = TEXT("\\Processor(_Total)\\% Processor Time");
 
 	/* We can use "% Idle Time" to retrieve IDL time directly, but this counter is available 
 	 * on WindowsXP only. Fortunatelly, we can get IDL=100-Processer
 	 */
-	//TCHAR           szCounterPath[] = 
-	//	TEXT("\\Processor(0)\\% Idle Time");
+	//TCHAR szCounterPath[] = TEXT("\\Processor(0)\\% Idle Time");
 
 	// Open a query object.
-	pdhStatus = PdhOpenQuery (NULL, 0, &hQuery);
+	pdhStatus = PdhOpenQuery(NULL, 0, &hQuery);
 	if( pdhStatus != ERROR_SUCCESS )
 	{
 		return true;
 	}
 
 	// Add one counter that will provide the data.
-	pdhStatus = PdhAddCounter (hQuery,
+	pdhStatus = PdhAddCounter(hQuery,
 		szCounterPath,
 		0,
 		&hCounter);
@@ -138,7 +135,8 @@ bool System::isSystemIdle()
 
 	pdhStatus = PdhCloseQuery(hQuery);
 	return fmtValue.doubleValue <= 20;
-/*
+
+	/*
 	//Method 2, use GetSystemTimes, this is more Simple, but
 	//GetSystemTimes is not available on Window2000 OS
 	static __int64 last_idle = 0,last_kernel = 0,last_user = 0;
@@ -156,7 +154,7 @@ bool System::isSystemIdle()
 	if( rate >= 0.8 )//more than 80% of system is in idle
 		return true;
 	return false;
-*/
+	*/
 #else //Linux & UNIX
 #define MAXLOAD 20 //that's to say, if the system overload is no more than 20%, it's idle
 	char buf[4];
@@ -226,35 +224,40 @@ void System::idleCollect()
 	}
 }
 
-//int markCount = 0;
-void System::mark(SmartPtr<void>* ptr)
+unsigned int System::mark(SmartPtr<void>* ptr)
 {
 	GlobalMutexLock l;
+
+	unsigned int markCount = 1;
 	ObjectWrapper* pWrapper = ptr->wrapper;
 	pWrapper->isInUse = true;
+
 	SmartPtrManager* ptrManager = SmartPtrManager::getInstance();
-	LinkNode * p= (LinkNode*)ptrManager->pEmbeddedPtrHead->pNext;
-	int i=0;
+	LinkNode* p= (LinkNode*)ptrManager->pEmbeddedPtrHead->pNext;
+
 	while(p!=ptrManager->pEmbeddedPtrTail)
 	{
-		//++markCount;
 		//SmartPtr<void>* point = static_cast<SmartPtr<void>*>(p);
 		SmartPtr<void>* point = (SmartPtr<void>*)p;
 		if(!(point->wrapper->isInUse) && pWrapper->contain(point))
 		{
 			//point is in scope of ptr
-			mark(point);
+			markCount += mark(point);
 		}
 		p= (LinkNode*)p->pNext;
 	}
+	return markCount;
 }
 
+//TODO: 释放循环引用对象(可能存在释放顺序上的错误风险。待完善！)
+//ref: http://kaweh.candy.blog.163.com/blog/static/368187722008217111254485/
 void System::gc()
 {
 	//LOG_FATAL("Begin mark ptr");
-	//markCount = 0;
+	unsigned int markCount = 0;
+
 	GlobalMutexLock l;
-	ptrTrace("to collect garbage\r\n");
+	ptrTrace("GC: to collect garbage\r\n");
 	SmartPtrManager* ptrManager = getSmartPtrManager();
 	WrapperManager *wrapManager = getWrapperManager();
 	LinkNode* node = (LinkNode*)ptrManager->pHead->pNext;
@@ -270,7 +273,8 @@ void System::gc()
 	}
 
 	//mark all point as nouse
-	for(WrapperManager::WrapperSet::iterator i = wrapManager->wrappers.begin(); i !=  wrapManager->wrappers.end(); i++)
+	WrapperManager::WrapperSet::iterator i = wrapManager->wrappers.begin();
+	for(; i != wrapManager->wrappers.end(); i++)
 	{
 		(*i).p->isInUse = false;
 	}
@@ -279,41 +283,47 @@ void System::gc()
 	node= (LinkNode*)ptrManager->pUserPtrHead->pNext;
 	while(node!=ptrManager->pUserPtrTail)
 	{
-		mark(static_cast<SmartPtr<void>*>(node));
+		markCount += mark(static_cast<SmartPtr<void>*>(node));
 		node=node->pNext;
 	}
 	
-	//LOG_FATAL("Finish mark. %d ptr processed, total %d objects", markCount, WrapperManager::getInstance()->wrappers.size());
+	ptrTrace("GC: finished mark, %d ptr processed, total %d objects\r\n",
+		markCount, WrapperManager::getInstance()->wrappers.size());
 
 	//clear all unused object
 	m_nGcCount = 0;
 	m_bCollecting = true;
 
-#if 0
+#if 0 // 为了保证正确的顺序进行释放,不使用这个简单的方法
 	/**
-	 * use a vector to store all the pointer that are no used. Because I can't delete the wrapper object during 
-	 * iterating
+	 * use a vector to store all the pointer that are no used.
+	 * because we can't delete the wrapper object during iterating
 	 */
 	std::vector<WrapperPointer> garbage;
-	for(WrapperManager::WrapperSet::iterator i = wrapManager->wrappers.begin(); i !=  wrapManager->wrappers.end(); i++)
+	for(WrapperManager::WrapperSet::iterator i = wrapManager->wrappers.begin();
+		i !=  wrapManager->wrappers.end(); i++)
 	{
 		WrapperPointer wp = *i;
 		ObjectWrapper *pWrap = wp.p;
+		//no other reachable object use this one
 		if(!pWrap->isInUse)
-		{//no other reachable object use this one
+		{
 			m_nGcCount ++;
 			garbage.push_back(wp);
-			
 		}
 	}
-	for(std::vector<WrapperPointer>::iterator i = garbage.begin(); i != garbage.end(); i++)
+	for(std::vector<WrapperPointer>::iterator i = garbage.begin();
+		i != garbage.end(); i++)
 	{
 		WrapperPointer wp = *i;
 		wrapManager->wrappers.erase(wp);
 		delete (wp).p; //delete the wrapper. which also make memory reclaimed
 		//wrapManager->collect((*i).p); //collect this object and the wrapper object
 	}
-#else //回收垃圾,千万注意回收的顺序,WrapperSet是按照地址降序排的(后创建的放在前面,可能不完全按照创建顺序来的)
+
+#else
+	//回收垃圾,千万注意回收的顺序,WrapperSet是按照地址降序排的
+	//(后创建的放在前面, 可能不完全按照创建顺序来的)
 	std::vector<WrapperPointer> garbageList;
 	for(WrapperManager::WrapperSet::iterator i = wrapManager->wrappers.begin(); i !=  wrapManager->wrappers.end(); i++)
 	{
@@ -327,57 +337,45 @@ void System::gc()
 			garbageList.insert(garbageList.begin(),wp);
 		}
 	}
+
 	std::vector<WrapperPointer> garbageQueue;
-	for(std::vector<WrapperPointer>::iterator i = garbageList.begin(); i != garbageList.end(); i++)
+	for(std::vector<WrapperPointer>::iterator i = garbageList.begin();
+		i != garbageList.end(); i++)
 	{
 		ObjectWrapper *pWrap=(*i).p;
+		//删除顺序(由于没有什么好办法来保证正确的释放顺序,不使用addGarbage,直接释放) 
+		//addGarbage(pWrap,garbageList,garbageQueue);//将自己及父对象添加到垃圾队列
 		wrapManager->collect(pWrap);
-		//删除算法: 
-		//addGarbage(pWrap,garbageList,garbageQueue);//自己及父对象添加到垃圾队列
-	}
-	for(std::vector<WrapperPointer>::iterator i = garbageQueue.begin(); i != garbageQueue.end(); i++)
-	{
-		ObjectWrapper *pWrap=(*i).p;
-		wrapManager->collect(pWrap); //collect this object and the wrapper object
 	}
 #endif
 
 	m_bCollecting = false;
-	ptrTrace("%d objects collected\r\n",m_nGcCount);
-	ptrTrace("complete gc\r\n");
+	ptrTrace("GC: completed after %d objects collected\r\n", m_nGcCount);
 }
-void System::addGarbage(ObjectWrapper * pWrap, vector<WrapperPointer>& garbageList, vector<WrapperPointer>& garbageQueue)
+
+//此方法的目标是找到一种正确的循环引用释放顺序,由于父指针可能会在析构时调用子指针
+//所以先释放父指针是正确的(否则子指针先析构将导致非法的访问).
+//不过理论上先释放后创建的指针(子指针)貌似也是合理的？
+//所以没法实现所谓正确顺序, 不管如何删除都依赖于用户程序的逻辑！
+void System::addGarbage(ObjectWrapper* pWrap,
+	vector<WrapperPointer>& garbageList, vector<WrapperPointer>& garbageQueue)
 {
 	auto itor=std::find(garbageQueue.begin(),garbageQueue.end(),pWrap);
 	if(itor==garbageQueue.end())
 	{
+		//待释放指针插入到队列头上(最先添加的会被下一个顶到后面去)
 		garbageQueue.insert(garbageQueue.begin(),pWrap);
+
 		SmartPtrManager* ptrManager = getSmartPtrManager();
-		for(vector<WrapperPointer>::iterator i=garbageList.begin(); i!= garbageList.end(); i++)
+
+		//遍历其它需要释放的指针, 如果有父对象(包含待释放指针)则添加到垃圾队列头
+		vector<WrapperPointer>::iterator i=garbageList.begin();
+		for(; i!= garbageList.end(); i++)
 		{
 			ObjectWrapper *pWrapOther=(*i).p;
-			LinkNode* p= (LinkNode*)ptrManager->pEmbeddedPtrHead->pNext;
-			while(p!=ptrManager->pEmbeddedPtrTail)
-			{
-				SmartPtr<void>* pSmartPtr=static_cast<SmartPtr<void>*>(p);
-				if(pSmartPtr->getTarget()==pWrap->getTarget())
-				{
-					if(pWrapOther->contain(pSmartPtr))
-						addGarbage(pWrapOther,garbageList, garbageQueue);
-				}
-				p=p->pNext;
-			}
-			p= (LinkNode*)ptrManager->pUserPtrHead->pNext;
-			while(p!=ptrManager->pUserPtrTail)
-			{
-				SmartPtr<void>* pSmartPtr=static_cast<SmartPtr<void>*>(p);
-				if(pSmartPtr->getTarget()==pWrap->getTarget())
-				{
-					if(pWrapOther->contain(pSmartPtr))
-						addGarbage(pWrapOther,garbageList, garbageQueue);
-				}
-				p=p->pNext;
-			}			
+			//TODO: 指针被包含在父对象中(如何实现方法isParentOf)
+			//if(pWrapOther->isParentOf(pWrap))
+			//	addGarbage(pWrapOther,garbageList,garbageQueue);
 		}
 	}
 }
@@ -452,16 +450,16 @@ void System::destroy()
 	LogManager::destroy();
 }
 
-void System::debugInfo(const char* str , ...)
+void System::debugInfo(const char* str, ...)
 {
-	va_list vlist;  
-	//可变参数起始位置。   
-	va_start(vlist , str );  
-	char a [1024] ;  
-	//传递可变参数。  
-	vsprintf_s(a , str  , vlist);  
-	OutputDebugStringA(a);  
-	va_end(vlist); 
+	va_list vlist;
+	//可变参数起始位置
+	va_start(vlist, str);
+	//传递可变参数
+	char buf[1024*4];
+	vsprintf_s(buf, str, vlist);
+	OutputDebugStringA(buf);
+	va_end(vlist);
 }
 
 

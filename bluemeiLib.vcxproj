@@ -131,6 +131,7 @@
     <ClCompile Include="src\template\TemplateParser.cpp" />
     <ClCompile Include="src\thread\CriticalLock.cpp" />
     <ClCompile Include="src\thread\LambdaThread.cpp" />
+    <ClCompile Include="src\thread\MessageThread.cpp" />
     <ClCompile Include="src\thread\MutexLock.cpp" />
     <ClCompile Include="src\thread\ResourceLock.cpp" />
     <ClCompile Include="src\thread\Thread.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="src\thread\ThreadException.h" />
     <ClInclude Include="src\thread\ThreadPool.h" />
     <ClInclude Include="src\thread\Timer.h" />
+    <ClInclude Include="src\thread\UniqueLock.h" />
     <ClInclude Include="src\thread\WorkThread.h" />
     <ClInclude Include="src\type\ArrayList.h" />
     <ClInclude Include="src\type\BString.h" />
@@ -219,6 +221,7 @@
     <ClInclude Include="src\type\LinkedList.h" />
     <ClInclude Include="src\type\MultiValueHashMap.h" />
     <ClInclude Include="src\type\Pair.h" />
+    <ClInclude Include="src\type\PriorityQueue.h" />
     <ClInclude Include="src\type\SortArray.h" />
     <ClInclude Include="src\type\StringBuilder.h" />
     <ClInclude Include="src\type\Vector.h" />
@@ -232,7 +235,6 @@
     <ClInclude Include="src\utils\MemoryPool.h" />
     <ClInclude Include="src\utils\MultiValueHashMap.h" />
     <ClInclude Include="src\utils\Observer.h" />
-    <ClInclude Include="src\utils\PriorityQueue.h" />
     <ClInclude Include="src\utils\Ptr.h" />
     <ClInclude Include="src\utils\SimpleCfgFile.h" />
     <ClInclude Include="src\utils\SmartPtr.h" />
