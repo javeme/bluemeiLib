@@ -26,7 +26,7 @@ bool TypeManager::hasRegister(Object* p)
 {
 	if (p==nullptr)
 		return true;
-	auto conver=typeMap.get(getTypeInfo(p));
+	auto conver=m_typeMap.get(getTypeInfo(p));
 	if(conver==nullptr)
 		return false;
 	else
@@ -35,13 +35,13 @@ bool TypeManager::hasRegister(Object* p)
 
 void TypeManager::destroy()
 {
-	auto i=typeMap.iterator();
+	auto i=m_typeMap.iterator();
 	while(i->hasNext())
 	{
 		delete i->next().value;
 	}
-	typeMap.releaseIterator(i);
-	typeMap.clear();
+	m_typeMap.releaseIterator(i);
+	m_typeMap.clear();
 }
 
 }//end of namespace bluemei

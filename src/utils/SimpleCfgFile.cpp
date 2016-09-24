@@ -5,7 +5,7 @@ namespace bluemei{
 	
 SimpleCfgFile::SimpleCfgFile(const string& path)
 {	
-	isChanged=false;
+	m_isChanged=false;
 	readPropertyFromFile(path);
 }
 SimpleCfgFile::~SimpleCfgFile(void)
@@ -14,17 +14,17 @@ SimpleCfgFile::~SimpleCfgFile(void)
 }
 void SimpleCfgFile::readPropertyFromFile(const string& path)
 {
-	if(isChanged)
+	if(m_isChanged)
 		this->saveProperty();
 
-	this->filePath = path;
+	this->m_filePath = path;
 	File file(path,"r");
-	content="";
+	m_content="";
 	string line,key,value;
 	int pos=-1;
 	while(file.readLine(line)>0)
 	{		
-		content.append(line+"\r\n");
+		m_content.append(line+"\r\n");
 		//去除注释
 		pos=line.find('#');
 		if(pos>=0)
@@ -38,7 +38,7 @@ void SimpleCfgFile::readPropertyFromFile(const string& path)
 			value=line.substr(pos+1);
 			Util::trim(key);
 			Util::trim(value);
-			propertiesMap.insert(make_pair(key,value)); 
+			m_propertiesMap.insert(make_pair(key,value)); 
 		}
 	}
 	file.close();
@@ -46,8 +46,8 @@ void SimpleCfgFile::readPropertyFromFile(const string& path)
 //获取配置属性
 bool SimpleCfgFile::getProperty(const string& key,string& value)
 {
-	PropertiesMap::iterator it=propertiesMap.find(key);
-	if(it!=propertiesMap.end()) 
+	PropertiesMap::iterator it=m_propertiesMap.find(key);
+	if(it!=m_propertiesMap.end()) 
 	{
 		value=it->second;
 		return true;
@@ -75,46 +75,46 @@ bool SimpleCfgFile::setProperty(const string& key,const string& value)
 	if(getProperty(key,oldValue))//已存在
 	{
 		//replaceString(content,oldValue,value);//可能替换掉其它字串,如何改进?
-		int start=content.find(key);
-		start=content.find("=",start);
+		int start=m_content.find(key);
+		start=m_content.find("=",start);
 		start+=1;
-		int end=content.find(oldValue,start);//从'='后开始查找
-		content.replace(end ,oldValue.length() ,value); 
-		isChanged=true;
+		int end=m_content.find(oldValue,start);//从'='后开始查找
+		m_content.replace(end ,oldValue.length() ,value); 
+		m_isChanged=true;
 	}
 	else//不存在,添加
 	{
 		//string pair=key+"="+value+"\r\n";
-		content.append(key+"="+value+"\r\n");
-		isChanged=true;
+		m_content.append(key+"="+value+"\r\n");
+		m_isChanged=true;
 	}
-	return isChanged;
+	return m_isChanged;
 }
 bool SimpleCfgFile::removeProperty(const string& key)
 {
-	int start=content.find(key),end;
+	int start=m_content.find(key),end;
 	if(start>=0)
 	{
-		end=content.find("\n",start);
+		end=m_content.find("\n",start);
 		if(end<0)//最后一行
-			end=content.length();
+			end=m_content.length();
 		if(end>0)
 		{
-			content.replace(start ,end-start+1 ,"");
-			isChanged=true;
+			m_content.replace(start ,end-start+1 ,"");
+			m_isChanged=true;
 		}
 	}
-	return isChanged;
+	return m_isChanged;
 }
 //将改变的属性保存到文件中去
 void SimpleCfgFile::saveProperty()
 {
-	if(!isChanged)
+	if(!m_isChanged)
 		return;
 	//写入内容
-	File file(filePath,"w");
-	file.writeBytes(content.c_str(),content.length());
-	isChanged=false;
+	File file(m_filePath,"w");
+	file.writeBytes(m_content.c_str(),m_content.length());
+	m_isChanged=false;
 }
 
 }//end of namespace bluemei

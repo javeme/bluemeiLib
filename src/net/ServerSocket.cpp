@@ -7,7 +7,7 @@ namespace bluemei{
 ServerSocket::ServerSocket()
 {
 	m_bClose=true;
-	sockS=INVALID_SOCKET;
+	m_socket=INVALID_SOCKET;
 
 	m_sPort=0;
 }
@@ -15,7 +15,7 @@ ServerSocket::ServerSocket()
 ServerSocket::ServerSocket(int nPort)
 {
 	m_bClose=true;
-	sockS=INVALID_SOCKET;
+	m_socket=INVALID_SOCKET;
 
 	listen(nPort);
 }
@@ -35,8 +35,8 @@ ServerSocket::~ServerSocket()
 int ServerSocket::createSocket(int nPort)
 {
 	this->m_sPort=nPort;
-	sockS=socket(AF_INET,SOCK_STREAM,0);
-	if(sockS==INVALID_SOCKET)
+	m_socket=socket(AF_INET,SOCK_STREAM,0);
+	if(m_socket==INVALID_SOCKET)
 	{
 		return WSAGetLastError();
 	}
@@ -49,14 +49,14 @@ int ServerSocket::createSocket(int nPort)
 	serverAddr.sin_addr.S_un.S_addr=htonl(INADDR_ANY);
 
 	//绑定
-	int nRetCode=::bind(sockS,(sockaddr*)&serverAddr,lenOfServerAddr);
+	int nRetCode=::bind(m_socket,(sockaddr*)&serverAddr,lenOfServerAddr);
 	if(nRetCode==SOCKET_ERROR)
 	{
 		return WSAGetLastError();
 	}
 	//监听
 	int maxWaitCon = SOMAXCONN-1;
-	nRetCode=::listen(sockS,maxWaitCon);
+	nRetCode=::listen(m_socket,maxWaitCon);
 	if(nRetCode==SOCKET_ERROR)
 	{
 		return WSAGetLastError();
@@ -69,7 +69,7 @@ int ServerSocket::createSocket(int nPort)
 ClientSocket* ServerSocket::accept()
 {
 	//监听套接字设置为异步模式
-	//ioctlsocket(sockS,FIONBIO,&arg);
+	//ioctlsocket(m_serverSocket,FIONBIO,&arg);
 	//关闭监控线程句柄
 	//ResumeThread(hComm);
 	//CloseHandle(hComm);
@@ -77,7 +77,7 @@ ClientSocket* ServerSocket::accept()
 	//接受连接请求
 	sockaddr_in clientAddr;
 	int lenOfClientAddr=sizeof(clientAddr);
-	SOCKET sockC=::accept(sockS,(sockaddr*)&clientAddr,&lenOfClientAddr);
+	SOCKET sockC=::accept(m_socket,(sockaddr*)&clientAddr,&lenOfClientAddr);
 	if(sockC==INVALID_SOCKET)
 	{
 		throw SocketException(WSAGetLastError());
@@ -101,7 +101,7 @@ void ServerSocket::listen(int nPort)
 //关闭
 void ServerSocket::close()
 {
-	int nReturnCode=closesocket(this->sockS);
+	int nReturnCode=closesocket(this->m_socket);
 	if(nReturnCode==SOCKET_ERROR)
 	{
 		throw SocketException(::WSAGetLastError());
@@ -110,7 +110,7 @@ void ServerSocket::close()
 }
 
 ServerSocket::operator socket_t()const{
-	return sockS;
+	return m_socket;
 }
 
 void ServerSocket::destroy(ClientSocket*& pClientSocket)

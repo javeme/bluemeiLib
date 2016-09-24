@@ -6,24 +6,24 @@ namespace bluemei{
 
 IOCompletionPort::IOCompletionPort()
 {
-	impl=new IOCompletionPortImpl();
+	m_impl=new IOCompletionPortImpl();
 	create();
 }
 
 IOCompletionPort::~IOCompletionPort()
 {
 	close();
-	delete impl;
+	delete m_impl;
 }
 
 void IOCompletionPort::create()
 {
-	return impl->create();
+	return m_impl->create();
 }
 
 void IOCompletionPort::close()
 {
-	return impl->close();
+	return m_impl->close();
 }
 
 }//end of namespace bluemei

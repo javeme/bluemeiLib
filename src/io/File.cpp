@@ -27,15 +27,15 @@ File::~File()
 	}catch (Exception& e){
 		ErrorHandler::handle(e);
 	}
-	if(buffer)
-		delete[]buffer;
+	if(m_buffer)
+		delete[]m_buffer;
 }
 void File::init(String path,String openMode,size_t bufferSize)
 {
 	m_bCloseAble=false;
 	m_nBufferSize=bufferSize;
 	m_nUsedBufLength=0;
-	buffer=new char[m_nBufferSize];
+	m_buffer=new char[m_nBufferSize];
 	m_pFile=NULL;
 	if(path!=PATH_NULL)
 	{
@@ -43,8 +43,8 @@ void File::init(String path,String openMode,size_t bufferSize)
 			openFile(path,openMode);
 		}catch(...)
 		{
-			delete[] buffer;
-			buffer=NULL;
+			delete[] m_buffer;
+			m_buffer=NULL;
 			throw;
 		}
 	}
@@ -83,11 +83,11 @@ size_t File::writeBytes(const char buf[],size_t length)
 		if(m_nUsedBufLength+length>m_nBufferSize)//如果溢出,则先存入部分
 		{
 			emptyLen=m_nBufferSize-m_nUsedBufLength;
-			memcpy(buffer+m_nUsedBufLength,buf,emptyLen);
+			memcpy(m_buffer+m_nUsedBufLength,buf,emptyLen);
 			m_nUsedBufLength+=emptyLen;
 			flush();//m_nUsedBufLength=0
 		}
-		memcpy(buffer+m_nUsedBufLength,buf+emptyLen,length-emptyLen);
+		memcpy(m_buffer+m_nUsedBufLength,buf+emptyLen,length-emptyLen);
 		m_nUsedBufLength+=(length-emptyLen);
 		return length;
 	}
@@ -249,7 +249,7 @@ void File::flush()
 {
 	if(m_nUsedBufLength==0)
 		return;
-	(void)this->write((const byte*)buffer, m_nUsedBufLength);	
+	(void)this->write((const byte*)m_buffer, m_nUsedBufLength);
 	m_nUsedBufLength=0;
 }
 

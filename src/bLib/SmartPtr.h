@@ -74,8 +74,8 @@ public:
 		ptrTrace("SmartPtr con (T* pObj) %p\r\n",this);
 		getWrapper(pObj);
 
-		targetObj = pObj;
-		reserved = 0;
+		m_targetObj = pObj;
+		m_reserved = 0;
 	}
 		
 	virtual ~SmartPtr(void)
@@ -86,7 +86,7 @@ public:
 		//maybe not exists this scenarios due to GlobalMutexLock
 		if(System::instance().isCollecting())
 			return;
-		wrapper->disattach();
+		m_wrapper->disattach();
 	}
 
 	SmartPtr(const SmartPtr<T>& ptr)
@@ -94,25 +94,25 @@ public:
 		GlobalMutexLock l;
 		SmartPtrManager::getInstance()->add(this);
 		ptrTrace("SmartPtr con (const SmartPtr<T>& ptr) %p\r\n",this);
-		wrapper = ptr.wrapper;
-		wrapper->attach();
+		m_wrapper = ptr.m_wrapper;
+		m_wrapper->attach();
 
-		targetObj = ptr.targetObj;
-		reserved = ptr.reserved;
+		m_targetObj = ptr.m_targetObj;
+		m_reserved = ptr.m_reserved;
 	}
 	
 	SmartPtr<T>& operator=(const SmartPtr<T> &ptr)
 	{
 		GlobalMutexLock l;
 		ptrTrace("SmartPtr operator=(const SmartPtr<T> &ptr)\r\n");
-		if(wrapper == ptr.wrapper)//assign to self
+		if(m_wrapper == ptr.m_wrapper)//assign to self
 			return *this;
-		wrapper->disattach();
-		wrapper = ptr.wrapper;
-		wrapper->attach();
+		m_wrapper->disattach();
+		m_wrapper = ptr.m_wrapper;
+		m_wrapper->attach();
 
-		targetObj = ptr.targetObj;
-		reserved = ptr.reserved;
+		m_targetObj = ptr.m_targetObj;
+		m_reserved = ptr.m_reserved;
 
 		return *this;
 	}
@@ -122,11 +122,11 @@ public:
 		GlobalMutexLock l;
 		ptrTrace("SmartPtr operator=(T* p)\r\n");
 
-		ObjectWrapper *old = wrapper;
+		ObjectWrapper *old = m_wrapper;
 		getWrapper(pObj);
 		old->disattach();
 
-		targetObj = pObj;
+		m_targetObj = pObj;
 
 		return *this;
 	}
@@ -136,7 +136,7 @@ public:
 		return this->pWrapper->pObj == p;
 	}*/
 	int operator==(T* p) const {
-		return this->targetObj == p;
+		return this->m_targetObj == p;
 	}
 
 	operator T* () const {
@@ -162,9 +162,7 @@ public:
 
 	template<typename S>
 	const SmartPtr<S> dynamicCast() const { return dynamic_cast<S*>(getTarget()); }
-
-	friend class System;
-
+	
 	/*template<typename S, typename V>
 	friend SmartPtr<S> ptr_static_cast(SmartPtr<V> ptr);
 
@@ -172,22 +170,23 @@ public:
 	friend SmartPtr<S> ptr_dynamic_cast(SmartPtr<V> ptr);*/
 protected:
 	inline T* getTarget() const {
-		return targetObj;
+		return m_targetObj;
 	}
 
 	inline void* getTargetAddr() {
-		return wrapper->getTarget();
+		return m_wrapper->getTarget();
 	}
 
 	ObjectWrapper* getWrapper(T* pObj) {
-		this->wrapper = WrapperManager::getInstance()->getWrapper(pObj);
-		return this->wrapper;
+		this->m_wrapper = WrapperManager::getInstance()->getWrapper(pObj);
+		return this->m_wrapper;
 	}
 protected:
-	T* targetObj;
-	int reserved; //reserved
+	T* m_targetObj;
+	int m_reserved; //reserved
 
-	ObjectWrapper *wrapper;
+	ObjectWrapper *m_wrapper;
+	friend class System;
 };
 
 
@@ -200,29 +199,29 @@ public:
 	ArrayPtr<T>& operator=(T* p)
 	{
 		SmartPtr<T>::operator=(p);
-		SmartPtr<T>::wrapper->setFinalizer(&ArrayDestructorStruct<T>::destroy);
-		upBound = SmartPtr<T>::wrapper->getSize()/sizeof(T);
+		SmartPtr<T>::m_wrapper->setFinalizer(&ArrayDestructorStruct<T>::destroy);
+		m_upBound = SmartPtr<T>::m_wrapper->getSize()/sizeof(T);
 		return *this;
 	}
 	ArrayPtr<T>& operator=(const ArrayPtr<T> &ptr)
 	{
 		SmartPtr<T>::operator=(ptr);
-		upBound = ptr->upBound;
+		m_upBound = ptr->upBound;
 		return *this;
 	}
 	ArrayPtr(const ArrayPtr<T>& ptr):SmartPtr<T>(ptr)
 	{
-		upBound = ptr.upBound;
+		m_upBound = ptr.upBound;
 	}
 	ArrayPtr(T pObj[]=NULL):SmartPtr<T>(pObj)
 	{
-		SmartPtr<T>::wrapper->setFinalizer(&ArrayDestructorStruct<T>::destroy);
+		SmartPtr<T>::m_wrapper->setFinalizer(&ArrayDestructorStruct<T>::destroy);
 		///determine size of an array block
 #ifdef _MSC_VER
 #pragma warning (push)
 #pragma warning (disable:4267)
 #endif
-		upBound = SmartPtr<T>::wrapper->getSize()/sizeof(T);
+		m_upBound = SmartPtr<T>::m_wrapper->getSize()/sizeof(T);
 #ifdef _MSC_VER
 #pragma warning (pop)
 #endif
@@ -243,7 +242,7 @@ public:
 	friend class System;
 protected:
 	//up bound of array
-	int upBound;
+	int m_upBound;
 };
 
 template<typename S, typename T>

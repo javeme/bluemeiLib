@@ -108,12 +108,12 @@ bool Waiter::wait(unsigned int interval/*=1000*/)
 {
 	if(interval == 0)
 		interval = 1;
-	unsigned int times = this->timeout / interval;
-	for(unsigned int i = 0; !this->condition(); i++)
+	unsigned int times = this->m_timeout / interval;
+	for(unsigned int i = 0; !this->m_condition(); i++)
 	{
 		Thread::sleep(interval);
-		if(this->timeout > 0 && i >= times)
-			throw TimeoutException(this->timeout);
+		if(this->m_timeout > 0 && i >= times)
+			throw TimeoutException(this->m_timeout);
 	}
 	return true;
 }

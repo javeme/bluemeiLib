@@ -229,7 +229,7 @@ unsigned int System::mark(SmartPtr<void>* ptr)
 	GlobalMutexLock l;
 
 	unsigned int markCount = 1;
-	ObjectWrapper* pWrapper = ptr->wrapper;
+	ObjectWrapper* pWrapper = ptr->m_wrapper;
 	pWrapper->isInUse = true;
 
 	SmartPtrManager* ptrManager = SmartPtrManager::getInstance();
@@ -239,7 +239,7 @@ unsigned int System::mark(SmartPtr<void>* ptr)
 	{
 		//SmartPtr<void>* point = static_cast<SmartPtr<void>*>(p);
 		SmartPtr<void>* point = (SmartPtr<void>*)p;
-		if(!(point->wrapper->isInUse) && pWrapper->contain(point))
+		if(!(point->m_wrapper->isInUse) && pWrapper->contain(point))
 		{
 			//point is in scope of ptr
 			markCount += mark(point);

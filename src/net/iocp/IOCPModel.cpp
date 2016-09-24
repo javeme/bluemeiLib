@@ -128,7 +128,7 @@ IOCPModel::IOCPModel()
 {
 	m_pIOCPEventHandler=nullptr;
 
-	//listenSocket=0;
+	//m_listenSocket=0;
 	//clientSocket=0;
 
 	m_pIOThreadPool=nullptr;
@@ -146,9 +146,9 @@ IOCPModel::~IOCPModel()
 
 void IOCPModel::listen(int port)
 {
-	listenSocket.listen(port);
+	m_listenSocket.listen(port);
 	m_oIOCompletionPort.registerEvents(EVENT_FIRST_SOCKET|EVENT_ACCEPT|EVENT_ALL,
-		listenSocket);//EPOLLIN|EPOLLET
+		m_listenSocket);//EPOLLIN|EPOLLET
 
 	start();
 }
@@ -158,8 +158,8 @@ void IOCPModel::unlisten()
 	if(!m_bRunning)
 		return;
 	m_oIOCompletionPort.unregisterEvents(EVENT_ACCEPT|EVENT_ALL,
-		listenSocket);//EPOLLIN|EPOLLET
-	listenSocket.close();
+		m_listenSocket);//EPOLLIN|EPOLLET
+	m_listenSocket.close();
 
 	closeAllClients();
 	stop();
@@ -170,7 +170,7 @@ socket_t IOCPModel::connect(cstring ip,int port)
 	ClientSocket sock;
 	sock.connect(ip,port);
 	socket_t s=sock.detach();
-	clientSockets.put(s,s);
+	m_clientSockets.put(s,s);
 
 	start();
 	m_oIOCompletionPort.registerEvents(EVENT_FIRST_SOCKET|EVENT_ALL,s);
@@ -213,7 +213,7 @@ void IOCPModel::start()
 	 */
 	static auto handleAccept=[this](IOEvent& ev) {
 		//继续监听
-		m_oIOCompletionPort.registerEvents(EVENT_ACCEPT|EVENT_ALL,listenSocket);
+		m_oIOCompletionPort.registerEvents(EVENT_ACCEPT|EVENT_ALL,m_listenSocket);
 
 		socket_t sock=0;
 
@@ -226,7 +226,7 @@ void IOCPModel::start()
 		//还没有建立新的连接
 		else
 		{
-			std::auto_ptr<ClientSocket> client(listenSocket.accept());
+			std::auto_ptr<ClientSocket> client(m_listenSocket.accept());
 			sock=client->detach();
 			ev.data.fd=sock;
 			ev.events |= EVENT_ACCEPT;
@@ -249,7 +249,7 @@ void IOCPModel::start()
 		{
 			IOEvent& ev=events[i];
 			//有新的连接需要(或已)建立
-			if(ev.data.fd==listenSocket)
+			if(ev.data.fd==m_listenSocket)
 			{
 				try {
 					handleAccept(ev);
@@ -346,19 +346,19 @@ int IOCPModel::getLastError()
 bool IOCPModel::addClient(socket_t sock)
 {
 	socket_t v=sock;
-	return clientSockets.put(sock,v);
+	return m_clientSockets.put(sock,v);
 }
 
 bool IOCPModel::removeClient(socket_t sock)
 {
 	m_oIOCompletionPort.unregisterEvents(EVENT_ACCEPT|EVENT_ALL,sock);
 	socket_t v;
-	return clientSockets.remove(sock,v);
+	return m_clientSockets.remove(sock,v);
 }
 
 void IOCPModel::closeAllClients()
 {
-	auto iter = clientSockets.iterator();
+	auto iter = m_clientSockets.iterator();
 	while (iter->hasNext())
 	{
 		socket_t sock = iter->next().key;
@@ -369,7 +369,7 @@ void IOCPModel::closeAllClients()
 			notifyException(e);
 		}
 	}
-	clientSockets.releaseIterator(iter);
+	m_clientSockets.releaseIterator(iter);
 }
 
 

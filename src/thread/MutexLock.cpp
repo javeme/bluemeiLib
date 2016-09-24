@@ -7,10 +7,10 @@ namespace bluemei{
 
 MutexLock::MutexLock(bool initialOwner,cstring name)
 {
-	waitCount.counter = 0;
+	m_waitCount.counter = 0;
 	//初始化临界区
-	mutex = ::CreateMutexA(NULL, initialOwner, name);
-	if(mutex==0)
+	m_mutex = ::CreateMutexA(NULL, initialOwner, name);
+	if(m_mutex==0)
 	{
 		int error=::GetLastError();
 		String str=String::format("init mutex failed : %d",error);
@@ -21,19 +21,19 @@ MutexLock::MutexLock(bool initialOwner,cstring name)
 MutexLock::~MutexLock(void)
 {
 	//释放临界区
-	if(mutex!=0){
-		BOOL success=::CloseHandle(mutex);
-		mutex=0;
+	if(m_mutex!=0){
+		BOOL success=::CloseHandle(m_mutex);
+		m_mutex=0;
 	}
 }
 
 void MutexLock::getLock()
 {
 	//自增(原子操作)
-	unsigned int count=InterlockedIncrement(&waitCount.counter);
+	unsigned int count=InterlockedIncrement(&m_waitCount.counter);
 
 	//进入临界区
-	unsigned long result=::WaitForSingleObject(mutex, INFINITE);
+	unsigned long result=::WaitForSingleObject(m_mutex, INFINITE);
 	//bAlertable为TRUE时可能发生错误WAIT_IO_COMPLETION
 	if(result==WAIT_FAILED || result==WAIT_ABANDONED)
 	{
@@ -43,13 +43,13 @@ void MutexLock::getLock()
 		throw Exception(str);
 	}
 
-	InterlockedDecrement(&waitCount.counter);
+	InterlockedDecrement(&m_waitCount.counter);
 }
 
 void MutexLock::releaseLock()
 {
 	//离开临界区
-	BOOL success = ::ReleaseMutex(mutex);
+	BOOL success = ::ReleaseMutex(m_mutex);
 	if(!success)
 	{
 		int error=::GetLastError();
@@ -61,7 +61,7 @@ void MutexLock::releaseLock()
 
 long MutexLock::getWaitCount() const
 {
-	return waitCount.counter;
+	return m_waitCount.counter;
 }
 
 
@@ -70,7 +70,7 @@ long MutexLock::getWaitCount() const
 
 MutexLock::MutexLock(bool initialOwner,cstring name)
 {
-	atomic_set(&waitCount, 0);
+	atomic_set(&m_waitCount, 0);
 
 	pthread_mutexattr_t attr;
 	pthread_mutexattr_init(&attr);
@@ -88,10 +88,10 @@ MutexLock::MutexLock(bool initialOwner,cstring name)
 			PROT_READ | PROT_WRITE, MAP_SHARED,
 			fd, 0);
 		close(fd);
-		mutex = *sharedMutex;
+		m_mutex = *sharedMutex;
 	}
 
-	int error=pthread_mutex_init(&mutex,&attr);
+	int error=pthread_mutex_init(&m_mutex,&attr);
 	pthread_mutexattr_destroy(&attr);
 	if(error!=0)
 	{
@@ -104,16 +104,16 @@ MutexLock::MutexLock(bool initialOwner,cstring name)
 MutexLock::~MutexLock(void)
 {
 	//释放临界区
-	int error=pthread_mutex_destroy(&mutex);
+	int error=pthread_mutex_destroy(&m_mutex);
 }
 
 void MutexLock::getLock()
 {
 	//自增(原子操作)
-	atomic_inc(&waitCount);
+	atomic_inc(&m_waitCount);
 
 	//进入临界区
-	int error=pthread_mutex_lock(&mutex);
+	int error=pthread_mutex_lock(&m_mutex);
 	if(error!=0)
 	{
 		String str=String::format("MutexLock::getLock: wait for mutex "\
@@ -121,13 +121,13 @@ void MutexLock::getLock()
 		throw Exception(str);
 	}
 
-	atomic_dec(&waitCount);
+	atomic_dec(&m_waitCount);
 }
 
 void MutexLock::releaseLock()
 {
 	//离开临界区
-	int error=pthread_mutex_unlock(&mutex);
+	int error=pthread_mutex_unlock(&m_mutex);
 	if(error!=0)
 	{
 		String str=String::format("MutexLock::releaseLock: release mutex "\
@@ -138,7 +138,7 @@ void MutexLock::releaseLock()
 
 long MutexLock::getWaitCount() const
 {
-	return atomic_read(&waitCount);
+	return atomic_read(&m_waitCount);
 }
 
 #endif

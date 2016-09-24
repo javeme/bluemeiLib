@@ -9,10 +9,10 @@ ResourceLock::ResourceLock(unsigned int count,cstring name)
 
 ResourceLock::~ResourceLock(void)
 {
-	if(semaphoreHandle!=0)
+	if(m_semaphore!=0)
 	{
-		BOOL success=::CloseHandle(semaphoreHandle);
-		semaphoreHandle=0;
+		BOOL success=::CloseHandle(m_semaphore);
+		m_semaphore=0;
 	}
 }
 
@@ -29,8 +29,8 @@ ResourceLock& ResourceLock::operator=(const ResourceLock& other)
 void ResourceLock::init(unsigned int count,unsigned int maxCount,cstring name)
 {
 	waitCount=0;
-	semaphoreHandle=::CreateSemaphoreA(NULL,count,maxCount,name);
-	if(semaphoreHandle==0)
+	m_semaphore=::CreateSemaphoreA(NULL,count,maxCount,name);
+	if(m_semaphore==0)
 	{
 		int error=::GetLastError();
 		String str=String::format("init semaphore failed : %d",error);
@@ -46,7 +46,7 @@ bool ResourceLock::wait(unsigned long mSecond/*=INFINITE*/)
 {
 	//waitCount++;
 	InterlockedIncrement(&waitCount);//原子操作
-	unsigned long result=::WaitForSingleObject(semaphoreHandle,mSecond);
+	unsigned long result=::WaitForSingleObject(m_semaphore,mSecond);
 	if(result==WAIT_FAILED || result==WAIT_ABANDONED)
 	{
 		int error=::GetLastError();
@@ -65,7 +65,7 @@ bool ResourceLock::wait(MutexLock& mutex,unsigned long mSecond/*=INFINITE*/)
 {
 	InterlockedIncrement(&waitCount);//原子操作
 	//解锁mutex,等待信号semaphoreHandle（原子操作）
-	unsigned long result=::SignalObjectAndWait(mutex.mutex,semaphoreHandle,
+	unsigned long result=::SignalObjectAndWait(mutex.m_mutex,m_semaphore,
 		mSecond,FALSE);
 	//重新锁定mutex
 	mutex.getLock();
@@ -86,7 +86,7 @@ long ResourceLock::signal() throw(Exception)
 {
 	long previousCount=0;
 	//增加一个信号
-	BOOL isSuccess=::ReleaseSemaphore(semaphoreHandle,1,&previousCount);
+	BOOL isSuccess=::ReleaseSemaphore(m_semaphore,1,&previousCount);
 	if(!isSuccess)
 	{
 		int error=::GetLastError();
@@ -115,7 +115,7 @@ void ResourceLock::notifyAll()
 		return;
 	
 	//增加count个信号	
-	bool isSuccess=::ReleaseSemaphore(semaphoreHandle,count,&previousCount)==TRUE;
+	bool isSuccess=::ReleaseSemaphore(m_semaphore,count,&previousCount)==TRUE;
 	if(!isSuccess)
 	{
 		int error=::GetLastError();
@@ -129,7 +129,7 @@ long ResourceLock::getWaitCount() const
 {
 	return waitCount;
 	/*long count=0;
-	bool isSuccess=::ReleaseSemaphore(semaphoreHandle,0,&count);	
+	bool isSuccess=::ReleaseSemaphore(m_semaphore,0,&count);	
 	return count;*/
 }
 

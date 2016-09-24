@@ -24,8 +24,8 @@ private:
 	MutexLock& operator=(const MutexLock& other);
 private:
 	friend class ResourceLock;
-	mutex_t mutex;
-	atomic_t waitCount;//等待的线程数(跨进程时无效)
+	mutex_t m_mutex;
+	atomic_t m_waitCount;//等待的线程数(跨进程时无效)
 public:
 	virtual void getLock();
 	virtual void releaseLock();
