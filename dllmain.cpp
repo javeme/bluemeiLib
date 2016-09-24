@@ -31,6 +31,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 		//System::getInstance().destroy();
 		break;
 	}
-	return TRUE; 
+	return TRUE;
 }
 

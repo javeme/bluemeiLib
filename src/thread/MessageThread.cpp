@@ -31,10 +31,12 @@ void MessageThread::addMessage(Message* msg)
 
 	//消息入队
 	m_messageQueue.push(msg);
-	
+
 	//通知有消息了
-	if(needNofity)
+	if(needNofity) {
+		// to ensure that notify someone to get a msg if it's waiting for one
 		m_messageLock.notify();
+	}
 }
 
 void MessageThread::clearMessage()
@@ -55,7 +57,7 @@ Message* MessageThread::peekMessage()
 	Message* msg=nullptr;
 	ScopedLock scopedLock(m_queueLock);
 
-	if(!m_messageQueue.empty()){		
+	if(!m_messageQueue.empty()){
 		msg=m_messageQueue.top();
 	}
 
@@ -67,7 +69,7 @@ Message* MessageThread::nextMessage()
 	Message* msg=nullptr;
 	ScopedLock scopedLock(m_queueLock);
 
-	if(!m_messageQueue.empty()){		
+	if(!m_messageQueue.empty()){
 		msg=m_messageQueue.top();
 		m_messageQueue.pop();
 	}

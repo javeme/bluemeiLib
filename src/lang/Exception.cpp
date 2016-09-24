@@ -27,7 +27,7 @@ Exception::Exception(Exception& e,cstring msg)
 {
 	m_nLine=0;
 	setExceptionMsg(String(msg)+"\n  "+e.toString());
-	
+
 	initCallStackTrace();
 }
 
@@ -36,7 +36,7 @@ Exception::~Exception()
 
 }
 
-void Exception::initCallStackTrace() 
+void Exception::initCallStackTrace()
 {
 	CallStackUtil *callStack=CallStackUtil::inscance();
 	callStack->obtainCallStack(m_listStackMsg);

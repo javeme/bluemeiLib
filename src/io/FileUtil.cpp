@@ -56,20 +56,20 @@ namespace bluemei{
 		assert(dirname != NULL);
 		ArrayList<String> files;
 
-		struct _finddata_t fileInfo;  
-		
+		struct _finddata_t fileInfo;
+
 		String dir = String(dirname) + "\\*";
-		long fd = _findfirst(dir.c_str(), &fileInfo); 
-		if(fd != -1)  
-		{  
+		long fd = _findfirst(dir.c_str(), &fileInfo);
+		if(fd != -1)
+		{
 			do{
-				//if((fileInfo.attrib &  _A_SUBDIR)) 
-				if(strcmp(fileInfo.name, ".") == 0 
+				//if((fileInfo.attrib &  _A_SUBDIR))
+				if(strcmp(fileInfo.name, ".") == 0
 					|| strcmp(fileInfo.name, "..") == 0)
 					continue;
 				files.add(fileInfo.name);
-			}while(_findnext(fd, &fileInfo) == 0);  
-			_findclose(fd); 
+			}while(_findnext(fd, &fileInfo) == 0);
+			_findclose(fd);
 		}
 		return files;
 	}
@@ -107,10 +107,10 @@ namespace bluemei{
 		ArrayList<String> files;
 
 		struct dirent *fileInfo;
-		DIR *dir = opendir(dirname);		
+		DIR *dir = opendir(dirname);
 		while(dir && (file=readdir(dir)))
 		{
-			if(strcmp(fileInfo->d_name, ".") == 0 
+			if(strcmp(fileInfo->d_name, ".") == 0
 				|| strcmp(fileInfo->d_name, "..") == 0)
 				continue;
 

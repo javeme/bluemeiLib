@@ -59,7 +59,7 @@ bool SimpleMemoryPool<T>::changeMaxSize( unsigned int maxSize)
 	unsigned int currentSize=m_listOriginalObject.size();
 	if(maxSize<currentSize)
 		return false;
-	
+
 	m_nMaxSize=maxSize;
 	return true;
 }

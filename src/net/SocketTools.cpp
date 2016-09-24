@@ -16,8 +16,8 @@ int SocketTools::initSocketContext()
 	WSADATA wsad;
 	WORD ver;
 	//使用2.0的库函数
-	ver=MAKEWORD(2,0);		
-	int nRetCode=WSAStartup(ver,&wsad);	
+	ver=MAKEWORD(2,0);
+	int nRetCode=WSAStartup(ver,&wsad);
 	if(nRetCode)
 	{
 		throw SocketException(::WSAGetLastError());
@@ -118,9 +118,9 @@ String SocketTools::getWinsockErrorMsg(int errCode)
 		{
 			LPVOID lpMsgBuf=NULL;
 			int len=FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_IGNORE_INSERTS|FORMAT_MESSAGE_FROM_SYSTEM,
-				NULL,errCode,0,(LPSTR)&lpMsgBuf,0,NULL);  
+				NULL,errCode,0,(LPSTR)&lpMsgBuf,0,NULL);
 			if(len>0)
-				str=(cstring)lpMsgBuf; 
+				str=(cstring)lpMsgBuf;
 			else
 				str="no description";
 			LocalFree(lpMsgBuf);

@@ -57,7 +57,7 @@ void Timer::schedule(Runnable* pTask,unsigned long delay,
 void Timer::cancel()
 {
 	if(m_bGoOn){
-		m_bGoOn=false;		
+		m_bGoOn=false;
 		m_lock.signal();//释放定时器
 		m_waitFinishLock.wait();//等待线程结束
 	}

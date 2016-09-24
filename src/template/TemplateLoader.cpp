@@ -39,7 +39,7 @@ void testTemplate()
 	ctx.put("name", "blue");
 	ctx.put("age", "28");
 	ctx.put("hello", "lee-fuck");
-	
+
 	TemplateLoader loader;
 	auto tpl = loader.load(s);
 	String rs = tpl->render(ctx);

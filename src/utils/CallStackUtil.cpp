@@ -22,7 +22,7 @@ CallStackUtil* CallStackUtil::inscance()
 
 void CallStackUtil::OnCallstackEntry( CallstackEntryType eType, CallstackEntry &entry )
 {
-	//__super::OnCallstackEntry(eType,entry); 
+	//__super::OnCallstackEntry(eType,entry);
 
 	char buffer[STACKWALK_MAX_NAMELEN];
 	if ( (eType != lastEntry) && (entry.offset != 0) )
@@ -38,11 +38,11 @@ void CallStackUtil::OnCallstackEntry( CallstackEntryType eType, CallstackEntry &
 			strcpy_s(entry.lineFileName, "(filename not available)");
 			if (entry.moduleName[0] == 0)
 				strcpy_s(entry.moduleName, "(module-name not available)");
-			_snprintf_s(buffer, STACKWALK_MAX_NAMELEN, "%s (%s) %s %p", 
+			_snprintf_s(buffer, STACKWALK_MAX_NAMELEN, "%s (%s) %s %p",
 				entry.name, entry.moduleName, entry.lineFileName,(LPVOID)entry.offset);
 		}
 		else
-			_snprintf_s(buffer, STACKWALK_MAX_NAMELEN, "%s %s (line:%d)", 
+			_snprintf_s(buffer, STACKWALK_MAX_NAMELEN, "%s %s (line:%d)",
 			entry.name, entry.lineFileName, entry.lineNumber);
 
 		//printf(buffer);

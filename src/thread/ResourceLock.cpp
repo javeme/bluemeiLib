@@ -53,7 +53,7 @@ bool ResourceLock::wait(unsigned long mSecond/*=INFINITE*/)
 		String str=String::format("wait for object failed : %d",error);
 		throw Exception(str);
 	}
-	
+
 	//waitCount--;
 	InterlockedDecrement(&waitCount);
 	return result!=WAIT_TIMEOUT;//没有超时
@@ -113,8 +113,8 @@ void ResourceLock::notifyAll()
 	int count=waitCount;
 	if(count<=0)
 		return;
-	
-	//增加count个信号	
+
+	//增加count个信号
 	bool isSuccess=::ReleaseSemaphore(m_semaphore,count,&previousCount)==TRUE;
 	if(!isSuccess)
 	{
@@ -129,7 +129,7 @@ long ResourceLock::getWaitCount() const
 {
 	return waitCount;
 	/*long count=0;
-	bool isSuccess=::ReleaseSemaphore(m_semaphore,0,&count);	
+	bool isSuccess=::ReleaseSemaphore(m_semaphore,0,&count);
 	return count;*/
 }
 

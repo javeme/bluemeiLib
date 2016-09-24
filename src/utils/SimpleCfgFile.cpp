@@ -2,9 +2,9 @@
 #include "Util.h"
 
 namespace bluemei{
-	
+
 SimpleCfgFile::SimpleCfgFile(const string& path)
-{	
+{
 	m_isChanged=false;
 	readPropertyFromFile(path);
 }
@@ -23,7 +23,7 @@ void SimpleCfgFile::readPropertyFromFile(const string& path)
 	string line,key,value;
 	int pos=-1;
 	while(file.readLine(line)>0)
-	{		
+	{
 		m_content.append(line+"\r\n");
 		//去除注释
 		pos=line.find('#');
@@ -38,7 +38,7 @@ void SimpleCfgFile::readPropertyFromFile(const string& path)
 			value=line.substr(pos+1);
 			Util::trim(key);
 			Util::trim(value);
-			m_propertiesMap.insert(make_pair(key,value)); 
+			m_propertiesMap.insert(make_pair(key,value));
 		}
 	}
 	file.close();
@@ -47,11 +47,11 @@ void SimpleCfgFile::readPropertyFromFile(const string& path)
 bool SimpleCfgFile::getProperty(const string& key,string& value)
 {
 	PropertiesMap::iterator it=m_propertiesMap.find(key);
-	if(it!=m_propertiesMap.end()) 
+	if(it!=m_propertiesMap.end())
 	{
 		value=it->second;
 		return true;
-	} 
+	}
 	else
 		return false;
 }
@@ -79,7 +79,7 @@ bool SimpleCfgFile::setProperty(const string& key,const string& value)
 		start=m_content.find("=",start);
 		start+=1;
 		int end=m_content.find(oldValue,start);//从'='后开始查找
-		m_content.replace(end ,oldValue.length() ,value); 
+		m_content.replace(end ,oldValue.length() ,value);
 		m_isChanged=true;
 	}
 	else//不存在,添加

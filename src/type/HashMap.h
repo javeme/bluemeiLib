@@ -6,17 +6,17 @@
 
 namespace bluemei{
 
-template<class K,class V> 
+template<class K,class V>
 class BLUEMEILIB_TEMPLATE Entry : public Object
 {
 	template<class K,class V> friend class HashMap;
 public:
 	Entry(){ hash=0; next=nullptr; }
-	Entry(const K& k,const V& v,unsigned int h=0,Entry<K,V>* next=nullptr){ 
-		key=k; 
+	Entry(const K& k,const V& v,unsigned int h=0,Entry<K,V>* next=nullptr){
+		key=k;
 		value=v;
 		this->hashcode=h;
-		this->next=next; 
+		this->next=next;
 	}
 	virtual ~Entry(){ delete next; }
 public:
@@ -36,7 +36,7 @@ protected:
 	Entry<K,V>* next;
 };
 
-template<class K,class V> 
+template<class K,class V>
 class BLUEMEILIB_TEMPLATE IMap : public Object
 {
 public:
@@ -64,11 +64,11 @@ public:
 public:
 	static unsigned int indexFor( unsigned int hash, unsigned length ){
 		return hash%length;
-		//return hash & (length-1);		
+		//return hash & (length-1);
 	}
 };
 
-template<class K,class V> 
+template<class K,class V>
 class BLUEMEILIB_TEMPLATE HashMap : public IMap<K,V>
 {
 	typedef Entry<K,V> HashEntry;
@@ -96,7 +96,7 @@ public:
 		this->operator=(other);
 	}
 	HashMap& operator=(const HashMap& other)
-	{ 
+	{
 		if(this != &other)
 		{
 			this->clear();
@@ -117,7 +117,7 @@ public:
 			initListNull(this->m_entryTable);
 			this->merge(other);
 		}
-		return *this; 
+		return *this;
 	}
 	HashMap(HashMap&& other)
 	{
@@ -143,15 +143,15 @@ public:
 		return *this;
 	}
 
-	const V& operator[](const K& key)const 
-	{ 
+	const V& operator[](const K& key)const
+	{
 		V* v = get(key);
 		if (v == null)
-			throwpe(NotFoundException("key " + (String)Value2String<K>(key)));		
-		return *v; 
+			throwpe(NotFoundException("key " + (String)Value2String<K>(key)));
+		return *v;
 	}
 	V& operator[](const K& key)
-	{ 
+	{
 		V* v = get(key);
 		if (v == null) {
 			if(put(key, V()) && (v=get(key)))
@@ -171,7 +171,7 @@ public:
 	virtual bool contain(const K& key)const;
 	virtual unsigned int size() const;
 	virtual String toString()const;
-	
+
 	virtual Iterator<HashEntry>* iterator();
 	virtual void releaseIterator(Iterator<HashEntry>* itor);
 protected:
@@ -327,7 +327,7 @@ void HashMap<K, V>::transfer( ArrayList<HashEntry*>& newTable )const
 template<class K,class V>
 void HashMap<K, V>::initListNull(ArrayList<HashEntry*>& list)
 {
-	for (unsigned int i = 0; i < list.size(); i++) 
+	for (unsigned int i = 0; i < list.size(); i++)
 	{
 		list[i] = null;
 	}
@@ -355,7 +355,7 @@ bool HashMap<K, V>::put( const K& k,const V& v )
 template<class K,class V>
 V* HashMap<K, V>::get( const K& key ) const
 {
-	unsigned int index=indexFor(hashCode<K>(key),m_nMaxSize);		
+	unsigned int index=indexFor(hashCode<K>(key),m_nMaxSize);
 	for(HashEntry* entry=m_entryTable[index]; entry!=nullptr; entry=entry->next)
 	{
 		if(key==entry->key){
@@ -410,7 +410,7 @@ bool HashMap<K, V>::remove( const K& key,V& v )
 }
 
 template<class K,class V>
-void HashMap<K, V>::clear() 
+void HashMap<K, V>::clear()
 {
 	// Õ∑≈table
 	for(unsigned int i=0;i<m_entryTable.size();i++)

@@ -67,8 +67,8 @@ void BeanContainer::clear(bool autoRelease)
 		m_beanMap.clear();
 }
 
-Object* BeanContainer::operator[](const string& key)const 
-{ 
+Object* BeanContainer::operator[](const string& key)const
+{
 	return get(key);
 }
 

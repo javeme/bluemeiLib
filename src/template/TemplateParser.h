@@ -19,7 +19,7 @@ public:
 class BLUEMEILIB_API Token : public Object
 {
 public:
-	typedef enum Symbol{ 
+	typedef enum Symbol{
 		NONE = 0,
 		END = 1,
 		CONST_STR = 2,
@@ -74,7 +74,7 @@ public:
 
 	void reset(const String& s);
 	void destroy();
-	
+
     char readChar(unsigned int pos)
 	{
 		if(pos >= content.length())

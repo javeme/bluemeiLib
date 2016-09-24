@@ -63,14 +63,14 @@ bool Class::isMyObject(const Object* pObj)const
 
 	if(pObj==nullptr)
 		throw NullPointerException("Class::isMyObject: parameter is null");
-	
+
 	/*const static size_t LEN=strlen("class ");
 
 	cstring objClassName=typeid(*pObj).name();
-	if(strlen(objClassName)>LEN)											
-	{																			
-		if(strcmp(objClassName+LEN, getName())==0)								
-			return true;															
+	if(strlen(objClassName)>LEN)
+	{
+		if(strcmp(objClassName+LEN, getName())==0)
+			return true;
 	}
 	return false;*/
 
@@ -128,7 +128,7 @@ bool Class::isMyInstance(const Object* pObj)const
 	{
 		int funcAddr=vFuncPtr[i++];
 		int funcAddrObj=vFuncPtrObj[j++];
-		
+
 		if(funcAddr==NULL)
 			break;
 		if(funcAddrObj==NULL || funcAddr!=funcAddrObj)

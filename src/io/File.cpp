@@ -150,9 +150,9 @@ size_t File::readLine(String& line)
 		}
 		if(readedLen>BUFFER_SIZE)
 			throw IOException("read buffer full.");
-	}while(tmp>0 && buf[readedLen-1]!='\0' && buf[readedLen-1]!='\n');	
+	}while(tmp>0 && buf[readedLen-1]!='\0' && buf[readedLen-1]!='\n');
 	if(readedLen>0)
-	{		
+	{
 		if(tmp>0)//非文件结束
 			readedLen-=1;
 	}
@@ -214,7 +214,7 @@ void File::setPos(size_t pos)
 
 size_t File::getSize()
 {
-	if(::fseek(m_pFile,0,SEEK_END)==0) 
+	if(::fseek(m_pFile,0,SEEK_END)==0)
 	{
 		//int length=ftell(m_pFile);
 		size_t length=currentPos();

@@ -22,7 +22,7 @@ Log::Log(const String& name, const String& path, LogLevel level/*=LOG_INFO*/)
 	FilePath filePath(path);
 	if(!FileUtil::mkdirs(filePath.dirName()))
 	{
-		throwpe(IOException(String::format("failed to mkdirs for '%s'", 
+		throwpe(IOException(String::format("failed to mkdirs for '%s'",
 											filePath.toString().c_str())));
 	}
 	m_file.openFile(path, "a+");
@@ -110,7 +110,7 @@ void Log::updateFormatter(const String& val)
 String Log::format(const LogCtx& ctx)
 {
 	/*StringBuilder sb(1024);
-		
+
 	sb.append(ctx.getDefault("name", ""));
 	sb.append(" - ");
 	sb.append(ctx.getDefault("time", ""));

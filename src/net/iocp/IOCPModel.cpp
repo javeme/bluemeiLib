@@ -20,33 +20,33 @@ public:
 		this->ioCompPort=ioCompPort;
 	}
 public:
-	virtual void stop() 
+	virtual void stop()
 	{
 		m_bRunning=false;
 	}
 
-	virtual void setId( int id ) 
+	virtual void setId( int id )
 	{
 		;
 	}
 
-	virtual void taskStarted() 
+	virtual void taskStarted()
 	{
 		m_bRunning=true;
 	}
 
-	virtual int getId() 
+	virtual int getId()
 	{
 		return 0;
 	}
 
-	virtual void taskFinished() 
+	virtual void taskFinished()
 	{
 		m_bRunning=false;
 		delete this;
 	}
 
-	virtual bool isRunning() 
+	virtual bool isRunning()
 	{
 		return m_bRunning;
 	}
@@ -57,7 +57,7 @@ public:
 		int events=ioEvent.events;
 
 		bool continueEvent=true;
-			
+
 		//else if(events & (EVENT_READ | EVENT_READ_FINISH))//有数据可读或者已经读到
 		if(events & EVENT_READ)//有数据可读
 		{
@@ -195,7 +195,7 @@ void IOCPModel::send(const byte* buf,unsigned int len,socket_t sock)
 {
 	if(!m_bRunning)
 		throw IOCPException("Can't send any data after IOCP stopped.");
-	//m_oIOCompletionPort.registerEvents(EVENT_WRITE,sock);	
+	//m_oIOCompletionPort.registerEvents(EVENT_WRITE,sock);
 	m_oIOCompletionPort.send(buf,len,sock);
 }
 
@@ -204,7 +204,7 @@ void IOCPModel::start()
 	if(m_bRunning)
 		return;
 	m_bRunning=true;
-	
+
 	/**
 	 * 连接处理函数
 	 * 注意: 这种局部函数(变量)在外层方法结束时会被释放,为了避免非法访问错误:
@@ -255,7 +255,7 @@ void IOCPModel::start()
 					handleAccept(ev);
 				} catch (Exception& e) {
 					m_bRunning&=notifyException(e);
-				}				
+				}
 			}
 			//处理数据读写
 			else
@@ -312,7 +312,7 @@ void IOCPModel::stop()
 		m_bRunning=false;
 		m_oIOCompletionPort.cancelWait();
 		m_pEventThread->wait();
-		
+
 		delete m_pEventThread;
 		m_pEventThread=nullptr;
 	}

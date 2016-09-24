@@ -16,7 +16,7 @@ Tokenizer::~Tokenizer()
 {
 	destroy();
 }
-	
+
 void Tokenizer::reset( const String& s )
 {
 	this->destroy();
@@ -112,7 +112,7 @@ Token Tokenizer::nextToken()
 	Token ret = *this->next;
 
 	Token* next = this->current;
-	this->current = this->next;		
+	this->current = this->next;
 	*next = *this->next;
 	this->next = this->readNext(next);
 

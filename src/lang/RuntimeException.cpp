@@ -25,7 +25,7 @@ TypeException::TypeException(cstring msg) : RuntimeException(msg)
 {
 }
 
-TypeException::TypeException(cstring instance, cstring cls) 
+TypeException::TypeException(cstring instance, cstring cls)
 	: RuntimeException(String::format("object %s is not an instance of class %s", instance, cls))
 {
 }
@@ -85,7 +85,7 @@ String ClassNotFoundException::name()const
 
 ///////////////////////////////////////////////////////////////////////
 //AttributeNotFoundException
-AttributeNotFoundException::AttributeNotFoundException(cstring cls, cstring attr) 
+AttributeNotFoundException::AttributeNotFoundException(cstring cls, cstring attr)
 	: NotFoundException(String::format("Attribute '%s' not found in class %s", attr, cls))
 {
 }

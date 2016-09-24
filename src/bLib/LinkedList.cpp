@@ -32,9 +32,9 @@ LinkedList<EleType>& LinkedList<EleType>::operator=(const LinkedList<EleType>& o
 	if(this==&other)
 		return *this;
 
-	m_lock.getLock();	
+	m_lock.getLock();
 	((LinkedList<EleType>*)&other)->m_lock.getLock();
-	
+
 	clear();
 	//复制数据,包括指针内容
 	m_nSize=other.m_nSize;
@@ -73,7 +73,7 @@ LinkedList<EleType>& LinkedList<EleType>::operator=(LinkedList<EleType>&& other)
 	//窃取资源, 千万不要窃取m_lock, 其属于每个对象本身的资源
 	m_lock.getLock();
 	other.m_lock.getLock();
-	
+
 	if (this!=&other)
 	{
 		this->clear();
@@ -111,11 +111,11 @@ bool LinkedList<EleType>::addToLast(const EleType& value)
 		if(pNode!=NULL)
 		{
 			pNode->data=value;
-			pNode->next=m_pHeader; 
+			pNode->next=m_pHeader;
 			//TRACE("add to last:%p\n",pNode);
 
 			m_pRear->next=pNode;
-			m_pRear=pNode;	
+			m_pRear=pNode;
 			m_nSize++;
 			isSuccess=true;
 		}
@@ -176,13 +176,13 @@ bool LinkedList<EleType>::insert(int index,const EleType& value)
 	m_lock.getLock();
 	Node<EleType> *pNode=m_pRear;
 	Node<EleType> *pNewNode=new Node<EleType>;
-	pNewNode->data=value;	
+	pNewNode->data=value;
 	if(m_nSize>0)
 	{
 		for(int i=0;i<index;i++)
 		{
 			pNode=pNode->next;
-		}		
+		}
 		pNewNode->next=pNode->next;//pNode为要插入节点位置节点的前趋
 		pNode->next=pNewNode;
 
@@ -202,7 +202,7 @@ bool LinkedList<EleType>::insert(int index,const EleType& value)
 		{
 			pNewNode->next=pNewNode;
 			m_pRear=m_pHeader=pNewNode;
-		}		
+		}
 	}
 	m_nSize++;
 
@@ -212,7 +212,7 @@ bool LinkedList<EleType>::insert(int index,const EleType& value)
 
 template <class EleType>
 bool LinkedList<EleType>::remove(int index,EleType& value)
-{	
+{
 	if(index<0 || index>=m_nSize)
 		return false;
 	m_lock.getLock();
@@ -268,7 +268,7 @@ int LinkedList<EleType>::remove(const EleType& value)
 	/*
 	Node<EleType> *pTmp=m_pHeader;
 	for(int i=0;i<m_nSize;i++)
-	{		
+	{
 		TRACE("%p->",pTmp);
 		pTmp=pTmp->next;
 	}
@@ -297,7 +297,7 @@ int LinkedList<EleType>::remove(const EleType& value)
 	/*
 	pTmp=m_pHeader;
 	for(int i=0;i<m_nSize;i++)
-	{		
+	{
 		TRACE("%p->",pTmp);
 		pTmp=pTmp->next;
 	}
@@ -329,7 +329,7 @@ bool LinkedList<EleType>::get(int index,EleType& value) const
 {
 	if(index>=0 && index<m_nSize)
 	{
-		Node<EleType> *pNode=m_pHeader;	
+		Node<EleType> *pNode=m_pHeader;
 		for(int i=0;i<index;i++)
 		{
 			pNode=pNode->next;

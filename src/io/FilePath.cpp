@@ -86,7 +86,7 @@ ArrayList<FilePath> FilePath::list() const
 	if(this->isdir())
 	{
 		ArrayList<String> paths= FileUtil::list(this->toString());
-		for(unsigned int i=0; i<paths.size(); i++){			 
+		for(unsigned int i=0; i<paths.size(); i++){
 			files.add(FilePath(*this).append(paths[i]));
 		}
 	}

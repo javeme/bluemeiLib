@@ -58,7 +58,7 @@ Date Date::getCurrentTime()
 
 int Date::month2Int(const char* month)
 {
-	static const char* MONTHS[] = { 
+	static const char* MONTHS[] = {
 		"Jan",
 		"Feb",
 		"Mar",
@@ -67,10 +67,10 @@ int Date::month2Int(const char* month)
 		"Jun",
 		"Jul",
 		"Aug",
-		"Sep", 
+		"Sep",
 		"Oct",
 		"Nov",
-		"Dec" 
+		"Dec"
 	};
 	for(int i=0; i<sizeof(MONTHS); i++)
 	{
@@ -104,7 +104,7 @@ Date Date::parseDate( const char* format,const char* strDate )
 			break;
 		case 'Y':
 			if(type==BEFORE_PARSE)
-			{				
+			{
 				PARSE_TIME();
 				date.setYear(Util::str2Int(tmpStr));
 				type=PARSED;
@@ -112,7 +112,7 @@ Date Date::parseDate( const char* format,const char* strDate )
 			break;
 		case 'm':
 			if(type==BEFORE_PARSE)
-			{				
+			{
 				PARSE_TIME();
 				date.setMonth(Util::str2Int(tmpStr));
 				type=PARSED;
@@ -120,7 +120,7 @@ Date Date::parseDate( const char* format,const char* strDate )
 			break;
 		case 'b'://"Nov"
 			if(type==BEFORE_PARSE)
-			{				
+			{
 				PARSE_TIME();
 				date.setMonth(month2Int(tmpStr));
 				type=PARSED;
@@ -128,7 +128,7 @@ Date Date::parseDate( const char* format,const char* strDate )
 			break;
 		case 'd':
 			if(type==BEFORE_PARSE)
-			{				
+			{
 				PARSE_TIME();
 				date.setDay(Util::str2Int(tmpStr));
 				type=PARSED;
@@ -137,7 +137,7 @@ Date Date::parseDate( const char* format,const char* strDate )
 		case 'H':
 		case 'I':
 			if(type==BEFORE_PARSE)
-			{				
+			{
 				PARSE_TIME();
 				date.setHour(Util::str2Int(tmpStr));
 				type=PARSED;
@@ -145,7 +145,7 @@ Date Date::parseDate( const char* format,const char* strDate )
 			break;
 		case 'M':
 			if(type==BEFORE_PARSE)
-			{				
+			{
 				PARSE_TIME();
 				date.setMinu(Util::str2Int(tmpStr));
 				type=PARSED;
@@ -154,7 +154,7 @@ Date Date::parseDate( const char* format,const char* strDate )
 		case 'S':
 		case 's':
 			if(type==BEFORE_PARSE)
-			{				
+			{
 				PARSE_TIME();
 				date.setSecond(Util::str2Int(tmpStr));
 				type=PARSED;
@@ -162,7 +162,7 @@ Date Date::parseDate( const char* format,const char* strDate )
 			break;
 		case 'i':
 			if(type==BEFORE_PARSE)
-			{				
+			{
 				PARSE_TIME();
 				date.setMillisecond(Util::str2Int(tmpStr));
 				type=PARSED;
@@ -170,12 +170,12 @@ Date Date::parseDate( const char* format,const char* strDate )
 			break;
 		case 'a'://Sunday:"Sun"
 			if(type==BEFORE_PARSE)
-			{		
+			{
 				parsePos += 3;
 				type=PARSED;
 			}
 			break;
-		default:	
+		default:
 			if(type != BEFORE_PARSE)
 				type=NORMAL;
 			break;
@@ -183,7 +183,7 @@ Date Date::parseDate( const char* format,const char* strDate )
 		if(type == NORMAL){
 			if(c!=strTime[parsePos])
 				throw Exception(errMsg);
-			parsePos++;	
+			parsePos++;
 		}
 		else if(type == BEFORE_PARSE)
 			throw Exception(errMsg);
@@ -234,7 +234,7 @@ String Date::formatDate(const char* format)const
 String Date::toString() const
 {
 	DateInfo m_dateInfo=getDateInfo();
-	//2012-05-04 15:37:59.999 
+	//2012-05-04 15:37:59.999
 	String str=String::format("%d-%02d-%02d %02d:%02d:%02d.%d",m_dateInfo.tm_year+FROM_YEAR,m_dateInfo.tm_mon+1,m_dateInfo.tm_mday,
 		m_dateInfo.tm_hour,m_dateInfo.tm_min,m_dateInfo.tm_sec,m_time.millitm);
 	return str;

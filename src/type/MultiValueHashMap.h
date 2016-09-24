@@ -67,7 +67,7 @@ bool MultiValueHashMap<K, V>::remove( const K& key,V& v )
 }
 
 template<class K,class V>
-void MultiValueHashMap<K, V>::clear() 
+void MultiValueHashMap<K, V>::clear()
 {
 	m_hashMap.clear();
 }

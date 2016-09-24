@@ -19,7 +19,7 @@ protected:
 public:
 	virtual void OnCallstackEntry(CallstackEntryType eType, CallstackEntry &entry);
 	virtual void OnOutput(LPCSTR szText);
-	
+
 	bool obtainCallStack(List<String>& list);
 	//List<String> getCallStackMsgs() const { return m_listCallStackMsg; }
 protected:

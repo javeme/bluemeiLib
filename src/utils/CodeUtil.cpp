@@ -61,7 +61,7 @@ int CodeUtil::utf8ToUnicode( wstring& strUnicode,const char *strUtf8 )
 	int len=MultiByteToWideChar(CP_UTF8, 0, strUtf8, -1, NULL,0);
 	wchar_t * wszGBK = new wchar_t[len+1];
 	memset(wszGBK, 0, len * 2 + 2);
-	len = MultiByteToWideChar(CP_UTF8, 0, strUtf8, -1, wszGBK, len); 
+	len = MultiByteToWideChar(CP_UTF8, 0, strUtf8, -1, wszGBK, len);
 	strUnicode=wstring(wszGBK,len);
 	return len*2;
 }
@@ -73,7 +73,7 @@ int CodeUtil::unicodeToUtf8( string& strUtf8,const wstring& strUnicode )
 	int len = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
 	char* str = new char[len+1];
 	memset(str, 0, len+1);
-	len=WideCharToMultiByte(CP_UTF8, 0, wstr, -1, str, len, NULL, NULL);	
+	len=WideCharToMultiByte(CP_UTF8, 0, wstr, -1, str, len, NULL, NULL);
 	strUtf8=string(str,len);
 	return len;
 }
@@ -81,27 +81,27 @@ int CodeUtil::unicodeToUtf8( string& strUtf8,const wstring& strUnicode )
 //gbk转换unicode
 int CodeUtil::gbkToUnicode(wstring& strUnicode,const char *strGBK)
 {
-	int len = MultiByteToWideChar(CP_ACP, 0, strGBK, -1 , NULL, 0); 
+	int len = MultiByteToWideChar(CP_ACP, 0, strGBK, -1 , NULL, 0);
 	wchar_t* uBuf=new wchar_t[len];
-	len=MultiByteToWideChar(CP_ACP, 0, strGBK, -1, uBuf, len); 
+	len=MultiByteToWideChar(CP_ACP, 0, strGBK, -1, uBuf, len);
 	strUnicode=wstring(uBuf,len);
 	delete []uBuf;
 	return len*2;
 }
 //gb2312转换unicode --有问题!
-int CodeUtil::gb2312ToUnicode(wstring& result,const char *strGb2312)   
-{   
-	int n = MultiByteToWideChar( CP_ACP, 0, strGb2312, -1, NULL, 0 );   
-	result.resize(n);   
+int CodeUtil::gb2312ToUnicode(wstring& result,const char *strGb2312)
+{
+	int n = MultiByteToWideChar( CP_ACP, 0, strGb2312, -1, NULL, 0 );
+	result.resize(n);
 	n=::MultiByteToWideChar( CP_ACP, 0, strGb2312, -1, (LPWSTR)result.c_str(), result.length());
 	return n*2;
-}  
+}
 int CodeUtil::unicodeToGbk(string& result,const wstring& uStr)
 {
 	const wchar_t* uBuf=uStr.c_str();
-	int len = WideCharToMultiByte(CP_ACP, 0, uBuf, -1, NULL, 0, NULL, NULL); 
+	int len = WideCharToMultiByte(CP_ACP, 0, uBuf, -1, NULL, 0, NULL, NULL);
 	char* buf=new char[len];
-	len=WideCharToMultiByte(CP_ACP, 0, uBuf, -1, buf, len, 0, 0); 	
+	len=WideCharToMultiByte(CP_ACP, 0, uBuf, -1, buf, len, 0, 0);
 	result=buf;
 	delete []buf;
 	return len;
@@ -109,15 +109,15 @@ int CodeUtil::unicodeToGbk(string& result,const wstring& uStr)
 String CodeUtil::unicodeToGbk(const wstring& uStr)
 {
 	const wchar_t* uBuf=uStr.c_str();
-	int len = WideCharToMultiByte(CP_ACP, 0, uBuf, -1, NULL, 0, NULL, NULL); 
+	int len = WideCharToMultiByte(CP_ACP, 0, uBuf, -1, NULL, 0, NULL, NULL);
 	String result("",len-1);
 	char* buf=(char*)result.c_str();
-	WideCharToMultiByte(CP_ACP, 0, uBuf, -1, buf, len, 0, 0); 	
+	WideCharToMultiByte(CP_ACP, 0, uBuf, -1, buf, len, 0, 0);
 	return result;
 }
 //gbk转换为utf-8
 int CodeUtil::gbkToUtf8(string& strUtf8,const char *strGBK)
-{	
+{
 	int len = MultiByteToWideChar(CP_ACP, 0, strGBK, -1, NULL, 0);
 	wchar_t* wstr = new wchar_t[len+1];
 	memset(wstr, 0, len+1);
@@ -126,24 +126,24 @@ int CodeUtil::gbkToUtf8(string& strUtf8,const char *strGBK)
 	len = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
 	char* str = new char[len+1];
 	memset(str, 0, len+1);
-	len=WideCharToMultiByte(CP_UTF8, 0, wstr, -1, str, len, NULL, NULL);	
+	len=WideCharToMultiByte(CP_UTF8, 0, wstr, -1, str, len, NULL, NULL);
 	strUtf8=string(str,len);
 	delete[] wstr;
 	delete[]str;
 	return len;
-}  
+}
 //utf8转换为gbk编码
 int CodeUtil::utf8ToGbk(string& strGbk,const char* strUtf8)
 {
 	int len=MultiByteToWideChar(CP_UTF8, 0, strUtf8, -1, NULL,0);
 	wchar_t * wszGBK = new wchar_t[len+1];
 	memset(wszGBK, 0, len * 2 + 2);
-	MultiByteToWideChar(CP_UTF8, 0, strUtf8, -1, wszGBK, len); 
+	MultiByteToWideChar(CP_UTF8, 0, strUtf8, -1, wszGBK, len);
 
-	len = WideCharToMultiByte(CP_ACP, 0, wszGBK, -1, NULL, 0, NULL, NULL); 
+	len = WideCharToMultiByte(CP_ACP, 0, wszGBK, -1, NULL, 0, NULL, NULL);
 	char *szGBK=new char[len + 1];
 	memset(szGBK, 0, len + 1);
-	len=WideCharToMultiByte (CP_ACP, 0, wszGBK, -1, szGBK, len, NULL,NULL); 
+	len=WideCharToMultiByte (CP_ACP, 0, wszGBK, -1, szGBK, len, NULL,NULL);
 	strGbk = szGBK;
 	delete[] szGBK;
 	delete[] wszGBK;
@@ -163,33 +163,33 @@ String CodeUtil::gbkToUtf8(const char *strGBK)
 	len=WideCharToMultiByte(CP_UTF8, 0, wstr, -1, buf, len, NULL, NULL);
 	delete[] wstr;
 	return strUtf8;
-}  
+}
 //utf8转换为gbk编码
 String CodeUtil::utf8ToGbk(const char* strUtf8)
 {
 	int len=MultiByteToWideChar(CP_UTF8, 0, strUtf8, -1, NULL,0);
 	wchar_t * wszGBK = new wchar_t[len+1];
 	memset(wszGBK, 0, len * 2 + 2);
-	MultiByteToWideChar(CP_UTF8, 0, strUtf8, -1, wszGBK, len); 
+	MultiByteToWideChar(CP_UTF8, 0, strUtf8, -1, wszGBK, len);
 
-	len = WideCharToMultiByte(CP_ACP, 0, wszGBK, -1, NULL, 0, NULL, NULL); 
+	len = WideCharToMultiByte(CP_ACP, 0, wszGBK, -1, NULL, 0, NULL, NULL);
 	String strGbk("",len-1);
 	char* buf=(char*)strGbk.c_str();
-	len=WideCharToMultiByte (CP_ACP, 0, wszGBK, -1, buf, len, NULL,NULL); 	
+	len=WideCharToMultiByte (CP_ACP, 0, wszGBK, -1, buf, len, NULL,NULL);
 	delete[] wszGBK;
 	return strGbk;
 }
 /*
-void CodeUtil::utf8ToGbk(string& szstr)      
-{      
-	wchar_t* strSrc;      
-	char* szRes;       
-	int i = MultiByteToWideChar(CP_UTF8, 0, szstr.c_str(), -1, NULL, 0);      
-	strSrc = new wchar_t[i + 1];      
-	MultiByteToWideChar(CP_UTF8, 0, szstr.c_str(), -1, strSrc, i);      
-	i = WideCharToMultiByte(CP_ACP, 0, strSrc, -1, NULL, 0, NULL, NULL);      
-	szRes = new char[i + 1];      
-	WideCharToMultiByte(CP_ACP, 0, strSrc, -1, szRes, i, NULL, NULL);       
+void CodeUtil::utf8ToGbk(string& szstr)
+{
+	wchar_t* strSrc;
+	char* szRes;
+	int i = MultiByteToWideChar(CP_UTF8, 0, szstr.c_str(), -1, NULL, 0);
+	strSrc = new wchar_t[i + 1];
+	MultiByteToWideChar(CP_UTF8, 0, szstr.c_str(), -1, strSrc, i);
+	i = WideCharToMultiByte(CP_ACP, 0, strSrc, -1, NULL, 0, NULL, NULL);
+	szRes = new char[i + 1];
+	WideCharToMultiByte(CP_ACP, 0, strSrc, -1, szRes, i, NULL, NULL);
 	szstr = szRes;
 	delete[]strSrc;
 	delete[]szRes;
@@ -197,9 +197,9 @@ void CodeUtil::utf8ToGbk(string& szstr)
 
 
 string CodeUtil::base64Encode(const unsigned char* src, int srcLen)
-{	
+{
 	static const char encodeTable[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	
+
 	string strEncode;
 
 	unsigned int lineLen = 0;
@@ -214,14 +214,14 @@ string CodeUtil::base64Encode(const unsigned char* src, int srcLen)
 		strEncode += encodeTable[((buf[1] << 4) | (buf[2] >> 4)) & 0x3F];
 		strEncode += encodeTable[((buf[2] << 2) | (buf[3] >> 6)) & 0x3F];
 		strEncode += encodeTable[buf[3] & 0x3F];
-		
+
 		lineLen += 4;
 		if(lineLen == 76) {
 			strEncode += "\r\n";
 			lineLen = 0;
 		}
 	}
-	
+
 	//对剩余数据进行编码
 	int mod = srcLen % 3;
 	if(mod==1)
@@ -267,7 +267,7 @@ string CodeUtil::base64Decode(const char* src)
 
 	unsigned int encodeLen = strlen(src);
 	int nValue = 0;
-	
+
 	for(unsigned int i= 0; i < encodeLen; )
 	{
 		if (*src != '\r' && *src!='\n')
@@ -301,66 +301,66 @@ string CodeUtil::base64Decode(const char* src)
 
 
 unsigned char CodeUtil::char2hexChar(unsigned char x)
-{ 
-	return (unsigned char)(x > 9 ? x + 55 : x + 48); 
-} 
+{
+	return (unsigned char)(x > 9 ? x + 55 : x + 48);
+}
 
 bool CodeUtil::isAlpha(int c)
 {
 	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
-		return true; 
+		return true;
 	return false;
 }
 
 bool CodeUtil::isNumber(int c)
 {
 	if (c >= '0' && c <= '9')
-		return true; 
+		return true;
 	return false;
 }
 
 bool CodeUtil::isAlphaOrNumber(int c)
-{ 
-	if (isAlpha(c) || isNumber(c)) 
-		return true; 
-	return false; 
-} 
+{
+	if (isAlpha(c) || isNumber(c))
+		return true;
+	return false;
+}
 
 //url encode component
-string CodeUtil::urlEncodeComponent(const char* src) 
+string CodeUtil::urlEncodeComponent(const char* src)
 {
 	string dest;
 	dest.reserve(strlen(src));
 
-	unsigned char ch; 
-	unsigned int len = 0; 
+	unsigned char ch;
+	unsigned int len = 0;
 
-	while (*src) 
-	{ 
-		ch = (unsigned char)*src; 
-		if (isAlphaOrNumber(ch) || strchr("!'()*-._~", ch)) 
-		{ 
-			dest += *src; 
-		} 
-		/*else if (*src == ' ') 
-		{ 
-			dest += '+'; 
+	while (*src)
+	{
+		ch = (unsigned char)*src;
+		if (isAlphaOrNumber(ch) || strchr("!'()*-._~", ch))
+		{
+			dest += *src;
+		}
+		/*else if (*src == ' ')
+		{
+			dest += '+';
 		}*/
-		else 
-		{ 
-			dest += '%'; 
-			dest += char2hexChar( (unsigned char)(ch >> 4) ); 
-			dest += char2hexChar( (unsigned char)(ch % 16) ); 
-		}  
-		++src; 
-		++len; 
-	} 
-	
-	return dest; 
-} 
+		else
+		{
+			dest += '%';
+			dest += char2hexChar( (unsigned char)(ch >> 4) );
+			dest += char2hexChar( (unsigned char)(ch % 16) );
+		}
+		++src;
+		++len;
+	}
+
+	return dest;
+}
 
 //url decode component
-string CodeUtil::urlDecodeComponent(const char* encoded) 
+string CodeUtil::urlDecodeComponent(const char* encoded)
 {
 	string decoded;
 	decoded.reserve(strlen(encoded));
@@ -369,7 +369,7 @@ string CodeUtil::urlDecodeComponent(const char* encoded)
 	char buf[2];
 
 	for(i = 0; i < strlen(encoded); i++)
-	{ 
+	{
 		memset(buf, '/0', 2);
 		if(encoded[i] != '%')
 		{
@@ -379,50 +379,50 @@ string CodeUtil::urlDecodeComponent(const char* encoded)
 				decoded += encoded[i];
 
 			continue;
-		} 
+		}
 
-		buf[0] = encoded[++i]; 
-		buf[1] = encoded[++i]; 
+		buf[0] = encoded[++i];
+		buf[1] = encoded[++i];
 
-		buf[0] = buf[0] - 48 - ((buf[0] >= 'A') ? 7 : 0) - ((buf[0] >= 'a') ? 32 : 0); 
-		buf[1] = buf[1] - 48 - ((buf[1] >= 'A') ? 7 : 0) - ((buf[1] >= 'a') ? 32 : 0); 
+		buf[0] = buf[0] - 48 - ((buf[0] >= 'A') ? 7 : 0) - ((buf[0] >= 'a') ? 32 : 0);
+		buf[1] = buf[1] - 48 - ((buf[1] >= 'A') ? 7 : 0) - ((buf[1] >= 'a') ? 32 : 0);
 		decoded += (char)(buf[0] * 16 + buf[1]);
-	} 
+	}
 
 	return decoded;
 }
 
 //url encode
-string CodeUtil::urlEncode(const char* src) 
+string CodeUtil::urlEncode(const char* src)
 {
 	string dest;
 	dest.reserve(strlen(src));
 
-	unsigned char ch; 
-	unsigned int len = 0; 
+	unsigned char ch;
+	unsigned int len = 0;
 
-	while (*src) 
-	{ 
-		ch = (unsigned char)*src; 
-		if (isAlphaOrNumber(ch) || strchr("!#$&'()*+,/:;=?@-._~", ch)) 
-		{ 
-			dest += *src; 
+	while (*src)
+	{
+		ch = (unsigned char)*src;
+		if (isAlphaOrNumber(ch) || strchr("!#$&'()*+,/:;=?@-._~", ch))
+		{
+			dest += *src;
 		}
-		else 
-		{ 
-			dest += '%'; 
-			dest += char2hexChar( (unsigned char)(ch >> 4) ); 
-			dest += char2hexChar( (unsigned char)(ch % 16) ); 
-		}  
-		++src; 
-		++len; 
-	} 
-	
-	return dest; 
-} 
+		else
+		{
+			dest += '%';
+			dest += char2hexChar( (unsigned char)(ch >> 4) );
+			dest += char2hexChar( (unsigned char)(ch % 16) );
+		}
+		++src;
+		++len;
+	}
+
+	return dest;
+}
 
 //url decode
-string CodeUtil::urlDecode(const char* encoded) 
+string CodeUtil::urlDecode(const char* encoded)
 {
 	string decoded;
 	decoded.reserve(strlen(encoded));
@@ -431,21 +431,21 @@ string CodeUtil::urlDecode(const char* encoded)
 	char buf[2];
 
 	for(i = 0; i < strlen(encoded); i++)
-	{ 
+	{
 		memset(buf, '/0', 2);
 		if(encoded[i] != '%')
 		{
 			decoded += encoded[i];
 			continue;
-		} 
+		}
 
-		buf[0] = encoded[++i]; 
-		buf[1] = encoded[++i]; 
+		buf[0] = encoded[++i];
+		buf[1] = encoded[++i];
 
-		buf[0] = buf[0] - 48 - ((buf[0] >= 'A') ? 7 : 0) - ((buf[0] >= 'a') ? 32 : 0); 
-		buf[1] = buf[1] - 48 - ((buf[1] >= 'A') ? 7 : 0) - ((buf[1] >= 'a') ? 32 : 0); 
+		buf[0] = buf[0] - 48 - ((buf[0] >= 'A') ? 7 : 0) - ((buf[0] >= 'a') ? 32 : 0);
+		buf[1] = buf[1] - 48 - ((buf[1] >= 'A') ? 7 : 0) - ((buf[1] >= 'a') ? 32 : 0);
 		decoded += (char)(buf[0] * 16 + buf[1]);
-	} 
+	}
 
 	return decoded;
 }
@@ -455,16 +455,16 @@ string CodeUtil::urlDecode(const char* str){
 	string resault;
 	resault.reserve(strlen(str));
 	short tmp=0;
-	char ch, hex[2] = "";       
+	char ch, hex[2] = "";
 	int n = 0;
 
-	while (ch = *(str + n))       
-	{       
-		if (ch == '%')      
-		{      
-			hex[0] = *(str + n + 1);      
-			hex[1] = *(str + n + 2);       
-			sscanf(hex, "%x", &tmp);      
+	while (ch = *(str + n))
+	{
+		if (ch == '%')
+		{
+			hex[0] = *(str + n + 1);
+			hex[1] = *(str + n + 2);
+			sscanf(hex, "%x", &tmp);
 			resault += (char)tmp;
 			n = n + 3;
 			continue ;
@@ -490,7 +490,7 @@ string CodeUtil::urlDecode(const char* str){
 		{
 			;
 		}
-		n ++;       
+		n ++;
 	}
 	//utf8ToGbk(szResault);
 }*/

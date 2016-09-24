@@ -44,9 +44,9 @@ public:
 	String getName() const { return m_varName; }
 	//void setName(const String& name) { m_varName = name; }
 
-	virtual String eval(const TemplateCtx& ctx) { 
+	virtual String eval(const TemplateCtx& ctx) {
 		String undefindVar = "<undefind " + m_varName + ">";
-		return ctx.getDefault(m_varName, undefindVar); 
+		return ctx.getDefault(m_varName, undefindVar);
 	}
 private:
 	String m_varName;
@@ -71,7 +71,7 @@ public:
 	TemplateExpr* getRightExpr() const { return m_rightExpr; }
 	//void setRightExpr(Expression* val) { m_rightExpr = val; }
 
-	virtual String eval(const TemplateCtx& ctx) { 
+	virtual String eval(const TemplateCtx& ctx) {
 		checkNullPtr(m_leftExpr);
 		checkNullPtr(m_rightExpr);
 		return m_leftExpr->eval(ctx) + m_rightExpr->eval(ctx);

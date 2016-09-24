@@ -18,8 +18,8 @@ ThreadPool::~ThreadPool()
 	{
 		pTask=m_taskQueue.front();
 		m_taskQueue.pop();
-		delete pTask;		
-	}	
+		delete pTask;
+	}
 	//销毁线程
 	int size=m_threadList.size();
 	for(int i=0;i<size;i++)
@@ -59,11 +59,11 @@ Task* ThreadPool::getTask()
 {
 	if(m_bIsStop)
 		return NULL;
-	
+
 	//if(m_taskQueue.empty()) //如果在此时插入了一个任务,可能wait错过时机,没有通知到
 	//	m_taskLock.waitTask();//等待
 	m_taskLock.waitTask();
-	
+
 	Task* pTask=NULL;
 	if(!m_bIsStop){
 		m_mutexLock.getLock();
@@ -81,7 +81,7 @@ Task* ThreadPool::getTask()
 }
 
 void ThreadPool::onFinishTask(Task* pTask)
-{	
+{
 	//delete pTask;
 }
 

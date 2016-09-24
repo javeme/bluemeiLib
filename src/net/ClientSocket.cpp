@@ -106,7 +106,7 @@ void ClientSocket::setNoDelay(bool noDelay)
 
 //协议栈中达到可读字节数
 unsigned long ClientSocket::availableBytes()
-{	
+{
 	unsigned long length=0;
 	int ret=ioctl(m_hSocket,FIONREAD,&length);
 	if(ret==SOCKET_ERROR)
@@ -158,7 +158,7 @@ int ClientSocket::readBytes(char buffer[],int maxLength,int flags)
 }
 //读取指定长度字节
 int ClientSocket::readEnoughBytes(char buffer[],int length)
-{	
+{
 	int count=0;
 	do{
 		count+=readBytes(buffer+count,length-count);//EINTR
@@ -171,25 +171,25 @@ int ClientSocket::readEnoughBytes(char buffer[],int length)
 //读整型
 int ClientSocket::readInt()
 {
-	const int sizeOfInt=sizeof(int);	
+	const int sizeOfInt=sizeof(int);
 	char buf[sizeOfInt];
-	
+
 	this->readEnoughBytes(buf,sizeOfInt);//读取指定长的字节才返回
-	
-	int value=SocketTools::bytesToInt((byte*)buf);	
+
+	int value=SocketTools::bytesToInt((byte*)buf);
 	value=::ntohl(value);
 	return value;
 }
 //读整型(2字节)
 int ClientSocket::readShort()
 {
-	const int sizeOfShort=sizeof(short);	
+	const int sizeOfShort=sizeof(short);
 	char buf[sizeOfShort];
-	
+
 	this->readEnoughBytes(buf,sizeOfShort);//读取指定长的字节才返回
-	
+
 	int value=SocketTools::bytesToInt((byte*)buf);
-	
+
 	value=::ntohs(value);
 	return value;
 }
@@ -223,7 +223,7 @@ String ClientSocket::readLine()
 }
 //读字符串,网络数据为utf-8编码形式,返回gbk编码 --待实现
 String ClientSocket::readUtfString()
-{	
+{
 	String str;
 	int len=this->readShort();
 	if(len>0)
@@ -236,7 +236,7 @@ String ClientSocket::readUtfString()
 			delete[] buffer;
 			throw;
 		}
-		str=SocketTools::utf8ToGbk(buffer);		
+		str=SocketTools::utf8ToGbk(buffer);
 		delete[] buffer;
 	}
 	return str;
@@ -258,18 +258,18 @@ int ClientSocket::writeBytes(const char buffer[],int length,int flags)
 			throw SocketException(errorCode,toString());
 	}
 #ifdef SEND_LOG
-	FILE *pFile; 
+	FILE *pFile;
 	if((pFile=fopen("sendData.log","a+")))
 	{
 		fwrite(buffer,1,length,pFile);
 		fclose(pFile);
-	}	
+	}
 #endif
 	return size;
 }
 //写指定长度字节
 int ClientSocket::writeEnoughBytes(const char buffer[],int length)
-{	
+{
 	int count=0;
 	do{
 		count+=writeBytes(buffer+count,length-count);//EINTR
@@ -288,7 +288,7 @@ int ClientSocket::writeInt(int value)
 	SocketTools::intToBytes((byte*)buf,value);
 
 	int len=writeEnoughBytes(buf,sizeOfInt);
-		
+
 	//if(len!=lensizeOfInt)
 	//	throw SocketException("length of the sended data not enough");
 	return len;
@@ -302,7 +302,7 @@ int ClientSocket::writeShort(short value)
 	SocketTools::shortToBytes((byte*)buf,value);
 
 	int len=writeEnoughBytes(buf,sizeOfInt);
-	
+
 	return len;
 }
 
@@ -313,12 +313,12 @@ int ClientSocket::writeByte(unsigned char value)
 
 //写字符串,源数据为gbk编码,网络数据以utf-8编码形式传送
 int ClientSocket::writeUtfString(const String& str)
-{	
+{
 	//new char[length];
 	String strUtf8 = SocketTools::gbkToUtf8(str);
 	int length=	strUtf8.length();
 	this->writeShort(length);
-	int size=this->writeEnoughBytes(str.c_str(),length);	
+	int size=this->writeEnoughBytes(str.c_str(),length);
 	return size;
 }
 ////写字符串,网络数据以默认编码传送

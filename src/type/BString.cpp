@@ -278,7 +278,7 @@ String String::trim(int part) const
 	if(part == TRIM_LEFT || part == TRIM_BOTH)
 	{
 		while(m_charBuffer[begin]==' ' && begin < m_nLength)
-			begin++;		
+			begin++;
 	}
 
 	if(part == TRIM_RIGHT || part == TRIM_BOTH)
@@ -494,7 +494,7 @@ String String::format(cstring frmt, ...)
 	String str;
 	va_list arg_ptr;
 	verdictNull(frmt);
-	va_start(arg_ptr,frmt); 
+	va_start(arg_ptr,frmt);
 	int size=strlen(frmt)+32;
 	while(true)
 	{

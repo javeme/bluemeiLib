@@ -6,7 +6,7 @@
 #include <algorithm>
 
 namespace bluemei{
-	
+
 CriticalLock System::s_instanceLock;
 WrapperManager* System::s_instanceWrapperManager=nullptr;
 SmartPtrManager* System::s_instanceSmartPtrManager=nullptr;
@@ -70,7 +70,7 @@ bool System::isSystemIdle()
 
 	TCHAR szCounterPath[] = TEXT("\\Processor(_Total)\\% Processor Time");
 
-	/* We can use "% Idle Time" to retrieve IDL time directly, but this counter is available 
+	/* We can use "% Idle Time" to retrieve IDL time directly, but this counter is available
 	 * on WindowsXP only. Fortunatelly, we can get IDL=100-Processer
 	 */
 	//TCHAR szCounterPath[] = TEXT("\\Processor(0)\\% Idle Time");
@@ -97,7 +97,7 @@ bool System::isSystemIdle()
 	PDH_RAW_COUNTER rawdata2;
 
 	pdhStatus = PdhCollectQueryData(hQuery);
-	if (pdhStatus != ERROR_SUCCESS) 
+	if (pdhStatus != ERROR_SUCCESS)
 	{
 		PdhCloseQuery(hQuery);
 		return true;
@@ -112,7 +112,7 @@ bool System::isSystemIdle()
 	}
 
 	pdhStatus = PdhCollectQueryData(hQuery);
-	if (pdhStatus != ERROR_SUCCESS) 
+	if (pdhStatus != ERROR_SUCCESS)
 	{
 		PdhCloseQuery(hQuery);
 		return true;
@@ -126,7 +126,7 @@ bool System::isSystemIdle()
 		&rawdata2,
 		&lastrawdata,
 		&fmtValue);
-	if (pdhStatus != ERROR_SUCCESS) 
+	if (pdhStatus != ERROR_SUCCESS)
 	{
 		PdhCloseQuery(hQuery);
 		return true;
@@ -178,9 +178,9 @@ bool System::isSystemIdle()
 //#define blockSize _msize
 size_t System::blockSize(void *p)
 {
-#ifdef  _MSC_VER 
+#ifdef  _MSC_VER
 	#pragma warning(push)
-	#pragma warning( disable : 4311) 
+	#pragma warning( disable : 4311)
 	if((int)p%8)//when allocate an array in windows with MSVC, address returned by new is the address returned
 		//by malloc +4;, so, if pass this address to _msize will cause an error
 	{
@@ -202,7 +202,7 @@ size_t System::blockSize(void *p)
 /**
 when system is in idle, this function will be called to collect garbage.
 */
-void System::idleCollect() 
+void System::idleCollect()
 {
 	unsigned int count = 0;
 	while(!m_bQuit)
@@ -286,7 +286,7 @@ void System::gc()
 		markCount += mark(static_cast<SmartPtr<void>*>(node));
 		node=node->pNext;
 	}
-	
+
 	ptrTrace("GC: finished mark, %d ptr processed, total %d objects\r\n",
 		markCount, WrapperManager::getInstance()->wrappers.size());
 
@@ -343,7 +343,7 @@ void System::gc()
 		i != garbageList.end(); i++)
 	{
 		ObjectWrapper *pWrap=(*i).p;
-		//删除顺序(由于没有什么好办法来保证正确的释放顺序,不使用addGarbage,直接释放) 
+		//删除顺序(由于没有什么好办法来保证正确的释放顺序,不使用addGarbage,直接释放)
 		//addGarbage(pWrap,garbageList,garbageQueue);//将自己及父对象添加到垃圾队列
 		wrapManager->collect(pWrap);
 	}
@@ -442,7 +442,7 @@ void System::destroy()
 
 	delete getWrapperManager();
 	delete getSmartPtrManager();
-	
+
 	TypeManager::releaseInstance();
 
 	ObjectFactory::destroy();

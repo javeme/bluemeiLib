@@ -110,7 +110,7 @@ public:
 	 * The default capacity of a buffer.
 	 */
 	enum {DEFAULT_CAPACITY = 16};
- 
+
 
 	/**
 	 * Create an empty <code>StringBuilder</code> with the specified initial
@@ -130,13 +130,13 @@ public:
 	 * @throws NullPointerException if str is null
 	 */
 	StringBuilder(const String& str);
-		
+
 	virtual ~StringBuilder();
 
 public:
 	StringBuilder(const StringBuilder &src);
 	StringBuilder(StringBuilder&& src);//move
-	
+
 	StringBuilder& operator = (const StringBuilder &src);
 	StringBuilder& operator = (StringBuilder&& src);//move
 
@@ -416,12 +416,12 @@ public:
 	{
 		return deleteSub(index, index + 1);
 	}
-	
+
 	StringBuilder& pop()
 	{
 		return deleteCharAt(length()-1);
 	}
-	
+
 
 	/**
 	 * Replace characters between index <code>start</code> (inclusive) and
@@ -507,7 +507,7 @@ public:
 	 * @throws StringIndexOutOfBoundsException if offset is out of bounds
 	 */
 	StringBuilder& insert(unsigned int offset, const String& str)
-	{		
+	{
 		return insert(offset,str.c_str(), 0, str.length());
 	}
 	StringBuilder& insert(unsigned int offset, cstring str)
@@ -700,7 +700,7 @@ public:
 
 	//set capacity to real size
 	void trimToSize();
-private:	
+private:
 	/**
 	 * Predicate which determines if a substring of this matches another String
 	 * starting at a specified offset for each String and continuing for a

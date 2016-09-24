@@ -63,7 +63,7 @@ void IOCompletionPortImpl::registerEvents(int events, socket_t socket)
 	{
 		this->accept(socket);
 	}
-	else 
+	else
 	{
 		//投递一个接收请求
 		if(events & EVENT_READ || events & EVENT_READ_FINISH)
@@ -90,16 +90,16 @@ void IOCompletionPortImpl::accept(socket_t socket)
 	//获取AcceptEx函数地址
 	//(直接调用AcceptEx的话,每次Service Provider都得要通过WSAIoctl()获取一次该函数指针)
 	const static int ADDR_SIZE=(sizeof(SOCKADDR_IN)+16);
-	static LPFN_ACCEPTEX FuncAcceptEx=nullptr; //AcceptEx函数指针  
+	static LPFN_ACCEPTEX FuncAcceptEx=nullptr; //AcceptEx函数指针
 	if(FuncAcceptEx==nullptr)
 	{
-		GUID GuidAcceptEx = WSAID_ACCEPTEX;//GUID,这个是识别AcceptEx函数必须的  
-		DWORD dwBytes = 0;    
+		GUID GuidAcceptEx = WSAID_ACCEPTEX;//GUID,这个是识别AcceptEx函数必须的
+		DWORD dwBytes = 0;
 
 		if(::WSAIoctl(socket, SIO_GET_EXTENSION_FUNCTION_POINTER,
-			&GuidAcceptEx,sizeof(GuidAcceptEx),   
+			&GuidAcceptEx,sizeof(GuidAcceptEx),
 			&FuncAcceptEx,sizeof(FuncAcceptEx),
-			&dwBytes,NULL,NULL)==INVALID_SOCKET) 
+			&dwBytes,NULL,NULL)==INVALID_SOCKET)
 		{
 			m_pPoolIOCPData->release(pPerIOData);
 			throw IOCPException(::WSAGetLastError());
@@ -132,7 +132,7 @@ void IOCompletionPortImpl::receive(socket_t socket)
 	pPerIOData->operationType=EVENT_READ_FINISH;
 	WSABUF buf;
 	buf.buf = pPerIOData->buf;
-	buf.len = pPerIOData->IOCP_BUFFER_SIZE;  
+	buf.len = pPerIOData->IOCP_BUFFER_SIZE;
 	//WSARecv待加入错误处理
 	int rt=::WSARecv(socket, &buf, 1, &pPerIOData->lengthReceived, &pPerIOData->flags, &pPerIOData->ol, NULL);
 	if(rt==SOCKET_ERROR)
@@ -198,9 +198,9 @@ int IOCompletionPortImpl::waitEvent(IOEvent* events,int maxEvents,int timeout)
 		&transLen, (LPDWORD)&socket, (LPOVERLAPPED*)&pPerData, timeout);
 
 	//在此套接字上有错误发生
-	if(!bOK || pPerData==nullptr)//失败                                                 
+	if(!bOK || pPerData==nullptr)//失败
 	{
-		int errorCode=GetLastError();//WSAGetLastError		
+		int errorCode=GetLastError();//WSAGetLastError
 		if (errorCode==WAIT_TIMEOUT){//超时 WSAETIMEDOUT
 			//释放pPerData?
 			throw TimeoutException(timeout);
@@ -259,7 +259,7 @@ int IOCompletionPortImpl::waitEvent(IOEvent* events,int maxEvents,int timeout)
 		{
 			ev.events=EVENT_CLOSED;
 		}
-		
+
 		size=1;
 	}
 

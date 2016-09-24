@@ -3,7 +3,7 @@
 #include <process.h>
 
 namespace bluemei{
- 
+
 //创建线程后回调,表示开始执行新线程了
 unsigned int WINAPI callBackOfStartThread(void* pVoid)
 {
@@ -34,7 +34,7 @@ void Thread::init()
 {
 	m_bDetached=false;
 	m_bAutoDestroyObj=false;
-	m_bRunning=false; 
+	m_bRunning=false;
 	//m_hThread=::CreateThread(NULL,0,CallBackOfCreateThread,(LPVOID)this,CREATE_SUSPENDED,&m_threadId);
 	m_hThread=(HANDLE)_beginthreadex(NULL,0,callBackOfStartThread,(LPVOID)this,CREATE_SUSPENDED,&m_threadId);
 }
@@ -60,13 +60,13 @@ void Thread::start()
 		e.setExceptionMsg("start thread failed");
 		throwpe(e);
 	}
-	
+
 	if(!m_lock.wait(1000*30)){//超时 wait发生异常该如何处理???
 		throwpe(ThreadException("starting the thread may be failed, out of time"));
-	}	
+	}
 }
 void Thread::stop()
-{	
+{
 	if(this->m_bRunning)
 		::TerminateThread(m_hThread,0);//其它线程结束本线程 (_endthreadex及ExitThread为自己结束本线程)
 	else{
@@ -132,7 +132,7 @@ int Thread::callBackStartThread()
 		ErrorHandler::handle(e);
 		ret=-1;
 	}
-	
+
 	if(m_bAutoDestroyObj)
 	{
 		//destroy();

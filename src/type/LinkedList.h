@@ -18,7 +18,7 @@ struct Node : public Object
 //Ñ­»·Á´±í
 template <class EleType>
 class LinkedList : public Object//BLUEMEILIB_API
-{	
+{
 public:
 	LinkedList();
 	LinkedList(EleType data[],int length);
@@ -87,4 +87,4 @@ private:
 };
 
 }//end of namespace bluemei
-#endif 
+#endif

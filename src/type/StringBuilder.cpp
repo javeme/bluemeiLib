@@ -321,7 +321,7 @@ bool StringBuilder::regionMatches(unsigned int offset, const String& other) cons
 {
 	unsigned int len = other.length();
 	cstring s = other.c_str();
-	
+
 	if(offset + len > length())
 		return false;
 	if(offset == 0 && length() == 0)//empty

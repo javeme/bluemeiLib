@@ -62,19 +62,19 @@ const Class* Object::getThisClass() const
 
 void Object::setAttribute(cstring name, Object* val)
 {
-	const FieldInfo* fldInfo = getThisClass()->getField(name); 
+	const FieldInfo* fldInfo = getThisClass()->getField(name);
 	return fldInfo->setValue(*this, val);
 }
 
 Object* Object::getAttribute(cstring name) const
 {
-	const FieldInfo* fldInfo = getThisClass()->getField(name); 
+	const FieldInfo* fldInfo = getThisClass()->getField(name);
 	return fldInfo->getValue(*this);
 }
 
 const void* Object::getAttributeAddr(cstring name) const
 {
-	const FieldInfo* fldInfo = getThisClass()->getField(name); 
+	const FieldInfo* fldInfo = getThisClass()->getField(name);
 	return fldInfo->getAddr(*this);
 }
 

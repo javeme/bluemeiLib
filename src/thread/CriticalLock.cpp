@@ -61,7 +61,7 @@ long CriticalLock::getWaitCount() const
 	else if(osvi.dwPlatformId==VER_PLATFORM_WIN32_WINDOWS){
 		wc=m_critialSection.LockCount- (m_critialSection.RecursionCount -1);
 	}
-	else 
+	else
 		wc=m_waitCount;
 	return wc;
 }

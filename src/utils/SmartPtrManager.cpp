@@ -78,14 +78,14 @@ static void restoreNewHandler()
 MutexLock GlobalMutexLock::s_globalMutex;
 
 ///< Lock constructor
-GlobalMutexLock::GlobalMutexLock() 
+GlobalMutexLock::GlobalMutexLock()
 {
 	s_globalMutex.getLock();
 }
 
 ///< Lock destructor
-GlobalMutexLock::~GlobalMutexLock() 
-{ 
+GlobalMutexLock::~GlobalMutexLock()
+{
 	s_globalMutex.releaseLock();
 }
 
@@ -119,7 +119,7 @@ WrapperManager::~WrapperManager()
 }
 
 WrapperManager* WrapperManager::getInstance()
-{	
+{
 	return System::getWrapperManager();
 }
 
@@ -179,7 +179,7 @@ ObjectWrapper* WrapperManager::attachWrapper(void* pTarget, DESTORY_PROC destory
 	// a non zero memSize make the ObjectWrapper use this size instead of
 	//calculate size itself, which save the computer resource
 	ObjectWrapper tempWrapper(pTarget, NULL, 1);//destory=null,size=1
-	
+
 	WrapperSet::const_iterator i = wrappers.find(&tempWrapper);
 	if(i == wrappers.end())
 	{

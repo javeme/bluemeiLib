@@ -23,21 +23,21 @@ Util::~Util(void)
 }
 
 /*********************************字符串处理函数******************************/
-  
+
 //替换字符串:将strToReplace里面的strSrc字串替换成strDst
 void Util::replaceString(string& strToReplace, const string& strSrc, const string& strDst)
-{ 
+{
 	if(strSrc.length()==0)
 		return;
-	string::size_type pos=0; 
-	string::size_type srcLen=strSrc.size(); 
+	string::size_type pos=0;
+	string::size_type srcLen=strSrc.size();
 	string::size_type dstLen=strDst.size();
 	while( (pos=strToReplace.find(strSrc, pos)) != string::npos)
-	{  
-		strToReplace.replace(pos, srcLen, strDst);  
+	{
+		strToReplace.replace(pos, srcLen, strDst);
 		pos += dstLen;
 	}
-} 
+}
 //替换首尾空格
 void Util::trim(string& str)
 {
@@ -76,7 +76,7 @@ int Util::match(const string& value,const string& regex)//待完善...
 	{
 		char1=getChar(pos1,value);
 		char2=getChar(pos2,regex);
-	
+
 		//相等
 		if(char1==char2)
 		{
@@ -98,9 +98,9 @@ int Util::match(const string& value,const string& regex)//待完善...
 				char1=getChar(pos1,value);
 				pos2++;
 				char2=getChar(pos2,regex);
-				//如果下一个字符相同,则前移	
+				//如果下一个字符相同,则前移
 				if(char1==char2)
-				{	
+				{
 					matchedPos=pos1;
 					pos1++;
 					pos2++;
@@ -108,10 +108,10 @@ int Util::match(const string& value,const string& regex)//待完善...
 				else
 				{
 					if(char1<0)
-						pos1--;					
+						pos1--;
 					if(char2>0)
 						pos2-=1;
-					else 
+					else
 						char2-=2;
 				}
 			}
@@ -139,7 +139,7 @@ bool Util::simpleEncode(string& plaintext,const string& code)//明文->密码
 		tmp1=plaintext[i] & 0x00ff;
 		tmp2=code[j] & 0x00ff;
 		plaintext[i]=(char)(tmp1+tmp2)%256;
-	}	
+	}
 	return true;
 }
 bool Util::simpleDecode(string& cipher,const string& code)//密码->明文
@@ -154,14 +154,14 @@ bool Util::simpleDecode(string& cipher,const string& code)//密码->明文
 		tmp1=(cipher[i] & 0x00ff);
 		tmp2=code[j] & 0x00ff;
 		cipher[i]=(char)(tmp1-tmp2)%256;
-	}	
+	}
 	return true;
 }
 /************************************系统相关*************************************/
 //获取当前目录的路径
 bool Util::getSelfPath(string& path)
 {
-	char strModulePath[MAX_PATH];	
+	char strModulePath[MAX_PATH];
 	//::GetCurrentDirectory(MAX_PATH,strModulePath.GetBuffer(MAX_PATH));
 	DWORD dwResult = ::GetModuleFileNameA(NULL,strModulePath,MAX_PATH);
 	if(dwResult==0)
@@ -176,14 +176,14 @@ bool Util::getSelfPath(string& path)
 }
 //打开可执行文件
 bool Util::open(const string& name,const string& arg)
-{	
+{
 	/*wstring op,uStrName,uStrArg;
 	SocketTools::gbkToUnicode(op,"open");
 	SocketTools::gbkToUnicode(uStrName,name.c_str());
 	SocketTools::gbkToUnicode(uStrArg,arg.c_str());
 	const wchar_t *pArg=uStrArg.length()==0?NULL:uStrArg.c_str();
 	ShellExecute(NULL,op.c_str() ,uStrName.c_str(),pArg,NULL,SW_SHOW); */
-	HINSTANCE h=ShellExecuteA(NULL,"open" ,name.c_str(),arg.c_str(),NULL,SW_SHOW); 
+	HINSTANCE h=ShellExecuteA(NULL,"open" ,name.c_str(),arg.c_str(),NULL,SW_SHOW);
 	return (int)h>32;
 }
 
@@ -237,15 +237,15 @@ string Util::uuid4()
 	* http://www.ietf.org/rfc/rfc4122.txt
 	* http://stackoverflow.com/questions/2174768/generating-random-uuids-in-linux
 	*/
-	
+
 	char strUuid[40] = {0};
-	sprintf_s(strUuid, "%04x%04x-%04x-%04x-%04x-%04x%04x%04x", 
+	sprintf_s(strUuid, "%04x%04x-%04x-%04x-%04x-%04x%04x%04x",
 		random(), random(),                 // Generates a 64-bit Hex number
 		random(),                           // Generates a 32-bit Hex number
 		((random() & 0x0fff) | 0x4000),     // Generates a 32-bit Hex number of the form 4xxx (4 indicates the UUID version)
 		((random() & 0x3fff) | 0x8000),     // Generates a 32-bit Hex number in the range [0x8000, 0xbfff]
 		random(), random(), random());      // Generates a 96-bit Hex number
-	
+
 	return strUuid;
 }
 
@@ -265,7 +265,7 @@ public:
 	#define NSec100_Per_Sec     (USec_Per_Sec*10)
 	#define NSec100_Per_MSec    (USec_Per_MSec*10)
 	#define NSec100_Since_1582     ((uint64)(0x01B21DD213814000))
-	
+
 public:
 	Uuid1Generater(){ initialize(); }
 	virtual ~Uuid1Generater(){}
@@ -275,7 +275,7 @@ private:
 		this->operator=(other);
 	}
 	Uuid1Generater& operator=(const Uuid1Generater& other)
-	{ 
+	{
 		return *this;
 	}
 public:
@@ -301,18 +301,18 @@ public:
 		int64 time = Date::getCurrentTime().getTotalMillSecond(); // ms
 		time = time * NSec100_Per_MSec + NSec100_Since_1582; // unit of 100ns
 
-		if (time < timestamp) 
+		if (time < timestamp)
 		{
 			timestamp = time;
 			advance = 0;
 			clockseq++;
-		} 
-		else if (time == timestamp) 
+		}
+		else if (time == timestamp)
 		{
 			advance++;
 			time += advance;
-		} 
-		else 
+		}
+		else
 		{
 			timestamp = time;
 			advance = 0;
