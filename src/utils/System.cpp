@@ -7,6 +7,12 @@
 
 namespace bluemei{
 
+//collect every 30 seconds
+#define GC_INTERVAL 30
+
+//that's to say, if the system overload is no more than 40%, it's idle
+#define GC_MAXLOAD 40
+
 CriticalLock System::s_instanceLock;
 WrapperManager* System::s_instanceWrapperManager=nullptr;
 SmartPtrManager* System::s_instanceSmartPtrManager=nullptr;
@@ -87,7 +93,7 @@ bool System::isSystemIdle()
 		szCounterPath,
 		0,
 		&hCounter);
-	if( pdhStatus != ERROR_SUCCESS )
+	if(pdhStatus != ERROR_SUCCESS)
 	{
 		PdhCloseQuery(hQuery);
 		return true;
@@ -134,7 +140,7 @@ bool System::isSystemIdle()
 	lastrawdata = rawdata2;
 
 	pdhStatus = PdhCloseQuery(hQuery);
-	return fmtValue.doubleValue <= 20;
+	return fmtValue.doubleValue <= GC_MAXLOAD;
 
 	/*
 	//Method 2, use GetSystemTimes, this is more Simple, but
@@ -156,7 +162,6 @@ bool System::isSystemIdle()
 	return false;
 	*/
 #else //Linux & UNIX
-#define MAXLOAD 20 //that's to say, if the system overload is no more than 20%, it's idle
 	char buf[4];
 	int f=open("/proc/loadavg", O_RDONLY);
 	if(f<0)
@@ -171,7 +176,7 @@ bool System::isSystemIdle()
 		return false;
 	}
 	close(f);
-	return ((buf[0]=='0') && (atoi(buf+2))<MAXLOAD);
+	return ((buf[0]=='0') && (atoi(buf+2))<GC_MAXLOAD);
 #endif
 }
 
@@ -198,7 +203,6 @@ size_t System::blockSize(void *p)
 }
 
 
-#define INTERVAL 30 //collect every 30 seconds
 /**
 when system is in idle, this function will be called to collect garbage.
 */
@@ -206,14 +210,15 @@ void System::idleCollect()
 {
 	unsigned int count = 0;
 	while(!m_bQuit)
-	{//quit of the appclication will delay at most 1 second
+	{
+		//quit of the appclication will delay at most 1 second
 #ifdef WIN32
 		Sleep(1000);//there's no sleep in MSVC? how strange!
 #else
 		sleep(1000); //nanosleep also available on Linux platform
 #endif
 		++count;
-		if(count == INTERVAL)
+		if(count == GC_INTERVAL)
 		{
 			count = 0;
 			if(isSystemIdle())
@@ -259,17 +264,18 @@ void System::gc()
 	GlobalMutexLock l;
 	ptrTrace("GC: to collect garbage\r\n");
 	SmartPtrManager* ptrManager = getSmartPtrManager();
-	WrapperManager *wrapManager = getWrapperManager();
+	WrapperManager* wrapManager = getWrapperManager();
 	LinkNode* node = (LinkNode*)ptrManager->pHead->pNext;
 	//update Ptr's state that are new created
 	while(node!=ptrManager->pTail)
 	{
-		void* ptr = reinterpret_cast<void*>(node);
-		if(wrapManager->isEmbeddedPtr(ptr))//是否为嵌入对象(在其他对象内部的对象)
-			ptrManager->moveToEmbeddedPtr(node);
-		else
-			ptrManager->moveToUserPtr(node);
+		SmartPtr<void>* ptr = static_cast<SmartPtr<void>*>(node);
 		node = node->pNext;
+		//SmartPtr本身地址是否为嵌入对象(在其他对象内部的变量)
+		if(wrapManager->isEmbeddedPtr(ptr))
+			ptrManager->moveToEmbeddedPtr(ptr);
+		else
+			ptrManager->moveToUserPtr(ptr);
 	}
 
 	//mark all point as nouse

@@ -132,6 +132,7 @@ int Thread::callBackStartThread()
 		ErrorHandler::handle(e);
 		ret=-1;
 	}
+	m_bRunning=false;
 
 	if(m_bAutoDestroyObj)
 	{
@@ -139,7 +140,6 @@ int Thread::callBackStartThread()
 		delete this;
 	}
 
-	m_bRunning=false;
 	return ret;
 }
 //Ö´ÐÐ

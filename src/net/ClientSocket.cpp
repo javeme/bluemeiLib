@@ -2,6 +2,7 @@
 #include "SocketException.h"
 #include "SocketTools.h"
 #include "RuntimeException.h"
+#include "StringBuilder.h"
 
 namespace bluemei{
 
@@ -118,7 +119,7 @@ void ClientSocket::skip(unsigned long len)
 {
 	if(len==0)
 		return;
-	const static int BUF_LEN = 1024;
+	const static int BUF_LEN=1024;
 	int count=0,wantLen;
 	char buffer[BUF_LEN];
 	do{
@@ -163,7 +164,8 @@ int ClientSocket::readEnoughBytes(char buffer[],int length)
 	do{
 		count+=readBytes(buffer+count,length-count);//EINTR
 	}while(count!=length);
-	//count=readBytes(buffer,length,MSG_WAITALL);// return error WSAEOPNOTSUPP on win7?
+	// return error WSAEOPNOTSUPP on win7?
+	//count=readBytes(buffer,length,MSG_WAITALL);
 	if(count!=length)
 		throw SocketException("have not read enough data,"+toString());
 	return count;
@@ -204,24 +206,76 @@ unsigned char ClientSocket::readByte()
 	return buf[0];
 }
 
-//读取一行数据,网络数据为gbk编码形式,返回gbk编码
+//读取一行数据,返回与原来一致的编码（比如网络数据为GBK）
+#ifdef MSG_PEEK
 String ClientSocket::readLine()
 {
-	int count=0;
-	const unsigned int bufLen = LINE_BUFFER_SIZE;
+	int recvLen=0, size=0;
+	StringBuilder line(1024);
+	const unsigned int bufLen=LINE_BUFFER_SIZE;
+	char buffer[bufLen];
+	bool eol=false;
+
+	while(!eol){
+		recvLen=this->readBytes(buffer,bufLen,MSG_PEEK);
+		int i=0;
+		// find the end of line 
+		for(; i<recvLen; i++){
+			if(buffer[i]=='\n'){
+				eol=true;
+				// exclude '\n'
+				size=i;
+				// exclude '\r'
+				if(i>0 && buffer[i-1]=='\r')
+					size=i-1;
+				i++; // for the size to consume
+				break;
+			}
+		}
+		if(!eol)
+			size=recvLen;
+		// the last char appended to the line is '\r' and current is '\n'?
+		if(eol && buffer[0]=='\n' && line.endWith('\r'))
+			line.pop();
+		else
+			line.append(buffer, size);
+		// consume the line
+		this->skip(i);
+	}
+	return line.toString();
+}
+#else // #not defined MSG_PEEK
+String ClientSocket::readLine()
+{
+	int count=0, size=0;
+	const unsigned int bufLen=LINE_BUFFER_SIZE;
 	char buffer[bufLen];
 	char receivedChar;
 	do{
-		count+=readBytes(&buffer[count],1);
+		count+=readBytes(buffer+count,1);
 		receivedChar=buffer[count-1];//减去1因为count已经加了1
 		//printf("==%c\n",receivedChar);
 	}while(receivedChar!='\n' && count<bufLen);
-	buffer[count-1]='\0';
-	if(count>1 && buffer[count-2]=='\r')
-		buffer[count-2]='\0';
-	return buffer;
+
+	size=count;
+	//remove '\n'
+	if(count>0 && buffer[count-1]=='\n'){
+		size=count-1;
+		buffer[size]='\0';
+		//remove '\r'
+		if(count>1 && buffer[count-2]=='\r'){
+			size=count-2;
+			buffer[size]='\0';
+		}
+	}
+	else{
+		//throw SocketException("Buffer size reached");
+	}
+	return String(buffer, size);
 }
-//读字符串,网络数据为utf-8编码形式,返回gbk编码 --待实现
+#endif // MSG_PEEK
+
+//读字符串,网络数据为utf-8编码形式,返回gbk编码
 String ClientSocket::readUtfString()
 {
 	String str;
