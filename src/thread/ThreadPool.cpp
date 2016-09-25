@@ -100,7 +100,6 @@ void ThreadPool::stop()
 	{
 		i->next()->stopAndWait();
 	}
-	m_threadList.releaseIterator(i);
 }
 
 int ThreadPool::addMoreThread(int num)

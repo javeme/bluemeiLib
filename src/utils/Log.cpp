@@ -233,7 +233,6 @@ void LogManager::destroyLoggers()
 	while(i->hasNext()) {
 		delete i->next().value;
 	}
-	m_loggers.releaseIterator(i);
 	m_loggers.clear();
 }
 

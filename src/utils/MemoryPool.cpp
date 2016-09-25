@@ -42,7 +42,7 @@ void SimpleMemoryPool<T>::destroy()
 	{
 		delete i->next();
 	}
-	m_listOriginalObject.releaseIterator(i);
+	//delete i.detach();
 	m_listOriginalObject.clear();
 	m_listObject.clear();
 }

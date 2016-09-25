@@ -369,7 +369,6 @@ void IOCPModel::closeAllClients()
 			notifyException(e);
 		}
 	}
-	m_clientSockets.releaseIterator(iter);
 }
 
 

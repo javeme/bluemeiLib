@@ -144,7 +144,6 @@
     <ClCompile Include="src\type\DataBuffer.cpp" />
     <ClCompile Include="src\type\Date.cpp" />
     <ClCompile Include="src\type\KVPairTree.cpp" />
-    <ClCompile Include="src\type\LinkedList.cpp" />
     <ClCompile Include="src\type\StringBuilder.cpp" />
     <ClCompile Include="src\type\Vector.cpp" />
     <ClCompile Include="src\utils\CallStackUtil.cpp" />

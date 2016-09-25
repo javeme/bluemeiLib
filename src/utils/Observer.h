@@ -2,7 +2,7 @@
 #define Observer_H_H
 #include "Object.h"
 #include "Exception.h"
-#include "LinkedList.cpp"
+#include "LinkedList.h"
 
 namespace bluemei{
 

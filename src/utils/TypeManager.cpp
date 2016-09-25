@@ -40,7 +40,6 @@ void TypeManager::destroy()
 	{
 		delete i->next().value;
 	}
-	m_typeMap.releaseIterator(i);
 	m_typeMap.clear();
 }
 

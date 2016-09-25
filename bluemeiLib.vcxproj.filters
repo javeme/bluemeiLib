@@ -179,9 +179,6 @@
     <ClCompile Include="src\type\KVPairTree.cpp">
       <Filter>type</Filter>
     </ClCompile>
-    <ClCompile Include="src\type\LinkedList.cpp">
-      <Filter>type</Filter>
-    </ClCompile>
     <ClCompile Include="src\type\StringBuilder.cpp">
       <Filter>type</Filter>
     </ClCompile>
