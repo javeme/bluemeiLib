@@ -1,8 +1,8 @@
-//#include "MessageThread.h"
 #include "CodeUtil.h"
 #include "System.h"
 //TODO: why error C2011 if include "MessageThread.h" before include "System.h"
 #include "MessageThread.h"
+#include "ErrorHandler.h"
 
 
 namespace bluemei{
@@ -93,6 +93,8 @@ Message* MessageThread::waitMessage()
 		//或者也有可能是虚假唤醒
 		msg=nextMessage();
 		if(msg==nullptr){
+			if(!isRunning())
+				break;
 			static int count=0;
 			System::debugInfo("MessageThread::waitMessage:Message is null(%d).\n",
 				++count);
@@ -111,11 +113,17 @@ void MessageThread::doMessageLoop()
 {
 	while(isRunning()){
 		Message* msg=waitMessage();
-		onMessage(msg);
+		try{
+			onMessage(msg);
+		}catch (ExitLoopException& e){
+			m_bRunning=false;
+		}catch (Exception& e){
+			ErrorHandler::handle(e);
+		}
 	}
 }
 
-void MessageThread::finish()
+void MessageThread::stop()
 {
 	if(isRunning())
 	{

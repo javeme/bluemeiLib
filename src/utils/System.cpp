@@ -465,6 +465,7 @@ void System::debugInfo(const char* str, ...)
 	char buf[1024*4];
 	vsprintf_s(buf, str, vlist);
 	OutputDebugStringA(buf);
+	//fwrite(file, buf);
 	va_end(vlist);
 }
 

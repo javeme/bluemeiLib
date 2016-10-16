@@ -131,6 +131,7 @@
     <ClCompile Include="src\template\TemplateParser.cpp" />
     <ClCompile Include="src\thread\CriticalLock.cpp" />
     <ClCompile Include="src\thread\LambdaThread.cpp" />
+    <ClCompile Include="src\thread\Looper.cpp" />
     <ClCompile Include="src\thread\MessageThread.cpp" />
     <ClCompile Include="src\thread\MutexLock.cpp" />
     <ClCompile Include="src\thread\ResourceLock.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="src\template\TemplateParser.h" />
     <ClInclude Include="src\thread\CriticalLock.h" />
     <ClInclude Include="src\thread\LambdaThread.h" />
+    <ClInclude Include="src\thread\Looper.h" />
     <ClInclude Include="src\thread\MessageThread.h" />
     <ClInclude Include="src\thread\MutexLock.h" />
     <ClInclude Include="src\thread\ResourceLock.h" />

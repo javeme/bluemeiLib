@@ -215,6 +215,9 @@
     <ClCompile Include="src\thread\MessageThread.cpp">
       <Filter>thread</Filter>
     </ClCompile>
+    <ClCompile Include="src\thread\Looper.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\lang\Exception.h">
@@ -464,6 +467,9 @@
       <Filter>thread</Filter>
     </ClInclude>
     <ClInclude Include="src\thread\ThreadException.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\Looper.h">
       <Filter>thread</Filter>
     </ClInclude>
   </ItemGroup>
