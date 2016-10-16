@@ -191,7 +191,7 @@ Date Date::parseDate( const char* format,const char* strDate )
 	return date;
 }
 
-long Date::operator-(Date& other)const
+long Date::operator-(const Date& other)const
 {
 	//.time秒数, .timezone时区 以分钟数表示
 	time_t second=(m_time.time - other.m_time.time) +
@@ -205,7 +205,7 @@ Date Date::operator+(long ms)const
 	return Date(this->getTotalMillSecond() + ms);
 }
 
-bool Date::operator<(Date& other)const
+bool Date::operator<(const Date& other)const
 {
 	long long offset = 0;
 	if(m_time.timezone != other.m_time.timezone)
