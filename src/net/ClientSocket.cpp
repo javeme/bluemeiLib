@@ -3,6 +3,7 @@
 #include "SocketTools.h"
 #include "RuntimeException.h"
 #include "StringBuilder.h"
+#include "System.h"
 
 namespace bluemei{
 
@@ -13,16 +14,19 @@ ClientSocket::ClientSocket()
 	m_bClose=true;
 	createSocket();
 }
+
 ClientSocket::ClientSocket(socket_t hSocket)
 {
 	m_bClose=true;
 	attach(hSocket);
 }
+
 ClientSocket::~ClientSocket()
 {
 	if(!m_bClose)
 		close();
 }
+
 //创建套接字
 void ClientSocket::createSocket()
 {
@@ -33,6 +37,7 @@ void ClientSocket::createSocket()
 		throw SocketException(WSAGetLastError(),"Failed to init socket");
 	}
 }
+
 //连接服务器
 void ClientSocket::connect(cstring ip,unsigned short port)
 {
@@ -57,12 +62,14 @@ void ClientSocket::connect(cstring ip,unsigned short port)
 	}
 	m_bClose=false;
 }
+
 //设置对方地址
 void ClientSocket::setPeerAddr(sockaddr_in& addr)
 {
 	m_peerAddr=addr;
 	m_bClose=false;
 }
+
 //获取对方地址
 String ClientSocket::getPeerHost()const
 {
@@ -71,6 +78,7 @@ String ClientSocket::getPeerHost()const
 	//return *pStr;
 	return String(pChar);
 }
+
 //获得对方端口
 int ClientSocket::getPeerPort()const
 {
@@ -84,14 +92,17 @@ void ClientSocket::setTimeout(int ms)//毫秒
 #ifdef WIN32
 	int timeout=ms;
 #else
-	struct timeval timeout = {ms/1000,ms%1000};
+	struct timeval timeout={ms/1000,ms%1000};
 #endif
-	//设置发送超时
-	int ret=setsockopt(m_hSocket,SOL_SOCKET,SO_SNDTIMEO,(char*)&timeout,sizeof(timeout));
+	//设置发送超时 当短时间内大量发送数据时,不设置超时send函数可能阻塞住;	
+	//而设置超时后会阻塞timeout毫秒后会返回超时错误.那么,如何处理上述情况?
+	int ret=setsockopt(m_hSocket,SOL_SOCKET,SO_SNDTIMEO,
+		(char*)&timeout,sizeof(timeout));
 	if(ret==SOCKET_ERROR)
 		throw SocketException(WSAGetLastError(),toString());
 	//设置接收超时
-	ret=setsockopt(m_hSocket,SOL_SOCKET,SO_RCVTIMEO,(char*)&timeout,sizeof(timeout));
+	ret=setsockopt(m_hSocket,SOL_SOCKET,SO_RCVTIMEO,
+		(char*)&timeout,sizeof(timeout));
 	if(ret==SOCKET_ERROR)
 		throw SocketException(WSAGetLastError(),toString());
 }
@@ -99,7 +110,8 @@ void ClientSocket::setTimeout(int ms)//毫秒
 void ClientSocket::setNoDelay(bool noDelay)
 {
 	 int flag = noDelay;
-     int ret = setsockopt(m_hSocket,IPPROTO_TCP,TCP_NODELAY,(char*)&flag,sizeof(flag));
+     int ret = setsockopt(m_hSocket,IPPROTO_TCP,TCP_NODELAY,
+		 (char*)&flag,sizeof(flag));
 	 if(ret==SOCKET_ERROR)
 		 throw SocketException(WSAGetLastError(),toString());
 }
@@ -114,6 +126,7 @@ unsigned long ClientSocket::availableBytes()
 		throw SocketException(WSAGetLastError(),toString());
 	return length;
 }
+
 //跳过字节
 void ClientSocket::skip(unsigned long len)
 {
@@ -129,6 +142,7 @@ void ClientSocket::skip(unsigned long len)
 		count+=readBytes(buffer,wantLen);
 	}while(count!=len);
 }
+
 //读字节,返回读取字节数
 int ClientSocket::readBytes(char buffer[],int maxLength,int flags)
 {
@@ -157,6 +171,7 @@ int ClientSocket::readBytes(char buffer[],int maxLength,int flags)
 	}
 	return length;
 }
+
 //读取指定长度字节
 int ClientSocket::readEnoughBytes(char buffer[],int length)
 {
@@ -170,6 +185,7 @@ int ClientSocket::readEnoughBytes(char buffer[],int length)
 		throw SocketException("have not read enough data,"+toString());
 	return count;
 }
+
 //读整型
 int ClientSocket::readInt()
 {
@@ -182,6 +198,7 @@ int ClientSocket::readInt()
 	value=::ntohl(value);
 	return value;
 }
+
 //读整型(2字节)
 int ClientSocket::readShort()
 {
@@ -244,7 +261,9 @@ String ClientSocket::readLine()
 	}
 	return line.toString();
 }
+
 #else // #not defined MSG_PEEK
+
 String ClientSocket::readLine()
 {
 	int count=0, size=0;
@@ -306,6 +325,7 @@ int ClientSocket::writeBytes(const char buffer[],int length,int flags)
 		int errorCode=::WSAGetLastError();
 		if (errorCode==WSAETIMEDOUT)
 		{
+			// TODO: how to deal with send timeout?
 			throw TimeoutException(m_nTimeout);
 		}
 		else
@@ -321,18 +341,30 @@ int ClientSocket::writeBytes(const char buffer[],int length,int flags)
 #endif
 	return size;
 }
+
 //写指定长度字节
 int ClientSocket::writeEnoughBytes(const char buffer[],int length)
 {
 	int count=0;
 	do{
-		count+=writeBytes(buffer+count,length-count);//EINTR
+		try{
+			// may be broken by some reason like EINTR
+			count+=writeBytes(buffer+count,length-count);
+		}catch(TimeoutException& e){
+			// TODO: how to deal with send timeout?
+			System::debugInfo("writeEnoughBytes() send too much data: %s\n",
+				e.toString().c_str());
+			int ms = Util::random() % 1000;
+			Thread::sleep(ms);
+		}
 	}while(count!=length);
+	// TODO: use flag MSG_WAITALL to send all
 	//count=writeBytes(buffer,length,MSG_WAITALL);
 	if(count!=length)
-		throw SocketException("have not send enough data,"+toString());
+		throw SocketException("have not sent enough data,"+toString());
 	return count;
 }
+
 //写整型
 int ClientSocket::writeInt(int value)
 {
@@ -347,6 +379,7 @@ int ClientSocket::writeInt(int value)
 	//	throw SocketException("length of the sended data not enough");
 	return len;
 }
+
 //写整型(2字节)
 int ClientSocket::writeShort(short value)
 {
@@ -375,14 +408,16 @@ int ClientSocket::writeUtfString(const String& str)
 	int size=this->writeEnoughBytes(str.c_str(),length);
 	return size;
 }
-////写字符串,网络数据以默认编码传送
+
+//写字符串,网络数据以默认编码传送
 int ClientSocket::writeString(const String& str)
 {
 	int length=str.length();
 	int size=this->writeEnoughBytes(str.c_str(),length);
 	return size;
 }
-//关闭
+
+//关闭连接
 void ClientSocket::close()
 {
 	if(m_bClose)
@@ -394,6 +429,7 @@ void ClientSocket::close()
 		throw SocketException(::WSAGetLastError(),toString());
 	}
 }
+
 //返回描述
 String ClientSocket::toString()const
 {
