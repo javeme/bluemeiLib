@@ -2,28 +2,26 @@
 #include "bluemeiLib.h"
 #include "File.h"
 #include "Object.h"
+#include "StringBuilder.h"
 
 namespace bluemei{
-
-using std::string;
-#define PropertiesMap map<string,string>
 
 class BLUEMEILIB_API SimpleCfgFile : public Object
 {
 public:
-	SimpleCfgFile(const string& path);
+	SimpleCfgFile(const String& path);
 	~SimpleCfgFile(void);
 private:
-	PropertiesMap m_propertiesMap;
-	string m_filePath;
-	string m_content;
+	Map<String,String> m_propertiesMap;
+	String m_filePath;
+	StringBuilder m_content;
 	bool m_isChanged;
 public:
-	void readPropertyFromFile(const string& path);
+	void readPropertyFromFile(const String& path);
 public:
-	bool getProperty(const string& key,string& value);//获取配置属性
-	bool setProperty(const string& key,const string& value);//设置配置属性
-	bool removeProperty(const string& key);
+	bool getProperty(const String& key,String& value);
+	bool setProperty(const String& key,const String& value);
+	bool removeProperty(const String& key);
 	void saveProperty();
 };
 

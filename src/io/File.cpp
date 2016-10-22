@@ -56,7 +56,7 @@ void File::openFile(String path,String openMode)
 		throw IOException("can't open file: path-name is null.");
 	m_pFile=fopen(path.c_str(),openMode.c_str());
 	if(m_pFile==NULL)
-		throw IOException("'"+path+"'file open failed.");
+		throw IOException("failed to open file '"+path+"'");
 	m_bCloseAble=true;
 	m_strPath=path;
 }

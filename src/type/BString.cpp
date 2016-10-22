@@ -64,6 +64,7 @@ String::~String()
 bool String::init(int len)
 {
 	m_nLength = len;
+	// TODO: needs to support small string optimization?
 	m_charBuffer = new char[m_nLength+1];
 	if(m_charBuffer==nullptr)
 		return false;
@@ -118,30 +119,21 @@ String String::operator+ (const String &add) const
 	tmp+=add;
 	return tmp;
 }
+
 String& String::operator+= (const String &add)
 {
 	return append(add);
 }
+
 String::operator cstring() const
 {
 	return c_str();
 }
+
 String::operator std::string() const
 {
 	return m_charBuffer;
 }
-////////////////////////////////////////////////////////////
-// String类功能函数
-// const char *ToString()
-// char GetAt(int index)
-// int Len()
-// int FindFirstSub(String substr, int start = 0)
-// bool InStr(String substr)
-// String Trim(int part)
-// String Left()
-// String Right()
-// String Mid()
-// void Replace(String strNeedReplaced, String strReplace)
 
 String String::toString() const
 {
@@ -187,7 +179,7 @@ unsigned int String::length() const
 }
 
 //得到start后（含）子串substr的索引
-int String::find(const String& substr, unsigned int start/* = 0*/) const
+int String::find(const String& substr, unsigned int start/*= 0*/) const
 {
 	if(start == 0 && this->empty())
 		return substr.empty() ? 0 : -1;
@@ -216,7 +208,8 @@ int String::find(const String& substr, unsigned int start/* = 0*/) const
 	/*
 	char *strstr(const char *string, const char *strSearch);
 	在字符串string中查找strSearch子串.
-	返回子串strSearch在string中首次出现位置的指针. 如果没有找到子串strSearch, 则返回NULL. 如果子串strSearch为空串, 函数返回string值
+	返回子串strSearch在string中首次出现位置的指针. 如果没有找到子串strSearch,
+	则返回NULL. 如果子串strSearch为空串, 函数返回string值
 	*/
 	if(start>=0 && start<m_nLength)
 	{
@@ -298,7 +291,7 @@ String String::getLeftSub(unsigned int sublen) const
 		sublen=0;
 	return String(m_charBuffer,sublen);
 }
-//
+
 //字符串右部长度为sublen的子串
 String String::getRightSub(unsigned int sublen) const
 {
@@ -308,7 +301,7 @@ String String::getRightSub(unsigned int sublen) const
 		sublen=0;
 	return String(m_charBuffer+(m_nLength-sublen),sublen);
 }
-//
+
 //字符串中间从start开始长度为sublen的子串
 String String::substring(unsigned int start,unsigned int sublen) const
 {
@@ -333,7 +326,6 @@ String String::substring(unsigned int start) const
 	return substring(start,m_nLength-start);
 }
 
-//
 //将字符串中所有形如strNeedReplaced的子串替换为strReplace
 String String::replace(const String& strNeedReplaced,
 	const String& strReplace) const
@@ -552,33 +544,5 @@ IMPL_APPEND2STRING(float);
 IMPL_APPEND2STRING(double);
 IMPL_APPEND2STRING(cstring);
 
-// String类结束
-
-////////////////////////////////////////////////////////////
-/*
-String str="Hello.";
-str+="test";
-bool b=str.contain("es");
-b=str.contain("esta");
-String sub=str.getLeftSub(2);
-sub=str.getRightSub(11);
-sub=str.getRightSub(4);
-sub=str.substring(1,5);
-sub=str.substring(0,15);
-sub.replace("H","h");
-b=sub.compare(str,false);
-String tmp=String(" ")+str+" "+sub+"   ";
-tmp=tmp.trim();
-TRACE("%s\n",(const char*)tmp);
-
-String sss = "aaa bbb ccc ddd-eee fff";
-auto list = sss.splitWith(" ");
-String sss2 = String("_").join(list);
-sss2 = String("_").join(list, 1, 4);
-sss2 = String("_").join(list, 2, 3);
-sss2 = String("_").join(list, 1, 20);
-sss2 = String("_").join(list, 3, 2);
-
-*/
 
 }//end of namespace bluemei
