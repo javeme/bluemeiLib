@@ -26,11 +26,21 @@ Log::Log(const String& name, const String& path, LogLevel level/*=LOG_INFO*/)
 											filePath.toString().c_str())));
 	}
 	m_file.openFile(path, "a+");
+
+	// start loop in a new thread
+	m_looper.start();
 }
 
 Log::~Log()
 {
 	delete m_tmpl;
+
+	try{
+		m_looper.stop();
+	}catch (Exception& e){
+		ErrorHandler::handle(e);
+	}
+
 	try{
 		m_file.close();
 	}catch(Exception& e){
@@ -50,14 +60,18 @@ String Log::getLevelDscr() const
 
 void Log::printLine(const String& str)
 {
-	ScopedLock sl(m_lock);
-	m_file.writeLine(str);
+	// NOTE: use Looper.postRunnable() instead of 
+	// ScopedLock sl(lock); m_file.writeLine(str); return;
+	m_looper.postRunnable([&, str]{
+		m_file.writeLine(str);
+	});
 }
 
 void Log::print(const String& str)
 {
-	ScopedLock sl(m_lock);
-	m_file.writeBytes(str.c_str(), str.length());
+	m_looper.postRunnable([&, str]{
+		m_file.writeBytes(str.c_str(), str.length());
+	});
 }
 
 String Log::level2String(LogLevel val)

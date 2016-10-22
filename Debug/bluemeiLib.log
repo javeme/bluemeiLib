@@ -1,20 +1,77 @@
-﻿生成启动时间为 10/23/2016 2:37:02 AM。
+﻿生成启动时间为 10/23/2016 3:05:16 AM。
      1>项目“D:\c++\C++vs2010\bluemeiLib\bluemeiLib.vcxproj”在节点 2 上(build 个目标)。
      1>InitializeBuildStatus:
          正在创建“Debug\bluemeiLib.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
        ClCompile:
-         所有输出均为最新。
+         G:\VS2010\VC\bin\CL.exe /c /ID:\c++\C++vs2010\bluemeiLib\ /ID:\c++\C++vs2010\bluemeiLib\\src\bLib /ID:\c++\C++vs2010\bluemeiLib\\src /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D BLUEMEILIB_EXPORTS /D SEND_LOG /D _WINDLL /D _UNICODE /D UNICODE /GF /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt src\utils\Log.cpp
+         Log.cpp
        ManifestResourceCompile:
          所有输出均为最新。
        Link:
-         所有输出均为最新。
-       Manifest:
-         所有输出均为最新。
-       FinalizeBuildStatus:
-         正在删除文件“Debug\bluemeiLib.unsuccessfulbuild”。
-         正在对“Debug\bluemeiLib.lastbuildstate”执行 Touch 任务。
-     1>已完成生成项目“D:\c++\C++vs2010\bluemeiLib\bluemeiLib.vcxproj”(build 个目标)的操作。
+         G:\VS2010\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\c++\c++vs2010\sln\Debug\bluemeiLib.dll" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\bluemeiLib.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\c++\c++vs2010\sln\Debug\bluemeiLib.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\c++\c++vs2010\sln\Debug\bluemeiLib.lib" /MACHINE:X86 /DLL Debug\bluemeiLib.dll.embed.manifest.res
+         Debug\dllmain.obj
+         Debug\ConfigOption.obj
+         Debug\SimpleCfgFile.obj
+         Debug\File.obj
+         Debug\FilePath.obj
+         Debug\FileUtil.obj
+         Debug\IOException.obj
+         Debug\Class.obj
+         Debug\ClassField.obj
+         Debug\Exception.obj
+         Debug\Object.obj
+         Debug\ObjectFactory.obj
+         Debug\RuntimeException.obj
+         Debug\ClientSocket.obj
+         Debug\FtpConnection.obj
+         Debug\FtpException.obj
+         Debug\IOCompletionPort.obj
+         Debug\IOCompletionPortImplWin32.obj
+         Debug\IOCPModel.obj
+         Debug\ServerSocket.obj
+         Debug\SocketException.obj
+         Debug\SocketTools.obj
+         Debug\Application.obj
+         Debug\BeanContainer.obj
+         Debug\Context.obj
+         Debug\Session.obj
+         Debug\FileTemplate.obj
+         Debug\StringTemplate.obj
+         Debug\TemplateLoader.obj
+         Debug\TemplateParser.obj
+         Debug\CriticalLock.obj
+         Debug\LambdaThread.obj
+         Debug\Looper.obj
+         Debug\MessageThread.obj
+         Debug\MutexLock.obj
+         Debug\ResourceLock.obj
+         Debug\Thread.obj
+         Debug\ThreadException.obj
+         Debug\ThreadPool.obj
+         Debug\Timer.obj
+         Debug\WorkThread.obj
+         Debug\BString.obj
+         Debug\ByteBuffer.obj
+         Debug\DataBuffer.obj
+         Debug\Date.obj
+         Debug\KVPairTree.obj
+         Debug\StringBuilder.obj
+         Debug\Vector.obj
+         Debug\CallStackUtil.obj
+         Debug\CodeUtil.obj
+         Debug\Converter.obj
+         Debug\ErrorHandler.obj
+         Debug\Log.obj
+         Debug\MemoryPool.obj
+         Debug\Ptr.obj
+         Debug\SmartPtrManager.obj
+         Debug\StackWalker.obj
+         Debug\System.obj
+         Debug\TypeManager.obj
+         Debug\Util.obj
+     1>LINK : fatal error LNK1168: 无法打开 D:\c++\c++vs2010\sln\Debug\bluemeiLib.dll 进行写入
+     1>已完成生成项目“D:\c++\C++vs2010\bluemeiLib\bluemeiLib.vcxproj”(build 个目标)的操作 - 失败。
 
-生成成功。
+生成失败。
 
-已用时间 00:00:00.39
+已用时间 00:00:07.56
