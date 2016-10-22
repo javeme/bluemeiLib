@@ -35,6 +35,9 @@
     <Filter Include="template">
       <UniqueIdentifier>{c5704819-27d7-4446-99ae-107b64c6f468}</UniqueIdentifier>
     </Filter>
+    <Filter Include="conf">
+      <UniqueIdentifier>{f2f676f0-6b00-4350-9c88-b4e651c8c418}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -155,9 +158,6 @@
     <ClCompile Include="src\thread\MutexLock.cpp">
       <Filter>thread</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\SimpleCfgFile.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
     <ClCompile Include="src\lang\ClassField.cpp">
       <Filter>lang</Filter>
     </ClCompile>
@@ -217,6 +217,12 @@
     </ClCompile>
     <ClCompile Include="src\thread\Looper.cpp">
       <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\conf\SimpleCfgFile.cpp">
+      <Filter>conf</Filter>
+    </ClCompile>
+    <ClCompile Include="src\conf\ConfigOption.cpp">
+      <Filter>conf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -376,9 +382,6 @@
     <ClInclude Include="src\thread\MutexLock.h">
       <Filter>thread</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\SimpleCfgFile.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="src\lang\ClassField.h">
       <Filter>lang</Filter>
     </ClInclude>
@@ -471,6 +474,12 @@
     </ClInclude>
     <ClInclude Include="src\thread\Looper.h">
       <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\conf\SimpleCfgFile.h">
+      <Filter>conf</Filter>
+    </ClInclude>
+    <ClInclude Include="src\conf\ConfigOption.h">
+      <Filter>conf</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -205,7 +205,8 @@ string Util::int2Str(int i)
 double Util::str2Float(cstring str)
 {
 	if(!isFloatNumber(str,strlen(str))){
-		throw BadCastException(String::format("string '%s' can not be converted to floating point number",str));
+		throw BadCastException(String::format("string '%s' can not be "
+			"converted to floating point number",str));
 	}
 	double f=::atof(str);
 	return f;
@@ -216,6 +217,24 @@ bluemei::string Util::float2Str(double f)
 	char buf[256];
 	sprintf_s(buf,"%lf",f);
 	return buf;
+}
+
+bool Util::str2Boolean(cstring str)
+{
+	String s(str);
+	s = s.toLower();
+	if(s.compare("false") || s.compare("no") || s.compare("0"))
+		return false;
+	else
+		return true;
+}
+
+bluemei::string Util::boolean2Str(bool b)
+{
+	if(b)
+		return "true";
+	else
+		return "false";
 }
 
 int Util::random()

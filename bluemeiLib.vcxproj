@@ -102,6 +102,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="src\conf\ConfigOption.cpp" />
+    <ClCompile Include="src\conf\SimpleCfgFile.cpp" />
     <ClCompile Include="src\io\File.cpp" />
     <ClCompile Include="src\io\FilePath.cpp" />
     <ClCompile Include="src\io\FileUtil.cpp" />
@@ -154,7 +156,6 @@
     <ClCompile Include="src\utils\Log.cpp" />
     <ClCompile Include="src\utils\MemoryPool.cpp" />
     <ClCompile Include="src\utils\Ptr.cpp" />
-    <ClCompile Include="src\utils\SimpleCfgFile.cpp" />
     <ClCompile Include="src\utils\SmartPtrManager.cpp" />
     <ClCompile Include="src\utils\StackWalker.cpp" />
     <ClCompile Include="src\utils\System.cpp" />
@@ -163,6 +164,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bluemeiLib.h" />
+    <ClInclude Include="src\conf\ConfigOption.h" />
+    <ClInclude Include="src\conf\SimpleCfgFile.h" />
     <ClInclude Include="src\io\File.h" />
     <ClInclude Include="src\io\FilePath.h" />
     <ClInclude Include="src\io\FileUtil.h" />
@@ -237,7 +240,6 @@
     <ClInclude Include="src\utils\MultiValueHashMap.h" />
     <ClInclude Include="src\utils\Observer.h" />
     <ClInclude Include="src\utils\Ptr.h" />
-    <ClInclude Include="src\utils\SimpleCfgFile.h" />
     <ClInclude Include="src\utils\SmartPtr.h" />
     <ClInclude Include="src\utils\SmartPtrManager.h" />
     <ClInclude Include="src\utils\StackWalker.h" />
