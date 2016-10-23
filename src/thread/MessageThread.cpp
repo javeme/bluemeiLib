@@ -22,7 +22,7 @@ MessageThread::~MessageThread()
 	clearMessage();
 }
 
-void MessageThread::addMessage(Message* msg)
+void MessageThread::postMessage(Message* msg)
 {
 	ScopedLock scopedLock(m_queueLock);
 

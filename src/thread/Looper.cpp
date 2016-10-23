@@ -60,7 +60,7 @@ void Looper::stop()
 	// NOTE: don't use "m_msgThread->stop()" -- it may lead to some
 	// of the messages left in the queue.
 	ThreadFunction empty;
-	m_msgThread->addMessage(new RunnableMessage(MSG_EXIT_LOOP, empty));
+	m_msgThread->postMessage(new RunnableMessage(MSG_EXIT_LOOP, empty));
 	m_msgThread->wait();
 
 	delete m_msgThread;
@@ -72,7 +72,7 @@ void Looper::postRunnable(const ThreadFunction& f, int priority/*=0*/)
 	checkNullPtr(m_msgThread);
 
 	Message* msg = new RunnableMessage(MSG_EXE_RUNNABLE, f, priority);
-	this->m_msgThread->addMessage(msg);
+	this->m_msgThread->postMessage(msg);
 }
 
 void Looper::onMessage(Message* msg)
