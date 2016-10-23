@@ -198,7 +198,7 @@ ChoiceOption::~ChoiceOption()
 {
 	delete m_value;
 
-	for(int i=0; i<m_choices.size(); i++)
+	for(unsigned int i=0; i<m_choices.size(); i++)
 	{
 		delete m_choices[i];
 	}
@@ -224,7 +224,7 @@ ConfigOption& ChoiceOption::value() const
 
 bool ChoiceOption::checkChoice(const ConfigOption& val)
 {
-	for(int i=0; i<m_choices.size(); i++)
+	for(unsigned int i=0; i<m_choices.size(); i++)
 	{
 		ConfigOption* option = m_choices[i];
 		if(option && option->valueEquals(val))
@@ -267,7 +267,7 @@ Object* ChoiceOption::clone() const
 {
 	ChoiceOption* obj = new ChoiceOption(name(), *m_value, description());
 
-	for(int i=0; i<m_choices.size(); i++)
+	for(unsigned int i=0; i<m_choices.size(); i++)
 	{
 		obj->m_choices.push_back(ConfigOption::clone(*m_choices[i]));
 	}
@@ -289,7 +289,7 @@ String ChoiceOption::choicesString() const
 {
 	StringBuilder sb(m_choices.size() * 8);
 	sb.append("[");
-	for(int i=0; i<m_choices.size(); i++)
+	for(unsigned int i=0; i<m_choices.size(); i++)
 	{
 		sb.append(option2String(*m_choices[i]));
 		sb.append(",");
