@@ -57,7 +57,12 @@ void Looper::stop()
 {
 	checkNullPtr(m_msgThread);
 
-	m_msgThread->stop();
+	// NOTE: don't use "m_msgThread->stop()" -- it may lead to some
+	// of the messages left in the queue.
+	ThreadFunction empty;
+	m_msgThread->addMessage(new RunnableMessage(MSG_EXIT_LOOP, empty));
+	m_msgThread->wait();
+
 	delete m_msgThread;
 	m_msgThread = null;
 }
