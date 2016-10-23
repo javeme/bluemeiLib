@@ -115,7 +115,7 @@ void MessageThread::doMessageLoop()
 		Message* msg=waitMessage();
 		try{
 			onMessage(msg);
-		}catch (ExitLoopException& e){
+		}catch (ExitLoopException&){
 			m_bRunning=false;
 		}catch (Exception& e){
 			ErrorHandler::handle(e);
@@ -136,7 +136,13 @@ void MessageThread::stop()
 
 void MessageThread::run()
 {
-	doMessageLoop();
+	try{
+		doMessageLoop();
+	}catch (std::exception& e){
+		ErrorHandler::handle(StdException(e));
+	}catch (...){
+		ErrorHandler::handle(UnknownException("MessageThread unknown error"));
+	}
 }
 
 void MessageThread::onMessage(Message* msg)

@@ -291,8 +291,11 @@ void IOCPModel::start()
 				removeClient(e.getSocket());
 				m_bRunning&=notifyException(e);
 			}catch(Exception& e){
-				//֪ͨ�쳣
 				m_bRunning&=notifyException(e);
+			}catch (std::exception& e){
+				m_bRunning&=notifyException(StdException(e));
+			}catch (...){
+				m_bRunning&=notifyException(UnknownException());
 			}
 		}
 		//end of thread

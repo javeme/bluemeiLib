@@ -11,13 +11,13 @@ namespace bluemei{
 template class BLUEMEILIB_API std::allocator<String>;
 template class BLUEMEILIB_API List<String>;
 
-class BLUEMEILIB_API Exception: public std::exception , public Object
+class BLUEMEILIB_API Exception : public std::exception, public Object
 {
 public:
 	Exception();
 	Exception(cstring msg);
 	//Exception(const String& msg);
-	Exception(Exception& e,cstring msg);
+	Exception(Exception& e, cstring msg);
 	virtual ~Exception();
 public:
 	virtual void setExceptionMsg(cstring msg);
@@ -44,6 +44,28 @@ protected:
 	String m_strFunc,m_strFile;
 	List<String> m_listStackMsg;
 };
+
+class BLUEMEILIB_API StdException : public Exception
+{
+public:
+	StdException(const std::exception& e) : Exception(e.what()) {}
+public:
+	virtual String name()const {
+		return "StdException";
+	}
+};
+
+class BLUEMEILIB_API UnknownException : public Exception
+{
+public:
+	UnknownException(cstring msg) : Exception(msg) {}
+	UnknownException() : Exception("unknown exception") {}
+public:
+	virtual String name()const {
+		return "UnknownException";
+	}
+};
+
 typedef std::auto_ptr<Exception> AutoReleaseException;
 typedef AutoReleaseException ARException;
 

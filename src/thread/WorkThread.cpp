@@ -38,9 +38,12 @@ void WorkThread::run()
 			}
 			m_bIsIdle=true;
 		}
-	}catch(Exception& e)
-	{
+	}catch(Exception& e){
 		ErrorHandler::handle(e);
+	}catch (std::exception& e){
+		ErrorHandler::handle(StdException(e));
+	}catch (...){
+		ErrorHandler::handle(UnknownException("ThreadPool error"));
 	}
 }
 void WorkThread::stopAndWait()
