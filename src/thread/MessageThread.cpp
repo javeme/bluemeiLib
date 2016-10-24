@@ -119,7 +119,11 @@ void MessageThread::doMessageLoop()
 			m_bRunning=false;
 		}catch (Exception& e){
 			ErrorHandler::handle(e);
+		}catch (...){
+			if(msg) msg->release();
+			throw;
 		}
+		if(msg) msg->release();
 	}
 }
 
@@ -149,7 +153,6 @@ void MessageThread::onMessage(Message* msg)
 {
 	if(msg!=nullptr){
 		m_msgFun(msg);
-		msg->release();
 	}
 	else{
 		static int count=0;
