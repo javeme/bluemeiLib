@@ -11,6 +11,8 @@ template<class T> class ArrayList;
 #define TRIM_RIGHT 2
 #define TRIM_BOTH 0
 
+#define STR_SMALL_SIZE 8
+
 /*
 * 字符串类
 * @author Javeme(整理)
@@ -20,33 +22,36 @@ template<class T> class ArrayList;
 class BLUEMEILIB_API String : public Object
 {
 public:
+	// constructors
 	String();
-	String(cstring src , int len=-1);
+	String(cstring src, unsigned int len=-1);
 	String(const std::string &src);
 	String(const String &src);
-	String(String&& src);//move
+	String(String&& src); // move
 	virtual ~String();
-	//操作符重载
+
+	// operators
 	String& operator= (cstring src);
 	String& operator= (const String &src);
-	String& operator= (String&& src);//move
-	bool operator== (const String &other)const{ return compare(other); }
-	bool operator!= (const String &other)const{ return !compare(other); }
-	bool operator<(cstring str)const;
-	bool operator== (cstring str)const{ return compare(str); };
-	bool operator!= (cstring str)const{ return !compare(str); };
-	//char * operator + (String &add2);
+	String& operator= (String&& src); // move
+	bool operator== (const String &other) const{ return compare(other); }
+	bool operator!= (const String &other) const{ return !compare(other); }
+	bool operator< (cstring str) const;
+	bool operator== (cstring str) const{ return compare(str); };
+	bool operator!= (cstring str) const{ return !compare(str); };
 	String operator+ (const String &add) const;
 	String& operator+= (const String &add);
-	//强制转换
+
+	// conversions
 	operator cstring() const;
 	operator std::string() const;
-	//成员函数
+
+	// member methods
 	virtual String& append(const String &add);
 	virtual char charAt(int index) const;
 	virtual unsigned int length() const;
 	virtual bool empty() const{ return length() == 0; }
-	virtual int find(const String& substr, unsigned int start = 0) const;
+	virtual int find(const String& substr, unsigned int start=0) const;
 	virtual int rfind(const String& substr, unsigned int fromIndex=-1) const;
 	virtual bool contain(const String& substr) const;
 	virtual bool startWith(const String& substr) const;
@@ -68,17 +73,44 @@ public:
 	virtual cstring c_str() const;
 	static String format(cstring frmt, ...);
 private:
-	//init memory
-	bool init(int len);
-	//check offset is out of bound
-	void checkBound(unsigned int offset) const;
+	// union to store string data
+	typedef union {
+		// small string optimization: memory may be in stack
+		char buf[STR_SMALL_SIZE]; // and this permit aliasing
+		// memory in heap
+		char *ptr;
+	} str_buf_t;
+
+	// init memory
+	void init(unsigned int len);
+	// destroy memory
+	void destroy();
+	// resize memory
+	void resize(unsigned int len);
+	// update memory
+	void steal(String& src);
+	// get data ptr
+	char* data() const {
+		if(m_nSize < STR_SMALL_SIZE)
+			return (char*)m_chars.buf;
+		else
+			return m_chars.ptr;
+	}
+	// check offset is out of bound
+	void checkBound(unsigned int offset) const {
+		if(offset >= m_nLength) {
+			throwOutOfBoundException(offset);
+		}
+	}
+	// throw OutOfBoundException in cpp
+	void throwOutOfBoundException(unsigned int offset) const;
+
 private:
-	char *m_charBuffer;
+	str_buf_t m_chars;
 	unsigned int m_nLength;
+	unsigned int m_nSize;
 };
 
-//BLUEMEILIB_API bool operator<(const String& str1,const String& str2);
-//BLUEMEILIB_API String operator+(cstring str1,const String& str2);
 
 #define APPEND2STRING(Type)\
 	BLUEMEILIB_API String operator+(const Type& str1,const String& str2);\
