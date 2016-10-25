@@ -1,10 +1,9 @@
-﻿生成启动时间为 10/25/2016 4:57:46 AM。
+﻿生成启动时间为 10/25/2016 9:21:27 PM。
      1>项目“D:\c++\C++vs2010\bluemeiLib\bluemeiLib.vcxproj”在节点 2 上(build 个目标)。
      1>InitializeBuildStatus:
-         正在创建“Debug\bluemeiLib.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+         正在对“Debug\bluemeiLib.unsuccessfulbuild”执行 Touch 任务。
        ClCompile:
-         G:\VS2010\VC\bin\CL.exe /c /ID:\c++\C++vs2010\bluemeiLib\ /ID:\c++\C++vs2010\bluemeiLib\\src\bLib /ID:\c++\C++vs2010\bluemeiLib\\src /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D BLUEMEILIB_EXPORTS /D SEND_LOG /D _WINDLL /D _UNICODE /D UNICODE /GF /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt src\thread\MessageThread.cpp
-         MessageThread.cpp
+         所有输出均为最新。
        ManifestResourceCompile:
          所有输出均为最新。
        Link:
@@ -82,4 +81,4 @@
 
 生成成功。
 
-已用时间 00:00:08.12
+已用时间 00:00:00.89

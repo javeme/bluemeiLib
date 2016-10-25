@@ -200,16 +200,20 @@ String& String::append(const String &add)
 {
 	int lenAdd = add.length();
 	int lenTotal = m_nLength + lenAdd;
-
-	String tmp("", lenTotal);
-	char *buf = tmp.data();
-	//strcpy(buf, m_charBuffer);
-	//strcat(buf+m_nLength, (const char*)add);
-	memcpy(buf, data(), m_nLength);
-	memcpy(buf + m_nLength, add.data(), lenAdd);
-	buf[lenTotal] = '\0';
-
-	*this = std::move(tmp);
+	// append to this buffer if the size is enough
+	if(lenTotal <= m_nSize) {
+		memcpy(data() + m_nLength, add.data(), lenAdd + 1);
+		return *this;
+	}
+	// alloc a new buffer
+	else {
+		String tmp("", lenTotal);
+		char *buf = tmp.data();
+		//strcpy(buf, data());
+		memcpy(buf, data(), m_nLength);
+		memcpy(buf + m_nLength, add.data(), lenAdd + 1);
+		*this = std::move(tmp);
+	}
 	return *this;
 }
 
