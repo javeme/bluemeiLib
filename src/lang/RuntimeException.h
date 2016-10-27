@@ -51,8 +51,8 @@ template<typename T>
 inline void checkNullPtr(T* p) throw(NullPointerException)
 {
 	if (p==nullptr){
-		String str=String::format("instance of type %s* is null",CODE2STRING(T));
-		throwpe(NullPointerException(str));
+		throwpe(NullPointerException(String::format(
+			"instance of type %s* is null", typeid(T).name())));
 	}
 }
 
