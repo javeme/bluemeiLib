@@ -60,6 +60,21 @@ String::~String()
 	this->destroy();
 }
 
+inline char* String::data() const
+{
+	if(m_nSize < STR_SMALL_SIZE)
+		return (char*)m_chars.buf;
+	else
+		return m_chars.ptr;
+}
+
+inline void String::checkBound( unsigned int offset ) const
+{
+	if(offset >= m_nLength) {
+		throwpe(OutOfBoundException(offset, m_nLength));
+	}
+}
+
 void String::init(unsigned int len)
 {
 	// NOTE: to do small string optimization (70% of situations len < 8):
@@ -73,6 +88,8 @@ void String::init(unsigned int len)
 	else {
 		try {
 			m_chars.ptr = new char[len + 1];
+			//static GradeMemoryPools pools(1024*4000);
+			//m_chars.ptr = (char*)pools.alloc(len + 1);
 		} catch(std::exception&) {
 			throw(std::bad_alloc("Can't alloc any memory for String"));
 		}
@@ -85,6 +102,7 @@ void String::destroy()
 {
 	if(m_nSize >= STR_SMALL_SIZE && m_chars.ptr != null) {
 		delete[] m_chars.ptr;
+		//pools.free(m_chars.ptr, m_nSize + 1);
 	}
 
 	m_nSize = STR_SMALL_SIZE - 1;
@@ -198,8 +216,8 @@ cstring String::c_str() const
 
 String& String::append(const String &add)
 {
-	int lenAdd = add.length();
-	int lenTotal = m_nLength + lenAdd;
+	unsigned int lenAdd = add.length();
+	unsigned int lenTotal = m_nLength + lenAdd;
 	// append to this buffer if the size is enough
 	if(lenTotal <= m_nSize) {
 		memcpy(data() + m_nLength, add.data(), lenAdd + 1);
@@ -520,11 +538,6 @@ String String::format(cstring frmt, ...)
 	va_end(arg_ptr);
 
 	return str;
-}
-
-void String::throwOutOfBoundException(unsigned int offset) const
-{
-	throwpe(OutOfBoundException(offset, m_nLength));
 }
 
 

@@ -90,21 +90,9 @@ private:
 	// update memory
 	void steal(String& src);
 	// get data ptr
-	char* data() const {
-		if(m_nSize < STR_SMALL_SIZE)
-			return (char*)m_chars.buf;
-		else
-			return m_chars.ptr;
-	}
+	char* data() const;
 	// check offset is out of bound
-	void checkBound(unsigned int offset) const {
-		if(offset >= m_nLength) {
-			throwOutOfBoundException(offset);
-		}
-	}
-	// throw OutOfBoundException in cpp
-	void throwOutOfBoundException(unsigned int offset) const;
-
+	void checkBound(unsigned int offset) const;
 private:
 	str_buf_t m_chars;
 	unsigned int m_nLength;
