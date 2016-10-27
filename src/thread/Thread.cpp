@@ -170,10 +170,14 @@ int Thread::callBackStartThread()
 
 		if(this->m_pObject)
 			this->m_pObject->run();
-	}catch(Exception& e)//发生异常该如何处理???
-	{
-		//printf("Thread: %s\n",e.toString().c_str());
+	}catch(Exception& e){
 		ErrorHandler::handle(e);
+		ret=-1;
+	}catch (std::exception& e){
+		ErrorHandler::handle(StdException(e));
+		ret=-1;
+	}catch (...){
+		ErrorHandler::handle(UnknownException("Thread error"));
 		ret=-1;
 	}
 	m_bRunning=false;

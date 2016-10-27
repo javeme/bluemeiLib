@@ -33,7 +33,7 @@ System::~System()
 
 void System::startGcThread()
 {
-	m_lock.getLock();
+	ScopedLock sl(m_lock);
 
 	if(m_pGcThread!=nullptr)
 		return;
@@ -42,14 +42,13 @@ void System::startGcThread()
 	},nullptr);
 	m_pGcThread->setAutoDestroy(false);
 	m_pGcThread->start();
-
-	m_lock.releaseLock();
 }
 
 
 void System::destroyGcThread()
 {
-	m_lock.getLock();
+	ScopedLock sl(m_lock);
+
 	if(m_pGcThread!=nullptr)
 	{
 		if(!m_bQuit)
@@ -61,7 +60,6 @@ void System::destroyGcThread()
 		m_pGcThread=nullptr;
 		gc();
 	}
-	m_lock.releaseLock();
 }
 
 bool System::isSystemIdle()
@@ -431,6 +429,7 @@ void System::setCollecting(bool b)
 
 void System::init()
 {
+	ScopedLock sl(m_lock);
 	m_bDestroy=false;
 
 	startGcThread();
@@ -440,6 +439,8 @@ void System::init()
 
 void System::destroy()
 {
+	ScopedLock sl(m_lock);
+
 	if(m_bDestroy)
 		return;
 	m_bDestroy=true;

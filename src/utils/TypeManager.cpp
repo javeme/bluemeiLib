@@ -12,6 +12,7 @@ TypeManager* TypeManager::instance()
 	ScopedLock sl(lock);
 	if(thisInstance==nullptr)
 		thisInstance=new TypeManager();
+	checkNullPtr(thisInstance);
 	return thisInstance;
 }
 
