@@ -1,7 +1,7 @@
 #pragma once
 #include "ClientSocket.h"
 //#include "IOCompletionPortImpl.h"
-#include "MemoryPool.cpp"
+#include "MemoryPool.h"
 
 
 namespace bluemei{
