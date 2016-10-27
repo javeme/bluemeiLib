@@ -213,6 +213,7 @@ unsigned int Thread::currentThreadId()
 }
 
 unsigned int Thread::s_mainThreadId=Thread::currentThreadId();
+
 unsigned int Thread::mainThreadId()
 {
 	return s_mainThreadId;

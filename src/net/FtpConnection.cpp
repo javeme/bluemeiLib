@@ -14,6 +14,7 @@ FtpConnection::FtpConnection(const char *ip,int port)
 	this->m_strIp=ip;
 	this->m_nPort=port;
 }
+
 FtpConnection::FtpConnection()
 {
 	m_bIsPasv=true;
@@ -28,11 +29,13 @@ FtpConnection::~FtpConnection(void)
 		ErrorHandler::handle(e);
 	}
 }
+
 void FtpConnection::setAddress(const char *ip,int port)
 {
 	this->m_strIp=ip;
 	this->m_nPort=port;
 }
+
 void FtpConnection::setPasv(bool isPasv)
 {
 	this->m_bIsPasv=isPasv;
@@ -42,8 +45,8 @@ bool FtpConnection::connectServer(const char *username,const char *password)
 	//连接服务器
 	m_cmdSocket.connect(m_strIp,m_nPort);
 
-    char buff[BUF_SIZE];
-    memset(buff, 0, sizeof(buff));
+	char buff[BUF_SIZE];
+	memset(buff, 0, sizeof(buff));
 	int recvedLen=0,pos=0;
 	String line;
 
@@ -52,68 +55,71 @@ bool FtpConnection::connectServer(const char *username,const char *password)
 	pos=line.find("220");
 	if (pos<0) {
 		throw FtpException(REFUSE,"connection refused by remote ftp server");
-    }
+	}
 	//验证用户名,密码
 	m_cmdSocket.skip(m_cmdSocket.availableBytes());//清空接收队列
-    sprintf_s(buff, "USER %s\r\n", username);
+	sprintf_s(buff, "USER %s\r\n", username);
 	m_cmdSocket.writeBytes(buff,strlen(buff));
 
-    line=m_cmdSocket.readLine();
+	line=m_cmdSocket.readLine();
 	pos=line.find("331");
-    if (pos<0){
+	if (pos<0){
 		throw FtpException(REFUSE,"connection refused by remote ftp server,cause:"+line);
-    }
+	}
 	//密码
-    sprintf_s(buff, "PASS %s\r\n", password);
-    m_cmdSocket.writeBytes(buff,strlen(buff));
+	sprintf_s(buff, "PASS %s\r\n", password);
+	m_cmdSocket.writeBytes(buff,strlen(buff));
 
 	line=m_cmdSocket.readLine();
 	pos=line.find("230");
 	if (pos<0) {
 		throw FtpException(PASSWORD_EEROR,"username and password not matched");
-    }
+	}
 	//获取系统信息
-    sprintf_s(buff, "SYST\r\n");
+	sprintf_s(buff, "SYST\r\n");
 	m_cmdSocket.writeBytes(buff,strlen(buff));
 	m_cmdSocket.readBytes(buff,sizeof(buff));
 
 	//设置传输类型
-    sprintf_s(buff, "TYPE I\r\n");
+	sprintf_s(buff, "TYPE I\r\n");
 	m_cmdSocket.writeBytes(buff,strlen(buff));
-    line=m_cmdSocket.readLine();
+	line=m_cmdSocket.readLine();
 	pos=line.find("200");
 	if (pos<0) {
 		throw FtpException(SET_BINARY_FAILED,"set type binary failed,cause:"+line);
-    }
+	}
 	return true;
 }
+
 bool FtpConnection::closeFtpConnection()
 {
 	m_cmdSocket.skip(m_cmdSocket.availableBytes());//清空接收队列
 	String line="QUIT\r\n";
 	m_cmdSocket.writeString(line);
-    line=m_cmdSocket.readLine();
+	line=m_cmdSocket.readLine();
 	int pos=line.find("221");
 	if (pos<0) {
 		line+=m_cmdSocket.readLine();
 		throw FtpException(CLOSE_CON_FAILED,"close ftp connection:"+line);
-    }
+	}
 	m_cmdSocket.close();
 	return true;
 }
+
 //设置主动/被动模式
 void FtpConnection::initTranMode()
 {
 	;
 }
+
 //上传,filePath本地文件路径,savePath服务器保存路径
 bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned int* pUploadSize)
 {
 	if(pUploadSize==NULL||*pUploadSize<0)
 		return false;
 	unsigned int& uploadSize=*pUploadSize;
-    char buff[BUF_SIZE];
-    memset(buff, 0, sizeof(buff));
+	char buff[BUF_SIZE];
+	memset(buff, 0, sizeof(buff));
 	int pos=0;
 	String line;
 	ClientSocket* pDataSocket=NULL;
@@ -205,8 +211,8 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 		}
 	}
 	//发送上传命令
-    sprintf_s(buff, "STOR %s\r\n", savePath);
-    m_cmdSocket.writeBytes(buff,strlen(buff));
+	sprintf_s(buff, "STOR %s\r\n", savePath);
+	m_cmdSocket.writeBytes(buff,strlen(buff));
 	line=m_cmdSocket.readLine();
 	pos=line.find("150");
 	if (pos<0) {
@@ -226,17 +232,17 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 		file.setPos(uploadSize);
 	}
 	m_bIsGoOn=true;//用于外部中断
-    while(m_bIsGoOn && (len=file.readBytes(buff,sizeof(buff)))>0)
-    {
+	while(m_bIsGoOn && (len=file.readBytes(buff,sizeof(buff)))>0)
+	{
 		uploadSize+=pDataSocket->writeBytes(buff,len);
-    }
+	}
 	file.close();
 	if(m_bIsPasv)
 		delete pDataSocket;
 	else
 		ServerSocket::destroy(pDataSocket);
 	printf("upload finish\n");
-    /*
+	/*
 	do{
 		line=m_cmdSocket.readLineByGbk();
 		pos=line.find("226");
@@ -247,29 +253,12 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 	{
 		throw FtpException(UPLOAD_FILE_FAILED,"result from server,cause:"+line);
 	}
-    return m_bIsGoOn;
+	return m_bIsGoOn;
 }
+
 void FtpConnection::stop()
 {
 	this->m_bIsGoOn=false;
-}
-
-
-void test()
-{
-	try{
-		SocketTools::initSocketContext();
-		FtpConnection uploader("219.148.23.133",8237);
-		uploader.connectServer("bluemei","bluemei");
-		uploader.upload("C:/Documents and Settings/Administrator/桌面/pic/prompt1.jpg","test.jpg");
-		uploader.closeFtpConnection();
-	}catch(Exception& e)
-	{
-		//printf(e.getErrorString().c_str());
-		e.printException();
-	}
-	SocketTools::cleanUpSocketContext();
-	system("pause");
 }
 
 }//end of namespace bluemei

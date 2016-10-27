@@ -121,7 +121,7 @@ protected:
 	const Type& value;
 public:
 	Value2String(const Type& v):value(v){}
-	operator String()const{
+	operator String() const{
 		const bool convertible = is_convertible<Type, Object*>::value;
 		if(convertible)
 			return dynamic_caster<Type, convertible>::toObject(value)->toString();
@@ -129,37 +129,37 @@ public:
 	}
 };
 
-template<> Value2String<cstring>::operator String()const{ return String(value); }
+template<> Value2String<cstring>::operator String() const{ return String(value); }
 template class BLUEMEILIB_API Value2String<cstring>;
 
-template<> Value2String<String>::operator String()const{ return value; }
+template<> Value2String<String>::operator String() const{ return value; }
 template class BLUEMEILIB_API Value2String<String>;
 
-template<> Value2String<bool>::operator String()const{ return value?"true":"false"; }
+template<> Value2String<bool>::operator String() const{ return value?"true":"false"; }
 template class BLUEMEILIB_API Value2String<bool>;
 
-template<> Value2String<char>::operator String()const{ return String::format("%c",value); }
+template<> Value2String<char>::operator String() const{ return String::format("%c",value); }
 template class BLUEMEILIB_API Value2String<char>;
 
-template<> Value2String<short>::operator String()const{ return String::format("%d",value); }
+template<> Value2String<short>::operator String() const{ return String::format("%d",value); }
 template class BLUEMEILIB_API Value2String<short>;
 
-template<> Value2String<int>::operator String()const{ return String::format("%d",value); }
+template<> Value2String<int>::operator String() const{ return String::format("%d",value); }
 template class BLUEMEILIB_API Value2String<int>;
 
-template<> Value2String<long>::operator String()const{ return String::format("%ld",value); }
+template<> Value2String<long>::operator String() const{ return String::format("%ld",value); }
 template class BLUEMEILIB_API Value2String<long>;
 
-template<> Value2String<long long>::operator String()const{ return String::format("%ld",value); }
+template<> Value2String<long long>::operator String() const{ return String::format("%ld",value); }
 template class BLUEMEILIB_API Value2String<long long>;
 
-template<> Value2String<float>::operator String()const{ return String::format("%f",value); }
+template<> Value2String<float>::operator String() const{ return String::format("%f",value); }
 template class BLUEMEILIB_API Value2String<float>;
 
-template<> Value2String<double>::operator String()const{ return String::format("%lf",value); }
+template<> Value2String<double>::operator String() const{ return String::format("%lf",value); }
 template class BLUEMEILIB_API Value2String<double>;
 
-template<> Value2String<const FieldInfo*>::operator String()const{
+template<> Value2String<const FieldInfo*>::operator String() const{
 	return String::format("%s<type %s>", value->name(), value->typeInfo().name());
 }
 template class BLUEMEILIB_API Value2String<const FieldInfo*>;
@@ -172,12 +172,12 @@ protected:
 	const Type& value;
 public:
 	Value2String(const Type& v):value(v){}
-	operator String()const{
+	operator String() const{
 		return "unknown";
 	}
 };
 template <>
-Value2String<int>::operator String()const{ return String::format("%d",value); }
+Value2String<int>::operator String() const{ return String::format("%d",value); }
 
 template <class Type>
 String operator+(const Type& str1,const String& str2)

@@ -3,11 +3,9 @@
 
 namespace bluemei{
 
-
 BeanContainer::BeanContainer(void)
 {
 }
-
 
 BeanContainer::~BeanContainer(void)
 {
@@ -19,7 +17,7 @@ bool BeanContainer::put(const string& key,Object* pBean)
 	return m_beanMap.insert(make_pair(key,pBean)).second;
 }
 
-Object* BeanContainer::get(const string& key)const
+Object* BeanContainer::get(const string& key) const
 {
 	auto& itor=m_beanMap.find(key);
 	if(itor!=m_beanMap.end())
@@ -67,7 +65,7 @@ void BeanContainer::clear(bool autoRelease)
 		m_beanMap.clear();
 }
 
-Object* BeanContainer::operator[](const string& key)const
+Object* BeanContainer::operator[](const string& key) const
 {
 	return get(key);
 }

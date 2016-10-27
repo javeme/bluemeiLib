@@ -2,7 +2,6 @@
 
 namespace bluemei{
 
-
 CallStackUtil::CallStackUtil() : StackWalker()
 {
 	LoadModules();
@@ -10,10 +9,10 @@ CallStackUtil::CallStackUtil() : StackWalker()
 
 CallStackUtil::~CallStackUtil()
 {
-
 }
 
 CallStackUtil CallStackUtil::staticCallStackUtil;
+
 CallStackUtil* CallStackUtil::inscance()
 {
 	//static CallStackUtil csu;
@@ -71,6 +70,7 @@ List<String> CallStackUtil::obtainCallStack()
 	m_lock.releaseLock();
 	return list;
 }*/
+
 bool CallStackUtil::obtainCallStack( List<String>& list )
 {
 	m_lock.getLock();
@@ -81,6 +81,5 @@ bool CallStackUtil::obtainCallStack( List<String>& list )
 		list.erase(list.begin());
 	return success;
 }
-
 
 }//end of namespace bluemei

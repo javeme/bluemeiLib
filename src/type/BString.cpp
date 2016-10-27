@@ -78,8 +78,8 @@ inline void String::checkBound( unsigned int offset ) const
 void String::init(unsigned int len)
 {
 	// NOTE: to do small string optimization (70% of situations len < 8):
-	//    store in stack(maybe) if it's a small string (len < STR_SMALL_SIZE)
-	//    store in heap if it's a larger string (len >= STR_SMALL_SIZE)
+	//	store in stack(maybe) if it's a small string (len < STR_SMALL_SIZE)
+	//	store in heap if it's a larger string (len >= STR_SMALL_SIZE)
 	if(len < STR_SMALL_SIZE) {
 		m_chars.buf[len] = '\0';
 		m_nSize = STR_SMALL_SIZE - 1;

@@ -37,7 +37,7 @@ public:
 
 	virtual void clear();
 
-	virtual unsigned int remains()const;
+	virtual unsigned int remains() const;
 	virtual unsigned int size() const;
 	virtual const Type* array() const;
 protected:
@@ -48,6 +48,5 @@ protected:
 	unsigned int m_nSize,m_nReadOffset;
 	Type* m_buffer;
 };
-
 
 }//end of namespace bluemei

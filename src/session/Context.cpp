@@ -4,12 +4,11 @@
 
 namespace bluemei{
 
-
 Context Context::staticContext;
+
 Context::Context(void)
 {
 }
-
 
 Context::~Context(void)
 {
@@ -67,6 +66,5 @@ void Context::clear()
 	}
 	m_application.clear();
 }
-
 
 }//end of namespace bluemei

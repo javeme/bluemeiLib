@@ -22,17 +22,17 @@ public:
 public:
 	virtual void setExceptionMsg(cstring msg);
 	//virtual void setExceptionMsg(String msg){setExceptionMsg(msg.c_str());}
-	virtual void printException()const;
+	virtual void printException() const;
 	virtual void initCallStackTrace();
-	virtual void printStackTrace()const;
+	virtual void printStackTrace() const;
 	virtual List<String> getCallStackMsgs();
 
-	virtual String name()const;
-	virtual cstring what()const;
-	virtual String toString()const;
+	virtual String name() const;
+	virtual cstring what() const;
+	virtual String toString() const;
 
 	virtual void setPosition(int line, cstring func, cstring file);
-	virtual String getPosition()const;
+	virtual String getPosition() const;
 
 	virtual String getDisplayText() const;
 	virtual void setDisplayText(cstring val);
@@ -50,7 +50,7 @@ class BLUEMEILIB_API StdException : public Exception
 public:
 	StdException(const std::exception& e) : Exception(e.what()) {}
 public:
-	virtual String name()const {
+	virtual String name() const {
 		return "StdException";
 	}
 };
@@ -61,7 +61,7 @@ public:
 	UnknownException(cstring msg) : Exception(msg) {}
 	UnknownException() : Exception("unknown exception") {}
 public:
-	virtual String name()const {
+	virtual String name() const {
 		return "UnknownException";
 	}
 };

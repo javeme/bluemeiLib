@@ -191,7 +191,7 @@ Date Date::parseDate( const char* format,const char* strDate )
 	return date;
 }
 
-long Date::operator-(const Date& other)const
+long Date::operator-(const Date& other) const
 {
 	//.time秒数, .timezone时区 以分钟数表示
 	time_t second=(m_time.time - other.m_time.time) +
@@ -200,12 +200,12 @@ long Date::operator-(const Date& other)const
 	return (long)span;
 }
 
-Date Date::operator+(long ms)const
+Date Date::operator+(long ms) const
 {
 	return Date(this->getTotalMillSecond() + ms);
 }
 
-bool Date::operator<(const Date& other)const
+bool Date::operator<(const Date& other) const
 {
 	long long offset = 0;
 	if(m_time.timezone != other.m_time.timezone)
@@ -213,7 +213,7 @@ bool Date::operator<(const Date& other)const
 	return getTotalMillSecond() + offset < other.getTotalMillSecond();
 }
 
-String Date::formatDate(const char* format)const
+String Date::formatDate(const char* format) const
 {
 	String str=format;
 	int pos=str.find("%i");//毫秒
@@ -248,14 +248,14 @@ void Date::setToCurrentTime()
 	//m_dateInfo=*localtime(&m_time.time);
 }
 
-DateInfo Date::getDateInfo()const
+DateInfo Date::getDateInfo() const
 {
 	DateInfo dateInfo;
 	localtime_s(&dateInfo, &m_time.time);
 	return dateInfo;
 }
 
-long long Date::getTotalMillSecond()const
+long long Date::getTotalMillSecond() const
 {
 	return m_time.time*1000+m_time.millitm;
 }

@@ -38,6 +38,7 @@ void Util::replaceString(string& strToReplace, const string& strSrc, const strin
 		pos += dstLen;
 	}
 }
+
 //替换首尾空格
 void Util::trim(string& str)
 {
@@ -55,6 +56,7 @@ void Util::trim(string& str)
 		str.erase(pos,1);
 	}
 }
+
 short Util::getChar(int& pos,const string& str)
 {
 	short tmpChar=0;
@@ -67,8 +69,9 @@ short Util::getChar(int& pos,const string& str)
 	}
 	return tmpChar;
 }
-//正则匹配
-int Util::match(const string& value,const string& regex)//待完善...
+
+//模糊匹配(待完善...)
+int Util::match(const string& value,const string& regex)
 {
 	int matchedPos=-1,pos1=0,pos2=0;
 	short char1,char2;
@@ -126,6 +129,7 @@ int Util::match(const string& value,const string& regex)//待完善...
 	}
 	return matchedPos;
 }
+
 /************************************对称加解密***********************************/
 bool Util::simpleEncode(string& plaintext,const string& code)//明文->密码
 {
@@ -142,6 +146,7 @@ bool Util::simpleEncode(string& plaintext,const string& code)//明文->密码
 	}
 	return true;
 }
+
 bool Util::simpleDecode(string& cipher,const string& code)//密码->明文
 {
 	int cipherLen=cipher.length();
@@ -157,6 +162,7 @@ bool Util::simpleDecode(string& cipher,const string& code)//密码->明文
 	}
 	return true;
 }
+
 /************************************系统相关*************************************/
 //获取当前目录的路径
 bool Util::getSelfPath(string& path)
@@ -174,6 +180,7 @@ bool Util::getSelfPath(string& path)
 	path=path.substr(0,pos+1);
 	return true;
 }
+
 //打开可执行文件
 bool Util::open(const string& name,const string& arg)
 {
@@ -212,7 +219,7 @@ double Util::str2Float(cstring str)
 	return f;
 }
 
-bluemei::string Util::float2Str(double f)
+string Util::float2Str(double f)
 {
 	char buf[256];
 	sprintf_s(buf,"%lf",f);
@@ -229,7 +236,7 @@ bool Util::str2Boolean(cstring str)
 		return true;
 }
 
-bluemei::string Util::boolean2Str(bool b)
+string Util::boolean2Str(bool b)
 {
 	if(b)
 		return "true";
@@ -259,11 +266,11 @@ string Util::uuid4()
 
 	char strUuid[40] = {0};
 	sprintf_s(strUuid, "%04x%04x-%04x-%04x-%04x-%04x%04x%04x",
-		random(), random(),                 // Generates a 64-bit Hex number
-		random(),                           // Generates a 32-bit Hex number
-		((random() & 0x0fff) | 0x4000),     // Generates a 32-bit Hex number of the form 4xxx (4 indicates the UUID version)
-		((random() & 0x3fff) | 0x8000),     // Generates a 32-bit Hex number in the range [0x8000, 0xbfff]
-		random(), random(), random());      // Generates a 96-bit Hex number
+		random(), random(),				 // Generates a 64-bit Hex number
+		random(),						   // Generates a 32-bit Hex number
+		((random() & 0x0fff) | 0x4000),	 // Generates a 32-bit Hex number of the form 4xxx (4 indicates the UUID version)
+		((random() & 0x3fff) | 0x8000),	 // Generates a 32-bit Hex number in the range [0x8000, 0xbfff]
+		random(), random(), random());	  // Generates a 96-bit Hex number
 
 	return strUuid;
 }
@@ -274,16 +281,16 @@ class Uuid1Generater : public Object
 {
 public:
 	typedef unsigned short   uint16;
-	typedef unsigned int     uint32;
-	typedef __int64          int64;
+	typedef unsigned int	 uint32;
+	typedef __int64		  int64;
 	typedef unsigned __int64 uint64;
 
 	/* microsecond per second. 1s=1000000us=1000000000ns*/
-	#define USec_Per_Sec        (1000*1000)
-	#define USec_Per_MSec       1000
-	#define NSec100_Per_Sec     (USec_Per_Sec*10)
-	#define NSec100_Per_MSec    (USec_Per_MSec*10)
-	#define NSec100_Since_1582     ((uint64)(0x01B21DD213814000))
+	#define USec_Per_Sec		(1000*1000)
+	#define USec_Per_MSec	   1000
+	#define NSec100_Per_Sec	 (USec_Per_Sec*10)
+	#define NSec100_Per_MSec	(USec_Per_MSec*10)
+	#define NSec100_Since_1582	 ((uint64)(0x01B21DD213814000))
 
 public:
 	Uuid1Generater(){ initialize(); }
@@ -299,19 +306,19 @@ private:
 	}
 public:
 	/* generate uuid version 1
-	* from:
-	* http://www.ietf.org/rfc/rfc4122.txt
-	* http://www.tuicool.com/articles/MNrYVri
-	* http://www.cnblogs.com/lidabo/p/3483128.html
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|                          time_low                             |
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|       time_mid                |         time_hi_and_version   |
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|clk_seq_hi_res |  clk_seq_low  |         node (0-1)            |
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|                         node (2-5)                            |
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	 * from:
+	 * http://www.ietf.org/rfc/rfc4122.txt
+	 * http://www.tuicool.com/articles/MNrYVri
+	 * http://www.cnblogs.com/lidabo/p/3483128.html
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                          time_low                             |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |       time_mid                |         time_hi_and_version   |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |clk_seq_hi_res |  clk_seq_low  |         node (0-1)            |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                         node (2-5)                            |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 	*/
 	std::string generate()
 	{
@@ -383,11 +390,11 @@ public:
 		}
 	}
 private:
-	int64     timestamp;
-	uint32    advance;
-	uint16    clockseq;
-	uint16    nodehigh;
-	uint32    nodelow;
+	int64	 timestamp;
+	uint32	advance;
+	uint16	clockseq;
+	uint16	nodehigh;
+	uint32	nodelow;
 
 	CriticalLock lock;
 };

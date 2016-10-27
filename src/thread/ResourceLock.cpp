@@ -37,11 +37,13 @@ void ResourceLock::init(unsigned int count,unsigned int maxCount,cstring name)
 		throw Exception(str);
 	}
 }
+
 void ResourceLock::getLock()
 {
 	//默认仅有没有信号量,其它线程将无法获得,只能等待
 	wait();//INFINITE
 }
+
 bool ResourceLock::wait(unsigned long mSecond/*=INFINITE*/)
 {
 	//waitCount++;

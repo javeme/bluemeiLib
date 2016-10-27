@@ -29,6 +29,5 @@ protected:
 	static CallStackUtil staticCallStackUtil;
 };
 
-
 }//end of namespace bluemei
 #endif

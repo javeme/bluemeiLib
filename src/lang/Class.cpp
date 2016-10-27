@@ -52,12 +52,12 @@ Object* Class::createObject() const
 	return pObj;
 }
 
-bool Class::operator==( const Class& other )const
+bool Class::operator==( const Class& other ) const
 {
 	return m_name.compare(other.getName())==0;
 }
 
-bool Class::isMyObject(const Object* pObj)const
+bool Class::isMyObject(const Object* pObj) const
 {
 	//return (this==pObj->thisClass());
 
@@ -84,7 +84,7 @@ bool Class::isMyObject(const Object* pObj)const
 	return isSame;
 }
 
-bool Class::isMyInstance(const Object* pObj)const
+bool Class::isMyInstance(const Object* pObj) const
 {
 	/*Object* pNewObj=pObj->createObject();
 	while(true)

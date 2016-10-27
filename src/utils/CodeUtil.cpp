@@ -88,6 +88,7 @@ int CodeUtil::gbkToUnicode(wstring& strUnicode,const char *strGBK)
 	delete []uBuf;
 	return len*2;
 }
+
 //gb2312转换unicode --有问题!
 int CodeUtil::gb2312ToUnicode(wstring& result,const char *strGb2312)
 {
@@ -96,6 +97,7 @@ int CodeUtil::gb2312ToUnicode(wstring& result,const char *strGb2312)
 	n=::MultiByteToWideChar( CP_ACP, 0, strGb2312, -1, (LPWSTR)result.c_str(), result.length());
 	return n*2;
 }
+
 int CodeUtil::unicodeToGbk(string& result,const wstring& uStr)
 {
 	const wchar_t* uBuf=uStr.c_str();
@@ -106,6 +108,7 @@ int CodeUtil::unicodeToGbk(string& result,const wstring& uStr)
 	delete []buf;
 	return len;
 }
+
 String CodeUtil::unicodeToGbk(const wstring& uStr)
 {
 	const wchar_t* uBuf=uStr.c_str();
@@ -115,6 +118,7 @@ String CodeUtil::unicodeToGbk(const wstring& uStr)
 	WideCharToMultiByte(CP_ACP, 0, uBuf, -1, buf, len, 0, 0);
 	return result;
 }
+
 //gbk转换为utf-8
 int CodeUtil::gbkToUtf8(string& strUtf8,const char *strGBK)
 {
@@ -132,6 +136,7 @@ int CodeUtil::gbkToUtf8(string& strUtf8,const char *strGBK)
 	delete[]str;
 	return len;
 }
+
 //utf8转换为gbk编码
 int CodeUtil::utf8ToGbk(string& strGbk,const char* strUtf8)
 {
@@ -149,6 +154,7 @@ int CodeUtil::utf8ToGbk(string& strGbk,const char* strUtf8)
 	delete[] wszGBK;
 	return len;
 }
+
 //gbk转换为utf-8
 String CodeUtil::gbkToUtf8(const char *strGBK)
 {
@@ -164,6 +170,7 @@ String CodeUtil::gbkToUtf8(const char *strGBK)
 	delete[] wstr;
 	return strUtf8;
 }
+
 //utf8转换为gbk编码
 String CodeUtil::utf8ToGbk(const char* strUtf8)
 {
@@ -179,6 +186,7 @@ String CodeUtil::utf8ToGbk(const char* strUtf8)
 	delete[] wszGBK;
 	return strGbk;
 }
+
 /*
 void CodeUtil::utf8ToGbk(string& szstr)
 {
@@ -411,8 +419,8 @@ string CodeUtil::urlEncode(const char* src)
 		else
 		{
 			dest += '%';
-			dest += char2hexChar( (unsigned char)(ch >> 4) );
-			dest += char2hexChar( (unsigned char)(ch % 16) );
+			dest += char2hexChar((unsigned char)(ch >> 4));
+			dest += char2hexChar((unsigned char)(ch % 16));
 		}
 		++src;
 		++len;
@@ -506,7 +514,6 @@ String CodeUtil::bytesToHexString(const byte buffer[], int len)
 		str+=tmp;
 	}
 	return str.trim();
-	//return str;
 }
 
 }//end of namespace bluemei

@@ -16,14 +16,7 @@ Object::~Object(void)
 {
 }
 
-/*
-string Object::toString()
-{
-	char buf[32];
-	sprintf_s(buf,"Object:%p",this);
-	return buf;
-}*/
-String Object::toString()const
+String Object::toString() const
 {
 	return String::format("Object:%p",this);
 }

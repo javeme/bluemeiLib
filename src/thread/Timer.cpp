@@ -98,11 +98,10 @@ long Timer::getRemainderTime()
 	return m_nextTime-currentTime;
 }
 
-bool Timer::isRunning()const
+bool Timer::isRunning() const
 {
 	return m_bGoOn;
 }
-
 
 bool Waiter::wait(unsigned int interval/*=1000*/)
 {

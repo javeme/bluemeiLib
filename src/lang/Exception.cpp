@@ -18,11 +18,7 @@ Exception::Exception(cstring msg)//exception(msg)»á¿½±´×Ö·û´®,exception(m_strLas
 
 	initCallStackTrace();
 }
-/*Exception::Exception(const String& msg)
-{
-	m_nLine=0;
-	setExceptionMsg(msg);
-}*/
+
 Exception::Exception(Exception& e,cstring msg)
 {
 	m_nLine=0;
@@ -33,7 +29,6 @@ Exception::Exception(Exception& e,cstring msg)
 
 Exception::~Exception()
 {
-
 }
 
 void Exception::initCallStackTrace()
@@ -47,11 +42,13 @@ void Exception::setExceptionMsg(cstring msg)
 	m_strLastError=msg;
 	exception::operator=(exception(msg));
 }
-void Exception::printException()const
+
+void Exception::printException() const
 {
 	//cout<<"Òì³£:"<<m_strLastError<<endl;
 	printf("%s\n",toString().c_str());
 }
+
 void Exception::printStackTrace() const
 {
 	printException();
@@ -61,6 +58,7 @@ void Exception::printStackTrace() const
 		printf("  %s\n", msg.c_str());
 	});
 }
+
 List<String> Exception::getCallStackMsgs()
 {
 	return m_listStackMsg;
@@ -71,13 +69,13 @@ String Exception::name() const
 	return "Exception";
 }
 
-cstring Exception::what()const
+cstring Exception::what() const
 {
 	//__super::what();
 	return m_strLastError.c_str();
 }
 
-String Exception::toString()const
+String Exception::toString() const
 {
 	return name() + ": " + m_strLastError;
 }
@@ -88,7 +86,8 @@ void Exception::setPosition(int line, cstring func, cstring file)
 	this->m_strFunc=func;
 	this->m_strFile=file;
 }
-String Exception::getPosition()const
+
+String Exception::getPosition() const
 {
 	String str=String::format("(line: %d , ",m_nLine);
 	str.append("method: "+m_strFunc+" , ");
@@ -100,6 +99,7 @@ String Exception::getDisplayText() const
 {
 	return m_strDisplayText;
 }
+
 void Exception::setDisplayText( cstring val )
 {
 	m_strDisplayText = val;

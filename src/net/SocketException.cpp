@@ -9,13 +9,15 @@ SocketException::SocketException(int nError)
 	this->m_nError=nError;
 }
 
-SocketException::SocketException(const String& strError):Exception(strError)
+SocketException::SocketException(const String& strError)
+	: Exception(strError)
 {
 	//this->SocketException::SocketException(0,strError);
 	this->m_nError=0;
 }
 
-SocketException::SocketException(int nError,const String& strError):Exception(strError)
+SocketException::SocketException(int nError,const String& strError)
+	: Exception(strError)
 {
 	this->m_nError=nError;
 	//this->m_strLastError=strError;
@@ -37,22 +39,13 @@ int SocketException::getError()
 	return this->m_nError;
 }
 
-/*
-//获取错误信息
-string& SocketException::getErrorString()//指针还是对象引用好?
-{
-	//string *pStr=new string(m_strError);
-	//return *pStr;
-	return m_strError;
-}*/
-
 //打印错误休息
 void SocketException::printErrorMsg()
 {
 	printf(SocketTools::getWinsockErrorMsg(m_nError));
 }
 
-String SocketException::toString()const
+String SocketException::toString() const
 {
 	return String::format("%s: %s(%s)",
 		name().c_str(), m_strLastError.c_str(),

@@ -2,7 +2,6 @@
 
 namespace bluemei{
 
-
 ThreadPool::ThreadPool(int threadCount)
 {
 	m_nThreadCount=0;

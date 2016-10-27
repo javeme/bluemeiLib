@@ -19,7 +19,7 @@ String ThreadException::name() const
 	return "ThreadException";
 }
 
-String ThreadException::getMessage()const{
+String ThreadException::getMessage() const{
 	String str="";
 	str.append(what());
 	str.append("(error='");
@@ -31,7 +31,7 @@ String ThreadException::getMessage()const{
 	return str;
 }
 
-String ThreadException::toString()const
+String ThreadException::toString() const
 {
 	return name() + ": " + getMessage();
 }

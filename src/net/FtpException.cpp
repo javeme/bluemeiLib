@@ -17,7 +17,7 @@ FtpException::~FtpException(void)
 {
 }
 
-String FtpException::name()const
+String FtpException::name() const
 {
 	return "FtpException";
 }

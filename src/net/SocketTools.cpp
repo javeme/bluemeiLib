@@ -24,6 +24,7 @@ int SocketTools::initSocketContext()
 	}
 	return nRetCode;
 }
+
 //清除socket环境
 int SocketTools::cleanUpSocketContext()
 {
@@ -34,6 +35,7 @@ int SocketTools::cleanUpSocketContext()
 }
 
 //显示错误
+#ifndef WIN32
 String SocketTools::getWinsockErrorMsg(int errCode)
 {
 	String str;
@@ -117,7 +119,9 @@ String SocketTools::getWinsockErrorMsg(int errCode)
 		default:
 		{
 			LPVOID lpMsgBuf=NULL;
-			int len=FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_IGNORE_INSERTS|FORMAT_MESSAGE_FROM_SYSTEM,
+			int len=FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER|
+				FORMAT_MESSAGE_IGNORE_INSERTS|
+				FORMAT_MESSAGE_FROM_SYSTEM,
 				NULL,errCode,0,(LPSTR)&lpMsgBuf,0,NULL);
 			if(len>0)
 				str=(cstring)lpMsgBuf;
@@ -130,5 +134,12 @@ String SocketTools::getWinsockErrorMsg(int errCode)
 	return str;
 }
 
+#else
+
+String SocketTools::getWinsockErrorMsg(int errCode)
+{
+	return Util::int2Str(errCode);
+}
+#endif
 
 }//end of namespace bluemei

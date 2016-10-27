@@ -3,15 +3,12 @@
 
 namespace bluemei{
 
-
 Application::Application(void)
 {
 }
 
-
 Application::~Application(void)
 {
 }
-
 
 }//end of namespace bluemei

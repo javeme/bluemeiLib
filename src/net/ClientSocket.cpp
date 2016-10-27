@@ -71,7 +71,7 @@ void ClientSocket::setPeerAddr(sockaddr_in& addr)
 }
 
 //获取对方地址
-String ClientSocket::getPeerHost()const
+String ClientSocket::getPeerHost() const
 {
 	char *pChar=::inet_ntoa(m_peerAddr.sin_addr);
 	//string *pStr=new string(pChar);
@@ -80,7 +80,7 @@ String ClientSocket::getPeerHost()const
 }
 
 //获得对方端口
-int ClientSocket::getPeerPort()const
+int ClientSocket::getPeerPort() const
 {
 	return ntohs(m_peerAddr.sin_port);
 }
@@ -110,7 +110,7 @@ void ClientSocket::setTimeout(int ms)//毫秒
 void ClientSocket::setNoDelay(bool noDelay)
 {
 	 int flag = noDelay;
-     int ret = setsockopt(m_hSocket,IPPROTO_TCP,TCP_NODELAY,
+	 int ret = setsockopt(m_hSocket,IPPROTO_TCP,TCP_NODELAY,
 		 (char*)&flag,sizeof(flag));
 	 if(ret==SOCKET_ERROR)
 		 throw SocketException(WSAGetLastError(),toString());
@@ -431,7 +431,7 @@ void ClientSocket::close()
 }
 
 //返回描述
-String ClientSocket::toString()const
+String ClientSocket::toString() const
 {
 	String str=String::format("Socket[peer address is %s:%d]",
 		getPeerHost().c_str(),getPeerPort());

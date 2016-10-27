@@ -13,7 +13,7 @@ RuntimeException::~RuntimeException()
 {
 }
 
-String RuntimeException::name()const
+String RuntimeException::name() const
 {
 	return "RuntimeException";
 }
@@ -47,7 +47,7 @@ BadCastException::BadCastException(cstring from, cstring to)
 	setExceptionMsg(err);
 }
 
-String BadCastException::name()const
+String BadCastException::name() const
 {
 	return "BadCastException";
 }
@@ -78,7 +78,7 @@ ClassNotFoundException::~ClassNotFoundException(void)
 {
 }
 
-String ClassNotFoundException::name()const
+String ClassNotFoundException::name() const
 {
 	return "ClassNotFoundException";
 }
@@ -94,7 +94,7 @@ AttributeNotFoundException::~AttributeNotFoundException(void)
 {
 }
 
-String AttributeNotFoundException::name()const
+String AttributeNotFoundException::name() const
 {
 	return "AttributeNotFoundException";
 }
@@ -141,7 +141,7 @@ OutOfBoundException::OutOfBoundException(int out,int size)
 	this->setExceptionMsg(str);
 }
 
-String OutOfBoundException::name()const
+String OutOfBoundException::name() const
 {
 	return "OutOfBoundException";
 }
@@ -154,7 +154,7 @@ OutOfMemoryException::OutOfMemoryException(long long size)
 	this->setExceptionMsg(String::format("when alloc memory size %ld",size));
 }
 
-String OutOfMemoryException::name()const
+String OutOfMemoryException::name() const
 {
 	return "OutOfMemoryException";
 }
@@ -185,7 +185,7 @@ TimeoutException::TimeoutException(long long time)
 	this->setExceptionMsg(String::format("%0.2f %s", ftime, unit));
 }
 
-String TimeoutException::name()const
+String TimeoutException::name() const
 {
 	return "TimeoutException";
 }

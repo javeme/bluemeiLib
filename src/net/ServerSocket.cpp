@@ -109,7 +109,7 @@ void ServerSocket::close()
 	m_bClose=true;
 }
 
-ServerSocket::operator socket_t()const{
+ServerSocket::operator socket_t() const{
 	return m_socket;
 }
 

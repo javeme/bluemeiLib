@@ -10,16 +10,12 @@ File::File(size_t bufferSize)
 {
 	init("","",bufferSize);
 }
-/*
-File::File(string path,string openMode)
-{
-	this->File::File(path,openMode,BUFFER_SIZE);
-}
-*/
+
 File::File(String path,String openMode,size_t bufferSize)
 {
 	init(path,openMode,bufferSize);
 }
+
 File::~File()
 {
 	try{
@@ -30,6 +26,7 @@ File::~File()
 	if(m_buffer)
 		delete[]m_buffer;
 }
+
 void File::init(String path,String openMode,size_t bufferSize)
 {
 	m_bCloseAble=false;
@@ -49,6 +46,7 @@ void File::init(String path,String openMode,size_t bufferSize)
 		}
 	}
 }
+
 void File::openFile(String path,String openMode)
 {
 	//path="./root/"+path;
@@ -60,6 +58,7 @@ void File::openFile(String path,String openMode)
 	m_bCloseAble=true;
 	m_strPath=path;
 }
+
 size_t File::writeBytes(const char buf[],size_t length)
 {
 	if(m_nUsedBufLength<0)
@@ -100,11 +99,13 @@ size_t File::writeBytes(const char buf[],size_t length)
 	}*/
 
 }
+
 void File::writeLine(cstring value)
 {
 	writeBytes(value, strlen(value));
 	writeBytes(EOL,strlen(EOL));
 }
+
 void File::writeLine(const String& value)
 {
 	writeBytes(value.c_str(),value.length());
@@ -131,6 +132,7 @@ size_t File::readBytes(char buf[],size_t length)
 	}
 	return nReturn;
 }
+
 size_t File::readLine(String& line)
 {
 	int readedLen=0,tmp;
@@ -190,7 +192,7 @@ size_t File::readAll(char buf[],size_t bufSize)
 	return this->readBytes(buf,getSize());
 }
 
-size_t File::currentPos()const
+size_t File::currentPos() const
 {
 	//return ftell(m_pFile);
 	fpos_t pos=0;
@@ -224,6 +226,7 @@ size_t File::getSize()
 	else
 		return -1;
 }
+
 void File::seek(long offset)
 {
 	if((::fseek(m_pFile,offset,SEEK_CUR))!=0)//SEEK_SET

@@ -18,6 +18,7 @@ WorkThread::~WorkThread(void)
 {
 	;
 }
+
 void WorkThread::run()
 {
 	try{
@@ -46,6 +47,7 @@ void WorkThread::run()
 		ErrorHandler::handle(UnknownException("ThreadPool error"));
 	}
 }
+
 void WorkThread::stopAndWait()
 {
 	if(Thread::currentThreadId() == this->getThreadId()) {

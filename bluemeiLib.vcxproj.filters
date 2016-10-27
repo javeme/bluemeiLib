@@ -38,6 +38,9 @@
     <Filter Include="conf">
       <UniqueIdentifier>{f2f676f0-6b00-4350-9c88-b4e651c8c418}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{4a31d47f-8f01-4485-8d91-a3dd60383206}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -223,6 +226,15 @@
     </ClCompile>
     <ClCompile Include="src\conf\ConfigOption.cpp">
       <Filter>conf</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bLib\DataBuffer.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bLib\KVPairTree.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bLib\Vector.cpp">
+      <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -480,6 +492,234 @@
     </ClInclude>
     <ClInclude Include="src\conf\ConfigOption.h">
       <Filter>conf</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\AccurateTimeTicker.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Application.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ArrayList.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\BeanContainer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\bluemeiLib.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\BString.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ByteBuffer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\CallStackUtil.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Class.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ClassField.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ClientSocket.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\CodeUtil.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ConfigOption.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Context.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Converter.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\CriticalLock.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\DataBuffer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Date.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ErrorHandler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Exception.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Exceptions.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\File.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\FilePath.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\FileUtil.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\FtpConnection.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\FtpException.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\HashCoder.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\HashMap.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\IOCompletionPort.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\IOCompletionPortImpl.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\IOCompletionPortImplLinux.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\IOCompletionPortImplWin32.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\IOCPEvent.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\IOCPException.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\IOCPModel.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\IOException.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Iterator.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\KVPairTree.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\LambdaThread.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\LinkedList.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Log.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Looper.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\MemoryPool.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\MessageThread.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\MultiValueHashMap.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\MutexLock.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Object.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ObjectFactory.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Observer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Pair.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\PriorityQueue.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Ptr.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ResourceLock.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Runnable.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\RuntimeException.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ServerSocket.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Session.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\SimpleCfgFile.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\SmartPtr.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\SmartPtrManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\SocketException.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\SocketTools.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\SortArray.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\StackWalker.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\StringBuilder.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\System.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Task.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Thread.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ThreadException.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ThreadPool.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Timer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\TypeManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\UniqueLock.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Util.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Vector.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\WorkThread.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

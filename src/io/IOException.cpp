@@ -6,11 +6,13 @@ IOException::IOException()
 {
 	;
 }
+
 IOException::IOException(String msg)
 {
 	this->setExceptionMsg(msg);
 }
-String IOException::name()const
+
+String IOException::name() const
 {
 	return "IOException";
 }

@@ -16,19 +16,6 @@ CriticalLock::~CriticalLock(void)
 	::DeleteCriticalSection(&m_critialSection);
 }
 
-/*
-CriticalLock::CriticalLock(const CriticalLock& other)
-{
-	m_waitCount=0;
-	::InitializeCriticalSection(&m_critialSection);
-	this->operator=(other);
-}
-
-CriticalLock& CriticalLock::operator=(const CriticalLock& other)
-{
-	return *this;
-}*/
-
 void CriticalLock::getLock()
 {
 	//m_waitCount++;

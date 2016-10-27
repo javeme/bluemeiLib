@@ -2,7 +2,6 @@
 
 namespace bluemei{
 
-
 ByteBuffer::ByteBuffer(unsigned int maxSize,unsigned int size):DataBuffer(maxSize,size)
 {
 	m_bBigEndian=false;
@@ -61,6 +60,5 @@ String ByteBuffer::readString()
 	delete[]buf;
 	return str;
 }
-
 
 }//end of namespace bluemei

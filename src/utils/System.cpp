@@ -66,9 +66,9 @@ bool System::isSystemIdle()
 {
 #ifdef WIN32
 	DWORD			counterType;
-	HQUERY          hQuery;
-	PDH_STATUS      pdhStatus;
-	HCOUNTER        hCounter;
+	HQUERY		  hQuery;
+	PDH_STATUS	  pdhStatus;
+	HCOUNTER		hCounter;
 	static PDH_RAW_COUNTER lastrawdata;
 	static bool first = true;
 
