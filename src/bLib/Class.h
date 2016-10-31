@@ -47,8 +47,10 @@ public:
 public:
 	static const Class* undefined();
 	static void registerClass(Class* cls);
-	static Class* registerClass(cstring name,CreateFun* pFun,const Class* superClass=nullptr);
-	static Class* registerClassIfNotExist(cstring name,CreateFun* pFun,const Class* superClass=nullptr);
+	static Class* registerClass(cstring name,CreateFun* pFun,
+		const Class* superClass=nullptr);
+	static Class* registerClassIfNotExist(cstring name,CreateFun* pFun,
+		const Class* superClass=nullptr);
 	static void throwRuntimeException(cstring msg) throw(RuntimeException);
 protected:
 	std::string m_name;
@@ -60,59 +62,59 @@ protected:
 
 //获取反射类
 #define CLASS(className)\
-	Class(_T2STR(className),className::createObject)
+    Class(_T2STR(className),className::createObject)
 #define NEW_CLASS(className)\
-	new Class(_T2STR(className),className::createObject)
+    new Class(_T2STR(className),className::createObject)
 
 
 //可动态创建类声明宏
 #define DECLARE_DCLASS(className) \
-	typedef className Self;																	   \
-	static Class* thisClass(){																   \
-		static Class* cls = Class::registerClass(_T2STR(className),							   \
-												 Self::createObject,						   \
-												 __super::thisClass());						   \
-		return cls;																			   \
-	}																						   \
-	static Object* createObject(){ return new Self();}										   \
-	virtual Object* clone() const{ return new Self(*this);}									   \
-	virtual const Class* getThisClass() const { 											   \
-		const Class* cls=thisClass();														   \
-		if(!cls->isMyObject(this))															   \
-		{																					   \
-			Class::throwRuntimeException("The object is not a instance of class '"			   \
-				_T2STR(className)"'(Please implement DECLARE_DCLASS)");						   \
-			return Class::undefined();														   \
-		}																					   \
-		else																				   \
-			return cls;																		   \
-	}							   															   \
-	template <typename T>																	   \
-	void setAttributeT(cstring name, const T& val) {										   \
-		const FieldInfo* fldInfo = getThisClass()->getField(name);							   \
-		typedef const FieldType<T(Self::*)>* TheFieldType;									   \
-		TheFieldType fldType= dynamic_cast<TheFieldType>(fldInfo);							   \
-		if(fldType)																			   \
-			return fldType->set(*this, val);												   \
-		else {																				   \
-			String err = String::format("type<%s> not matched, should be type<%s>", 		   \
-				typeid(T).name(), fldInfo->typeInfo().name());								   \
-			throwpe(TypeException(err));													   \
-		}																					   \
-	}																						   \
-	template <typename T>																	   \
-	T getAttributeT(cstring name) {															   \
-		const FieldInfo* fldInfo = getThisClass()->getField(name);							   \
-		typedef const FieldType<T(Self::*)>* TheFieldType;									   \
-		TheFieldType fldType= dynamic_cast<TheFieldType>(fldInfo);							   \
-		if(fldType)																			   \
-			return fldType->get(*this);														   \
-		else {																				   \
-			String err = String::format("type<%s> not matched, should be type<%s>", 		   \
-				typeid(T).name(), fldInfo->typeInfo().name());								   \
-			throwpe(TypeException(err));													   \
-		}																					   \
-	}																						   \
+    typedef className Self;                                                   \
+    static Class* thisClass(){                                                \
+        static Class* cls = Class::registerClass(_T2STR(className),           \
+                                                 Self::createObject,          \
+                                                 __super::thisClass());       \
+        return cls;                                                           \
+    }                                                                         \
+    static Object* createObject(){ return new Self();}                        \
+    virtual Object* clone() const{ return new Self(*this);}                   \
+    virtual const Class* getThisClass() const {                               \
+        const Class* cls=thisClass();                                         \
+        if(!cls->isMyObject(this))                                            \
+        {                                                                     \
+            Class::throwRuntimeException("The object is not an instance of "  \
+              "class '"_T2STR(className)"'(Please implement DECLARE_DCLASS)");\
+            return Class::undefined();                                        \
+        }                                                                     \
+        else                                                                  \
+            return cls;                                                       \
+    }                                                                         \
+    template <typename T>                                                     \
+    void setAttributeT(cstring name, const T& val) {                          \
+        const FieldInfo* fldInfo = getThisClass()->getField(name);            \
+        typedef const FieldType<T(Self::*)>* TheFieldType;                    \
+        TheFieldType fldType= dynamic_cast<TheFieldType>(fldInfo);            \
+        if(fldType)                                                           \
+            return fldType->set(*this, val);                                  \
+        else {                                                                \
+            String err = String::format("type<%s> not matched, should be "    \
+                "type<%s>", typeid(T).name(), fldInfo->typeInfo().name());    \
+            throwpe(TypeException(err));                                      \
+        }                                                                     \
+    }                                                                         \
+    template <typename T>                                                     \
+    T getAttributeT(cstring name) {                                           \
+        const FieldInfo* fldInfo = getThisClass()->getField(name);            \
+        typedef const FieldType<T(Self::*)>* TheFieldType;                    \
+        TheFieldType fldType= dynamic_cast<TheFieldType>(fldInfo);            \
+        if(fldType)                                                           \
+            return fldType->get(*this);                                       \
+        else {                                                                \
+            String err = String::format("type<%s> not matched, should be "    \
+                "type<%s>", typeid(T).name(), fldInfo->typeInfo().name());    \
+            throwpe(TypeException(err));                                      \
+        }                                                                     \
+    }                                                                         \
 //end of DECLARE_DCLASS
 
 }//end of namespace blib

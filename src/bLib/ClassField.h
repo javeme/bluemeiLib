@@ -128,6 +128,9 @@ public:
 public:
 	T value() const { return m_value; }
 	operator T() const { return value(); }
+
+	T operator->() const { return m_value; }
+
 	//const Field& fieldType() const { return *m_fieldType; }
 
 	virtual bool modified() const { return m_modified; }
@@ -137,11 +140,17 @@ public:
 	virtual void setSetted(bool state) { m_setted = state; }
 
 	bool operator==(const T& v) const { return m_value == v; }
-	bool operator!=(const T& v) const { return !(*this == v); }
+	bool operator!=(const T& v) const { return m_value != v; }
+
+	bool operator<(const T& v) const { return m_value < v; }
+	bool operator<=(const T& v) const { return m_value <= v; }
+
+	bool operator>(const T& v) const { return m_value > v; }
+	bool operator>=(const T& v) const { return m_value >= v; }
 
 	bool operator==(const Field& v) const { return m_value == v.m_value; }
-	bool operator!=(const Field& v) const { return !(*this == v); }
-
+	bool operator!=(const Field& v) const { return m_value != v.m_value; }
+	bool operator<(const Field& v) const { return m_value < v.m_value; }
 private:
 	T m_value;
 	bool m_setted;
@@ -183,7 +192,8 @@ private:
 
 //decltype => FieldType<Type>::Var(FieldType<Type>::Cls::*)
 #define REG_CLS_FIELD(cls, fld) \
-	static FieldRegister<decltype(&cls::fld)> ANONYMOUS(__s_regFor_##cls##_##fld)(_T2STR(fld), &cls::fld);
+    static FieldRegister<decltype(&cls::fld)> \
+        ANONYMOUS(__s_regFor_##cls##_##fld)(_T2STR(fld), &cls::fld);
 
 BLUEMEILIB_API void registerFieldCheck(bool success, cstring name);
 
@@ -210,18 +220,18 @@ static FieldType<Type> regFieldWithoutNs(cstring name, Type fieldType)
 
 //define a class field, and register it into Class
 #define FIELD(type, name) \
-	Field<type> name; 													\
-	class InerClassForRegField_##name									\
-	{																	\
-	public:																\
-		InerClassForRegField_##name(){									\
-			static bool notReged = true;								\
-			if(notReged) {												\
-				regField(#name, &Self::name);							\
-				notReged = false;										\
-			}															\
-		}																\
-	}_instanceOfInerClassForRegField_##name;							\
+    Field<type> name;                                                     \
+    class InerClassForRegField_##name                                     \
+    {                                                                     \
+    public:                                                               \
+        InerClassForRegField_##name(){                                    \
+            static bool notReged = true;                                  \
+            if(notReged) {                                                \
+                regField(#name, &Self::name);                             \
+                notReged = false;                                         \
+            }                                                             \
+        }                                                                 \
+    }_instanceOfInerClassForRegField_##name;                              \
 /*end of define a field*/
 
 /*
