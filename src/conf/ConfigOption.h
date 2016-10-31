@@ -167,6 +167,9 @@ public:
 	virtual String choicesString() const;	
 protected:
 	static String option2String(const ConfigOption& option);
+private:
+	ChoiceOption(const ChoiceOption& value);
+	ChoiceOption& operator=(const ChoiceOption& value);
 protected:
 	ConfigOption* m_value;
 	List<ConfigOption*> m_choices;
@@ -177,8 +180,11 @@ protected:
 class BLUEMEILIB_API ConfigGroup : public Object
 {
 public:
-	ConfigGroup(const String& name="") : m_group(name) {}
-	virtual ~ConfigGroup() {}
+	ConfigGroup(const String& name="");
+	virtual ~ConfigGroup();
+
+	ConfigGroup(const ConfigGroup& other);
+	ConfigGroup& operator=(const ConfigGroup& other);
 
 	void setName(const String& name) { m_group = name; }
 	String name() const { return m_group; }

@@ -312,6 +312,38 @@ String ChoiceOption::option2String(const ConfigOption& option)
 
 /////////////////////////////////////////////////////////////////////
 // class ConfigGroup
+ConfigGroup::ConfigGroup(const String& name/*=""*/) : m_group(name)
+{
+}
+
+ConfigGroup::ConfigGroup(const ConfigGroup& other)
+{
+	*this = other;
+}
+
+ConfigGroup::~ConfigGroup()
+{
+	for(auto i = m_propertiesMap.begin(); i != m_propertiesMap.end(); i++)
+	{
+		delete i->second;
+	}
+}
+
+ConfigGroup& ConfigGroup::operator=(const ConfigGroup& other)
+{
+	this->m_group = other.m_group;
+
+	for(auto i = other.m_propertiesMap.begin();
+		i != other.m_propertiesMap.end(); i++)
+	{
+		checkNullPtr(i->second);
+		m_propertiesMap.insert(std::make_pair(i->first,
+			ConfigOption::clone(*i->second)));
+	}
+
+	return *this;
+}
+
 bool ConfigGroup::exists(const String& key) const
 {
 	auto it = m_propertiesMap.find(key);
