@@ -4,7 +4,7 @@
 #include "ClassField.h"
 #include "BString.h"
 
-namespace bluemei{
+namespace blib{
 
 typedef Object Self;
 
@@ -71,4 +71,4 @@ const void* Object::getAttributeAddr(cstring name) const
 	return fldInfo->getAddr(*this);
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "BeanContainer.h"
 
-namespace bluemei{
+namespace blib{
 
 BeanContainer::BeanContainer(void)
 {
@@ -75,4 +75,4 @@ Object*& BeanContainer::operator[](const string& key)
 	return m_beanMap[key];
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

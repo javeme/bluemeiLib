@@ -1,6 +1,6 @@
 #include "MutexLock.h"
 
-namespace bluemei{
+namespace blib{
 
 // Windows MutexLock
 #ifdef WIN32
@@ -143,4 +143,4 @@ long MutexLock::getWaitCount() const
 
 #endif
 
-}//end of namespace bluemei
+}//end of namespace blib

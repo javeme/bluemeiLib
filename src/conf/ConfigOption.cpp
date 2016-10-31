@@ -4,7 +4,7 @@
 #include "StringBuilder.h"
 #include <functional>
 
-namespace bluemei{
+namespace blib{
 
 /////////////////////////////////////////////////////////////////////
 // tools macro
@@ -480,4 +480,4 @@ String Config::toString() const
 	return func() + "\n";
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

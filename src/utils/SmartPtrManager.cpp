@@ -16,7 +16,7 @@
 #include <set>
 #include <vector>
 
-namespace bluemei{
+namespace blib{
 
 ///////////////////////////////////////////////////////////////////////
 // new handler
@@ -378,4 +378,4 @@ bool ObjectWrapper::contain(void* point)
 }
 
 
-}//end of namespace bluemei
+}//end of namespace blib

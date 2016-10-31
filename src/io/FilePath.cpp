@@ -1,7 +1,7 @@
 #include "FilePath.h"
 
 
-namespace bluemei{
+namespace blib{
 
 
 FilePath::FilePath(const String& path/*=""*/) : m_path(path.length() + 64)
@@ -93,4 +93,4 @@ ArrayList<FilePath> FilePath::list() const
 	return files;
 }
 
-}//namespace bluemei
+}//namespace blib

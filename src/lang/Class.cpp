@@ -9,7 +9,7 @@
 #include "blib/Ptr.h"
 
 
-namespace bluemei{
+namespace blib{
 
 Class::Class()
 {
@@ -241,4 +241,4 @@ void Class::throwRuntimeException(cstring msg) throw(RuntimeException)
 	throw RuntimeException(msg);
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

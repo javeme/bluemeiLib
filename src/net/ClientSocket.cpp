@@ -5,7 +5,7 @@
 #include "StringBuilder.h"
 #include "System.h"
 
-namespace bluemei{
+namespace blib{
 
 const int ClientSocket::LINE_BUFFER_SIZE = 4096;
 
@@ -453,4 +453,4 @@ socket_t ClientSocket::detach()
 }
 
 
-}//end of namespace bluemei
+}//end of namespace blib

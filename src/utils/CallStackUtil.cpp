@@ -1,6 +1,6 @@
 #include "CallStackUtil.h"
 
-namespace bluemei{
+namespace blib{
 
 CallStackUtil::CallStackUtil() : StackWalker()
 {
@@ -82,4 +82,4 @@ bool CallStackUtil::obtainCallStack( List<String>& list )
 	return success;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

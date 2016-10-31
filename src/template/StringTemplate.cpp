@@ -1,7 +1,7 @@
 #include "StringTemplate.h"
 #include "TemplateParser.h"
 
-namespace bluemei{
+namespace blib{
 
 StringTemplate::StringTemplate(const String& tpl)
 {
@@ -20,4 +20,4 @@ String StringTemplate::render(const TemplateCtx& ctx)
 	return m_expr->eval(ctx);
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

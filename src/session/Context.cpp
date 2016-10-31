@@ -2,7 +2,7 @@
 #include "Context.h"
 #include "Exception.h"
 
-namespace bluemei{
+namespace blib{
 
 Context Context::staticContext;
 
@@ -67,4 +67,4 @@ void Context::clear()
 	m_application.clear();
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

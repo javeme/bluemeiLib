@@ -1,6 +1,6 @@
 #include "CodeUtil.h"
 
-namespace bluemei{
+namespace blib{
 
 //字节数组转换为整型
 int CodeUtil::bytesToInt(byte *buf)
@@ -516,4 +516,4 @@ String CodeUtil::bytesToHexString(const byte buffer[], int len)
 	return str.trim();
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

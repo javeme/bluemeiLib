@@ -721,5 +721,8 @@
     <ClInclude Include="src\bLib\WorkThread.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="src\bLib\TemplateParser.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

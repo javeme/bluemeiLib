@@ -8,7 +8,7 @@
 #include "StringBuilder.h"
 #include <assert.h>
 
-namespace bluemei{
+namespace blib{
 
 // const null string
 const cstring NULL_STRING = ""; // "" or "<null>"
@@ -560,4 +560,4 @@ IMPL_APPEND2STRING(double);
 IMPL_APPEND2STRING(cstring);
 
 
-}//end of namespace bluemei
+}//end of namespace blib

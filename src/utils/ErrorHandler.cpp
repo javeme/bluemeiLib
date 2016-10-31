@@ -1,7 +1,7 @@
 #include "ErrorHandler.h"
 #include "System.h"
 
-namespace bluemei{
+namespace blib{
 
 IErrorHandler* ErrorHandler::s_errorHandler=nullptr;
 
@@ -36,4 +36,4 @@ void ErrorHandler::setHandler(IErrorHandler* handler)
 }
 
 
-}//end of namespace bluemei
+}//end of namespace blib

@@ -3,7 +3,7 @@
 #include "StringTemplate.h"
 #include "FileTemplate.h"
 
-namespace bluemei{
+namespace blib{
 
 TemplateLoader::TemplateLoader(void)
 {

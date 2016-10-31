@@ -1,7 +1,7 @@
 #include "Timer.h"
 #include "RuntimeException.h"
 
-namespace bluemei{
+namespace blib{
 
 Timer::Timer()
 {
@@ -117,4 +117,4 @@ bool Waiter::wait(unsigned int interval/*=1000*/)
 	return true;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

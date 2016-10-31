@@ -1,6 +1,6 @@
 #include "ThreadPool.h"
 
-namespace bluemei{
+namespace blib{
 
 ThreadPool::ThreadPool(int threadCount)
 {
@@ -145,4 +145,4 @@ bool ThreadPool::isStop() const
 	return m_bIsStop;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

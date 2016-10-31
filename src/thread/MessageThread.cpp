@@ -5,7 +5,7 @@
 #include "ErrorHandler.h"
 
 
-namespace bluemei{
+namespace blib{
 
 MessageThread::MessageThread()
 {
@@ -161,4 +161,4 @@ void MessageThread::onMessage(Message* msg)
 	}
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

@@ -2,7 +2,7 @@
 #include "File.h"
 #include "ByteBuffer.h"
 
-namespace bluemei{
+namespace blib{
 
 FileTemplate::FileTemplate(const String& path)
 {

@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "Application.h"
 
-namespace bluemei{
+namespace blib{
 
 Application::Application(void)
 {
@@ -11,4 +11,4 @@ Application::~Application(void)
 {
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

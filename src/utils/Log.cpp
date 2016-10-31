@@ -6,7 +6,7 @@
 #include "FilePath.h"
 #include "template/TemplateLoader.h"
 
-namespace bluemei{
+namespace blib{
 
 // name level time message thread process
 //#define DFT_LOG_FRMT "%(time)s - %(level)s - %(message)s"
@@ -223,7 +223,8 @@ Log* LogManager::getLogger(const String& name)
 	return logger;
 }
 
-Log* LogManager::initLogger(const String& name, const String& path, Log::LogLevel level)
+Log* LogManager::initLogger(const String& name, const String& path,
+	Log::LogLevel level)
 {
 	Log* logger = m_loggers.getDefault(name, null);
 	if(!logger)
@@ -250,4 +251,4 @@ void LogManager::destroyLoggers()
 	m_loggers.clear();
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

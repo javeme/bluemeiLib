@@ -1,6 +1,6 @@
 #include "ThreadException.h"
 
-namespace bluemei{
+namespace blib{
 
 ThreadException::ThreadException(int error)
 {
@@ -36,4 +36,4 @@ String ThreadException::toString() const
 	return name() + ": " + getMessage();
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

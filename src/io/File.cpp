@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "ErrorHandler.h"
 
-namespace bluemei{
+namespace blib{
 
 File::File(size_t bufferSize)
 {
@@ -271,4 +271,4 @@ String File::filePath() const
 	return m_strPath;
 }
 
-}//namespace bluemei
+}//namespace blib

@@ -2,7 +2,7 @@
 #include "MemoryPool.h"
 #include "RuntimeException.h"
 
-namespace bluemei{
+namespace blib{
 
 /////////////////////////////////////////////////////////////////////
 // class GradeMemoryPool
@@ -232,4 +232,4 @@ void GradeMemoryPools::free(void* ptr, unsigned int size)
 		delete[] (char*)ptr;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

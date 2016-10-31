@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-namespace bluemei{
+namespace blib{
 
 #ifdef _WIN32
 #	include <direct.h>
@@ -231,4 +231,4 @@ bool FileUtil::chdir(const String& path)
 	return os_chdir(path.c_str()) == 0;
 }
 
-}//namespace bluemei
+}//namespace blib

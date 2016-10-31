@@ -2,7 +2,7 @@
 #include "Util.h"
 #include "StringBuilder.h"
 
-namespace bluemei{
+namespace blib{
 
 SimpleCfgFile::SimpleCfgFile(const String& path)
 {
@@ -117,4 +117,4 @@ ConfigGroup& SimpleCfgFile::setOptionToGroup(const String& section,
 	return grp;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

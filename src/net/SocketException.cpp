@@ -1,7 +1,7 @@
 #include "SocketException.h"
 #include "SocketTools.h"
 
-namespace bluemei{
+namespace blib{
 
 SocketException::SocketException(int nError)
 {
@@ -52,4 +52,4 @@ String SocketException::toString() const
 		SocketTools::getWinsockErrorMsg(m_nError).c_str());
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

@@ -5,7 +5,7 @@
 #include "File.h"
 #include "ErrorHandler.h"
 
-namespace bluemei{
+namespace blib{
 
 
 FtpConnection::FtpConnection(const char *ip,int port)
@@ -261,4 +261,4 @@ void FtpConnection::stop()
 	this->m_bIsGoOn=false;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

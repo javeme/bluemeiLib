@@ -234,6 +234,7 @@
     <ClInclude Include="src\bLib\StringBuilder.h" />
     <ClInclude Include="src\bLib\System.h" />
     <ClInclude Include="src\bLib\Task.h" />
+    <ClInclude Include="src\bLib\TemplateParser.h" />
     <ClInclude Include="src\bLib\Thread.h" />
     <ClInclude Include="src\bLib\ThreadException.h" />
     <ClInclude Include="src\bLib\ThreadPool.h" />

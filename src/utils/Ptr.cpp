@@ -1,7 +1,7 @@
 #pragma once
 #include "Ptr.h"
 
-namespace bluemei{
+namespace blib{
 
 
 PointerReference::PointerReference(void)
@@ -29,4 +29,4 @@ PointerReference* PointerReference::disattach()
 	return this;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

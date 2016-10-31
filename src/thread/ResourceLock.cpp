@@ -1,6 +1,6 @@
 #include "ResourceLock.h"
 
-namespace bluemei{
+namespace blib{
 
 ResourceLock::ResourceLock(unsigned int count,cstring name)
 {
@@ -138,4 +138,4 @@ long ResourceLock::getWaitCount() const
 //linux implement: http://linux.die.net/man/3/pthread_mutexattr_init
 //TODO
 
-}//end of namespace bluemei
+}//end of namespace blib

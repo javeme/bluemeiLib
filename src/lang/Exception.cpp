@@ -2,7 +2,7 @@
 #include "CallStackUtil.h"
 #include <algorithm>
 
-namespace bluemei{
+namespace blib{
 
 Exception::Exception()
 {
@@ -105,4 +105,4 @@ void Exception::setDisplayText( cstring val )
 	m_strDisplayText = val;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

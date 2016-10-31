@@ -1,7 +1,7 @@
 #include "RuntimeException.h"
 #include "Date.h"
 
-namespace bluemei{
+namespace blib{
 
 ///////////////////////////////////////////////////////////////////////
 //RuntimeException
@@ -190,4 +190,4 @@ String TimeoutException::name() const
 	return "TimeoutException";
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

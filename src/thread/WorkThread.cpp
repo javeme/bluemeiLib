@@ -3,7 +3,7 @@
 #include "ErrorHandler.h"
 //#include <tchar.h>
 
-namespace bluemei{
+namespace blib{
 
 WorkThread::WorkThread(TaskPool *const pTaskPool)
 	:/*m_pLock(pLock),*/m_pTaskPool(pTaskPool)
@@ -68,4 +68,4 @@ bool WorkThread::isIdle() const
 	return m_bIsIdle;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

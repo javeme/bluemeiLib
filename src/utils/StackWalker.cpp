@@ -30,7 +30,7 @@
 
 #include "StackWalker.h"
 
-namespace bluemei{
+namespace blib{
 
 
 // If VC7 and later, then use the shipped 'dbghelp.h'-file
@@ -1222,4 +1222,4 @@ void StackWalker::OnOutput(LPCSTR buffer)
 }
 
 
-}//end of namespace bluemei
+}//end of namespace blib

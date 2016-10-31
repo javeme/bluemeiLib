@@ -1,6 +1,6 @@
 #include "CriticalLock.h"
 
-namespace bluemei{
+namespace blib{
 
 CriticalLock::CriticalLock()
 {
@@ -58,4 +58,4 @@ long CriticalLock::getMyThreadEnteredCount() const
 	return m_critialSection.RecursionCount;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

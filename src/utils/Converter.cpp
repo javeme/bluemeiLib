@@ -2,7 +2,7 @@
 #include "Converter.h"
 #include "RuntimeException.h"
 
-namespace bluemei{
+namespace blib{
 
 void throwBadCastException(cstring from, cstring to)
 {
@@ -15,4 +15,4 @@ void throwTypeException(const Object* instance, cstring cls)
 	throwpe(TypeException(instance->toString(), cls));
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

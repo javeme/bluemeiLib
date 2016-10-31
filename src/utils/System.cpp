@@ -5,7 +5,7 @@
 #include "Log.h"
 #include <algorithm>
 
-namespace bluemei{
+namespace blib{
 
 //collect every 30 seconds
 #define GC_INTERVAL 30
@@ -471,4 +471,4 @@ void System::debugInfo(const char* str, ...)
 }
 
 
-}//end of namespace bluemei
+}//end of namespace blib

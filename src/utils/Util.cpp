@@ -12,7 +12,7 @@
 #include <uuid/uuid.h>
 #endif
 
-namespace bluemei{
+namespace blib{
 
 Util::Util(void)
 {
@@ -407,7 +407,7 @@ string Util::uuid1()
 }
 
 //generate a guid
-bluemei::string Util::guid()
+blib::string Util::guid()
 {
 	GUID guid = {0};
 
@@ -427,4 +427,4 @@ bluemei::string Util::guid()
 	return strUuid;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

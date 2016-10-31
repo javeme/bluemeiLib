@@ -1,7 +1,7 @@
 #pragma once
 #include "ObjectFactory.h"
 
-namespace bluemei{
+namespace blib{
 
 ObjectFactory::ObjectFactory(void)
 {
@@ -69,4 +69,4 @@ void ObjectFactory::clear()
 	m_classMap.clear();
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

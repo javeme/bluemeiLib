@@ -3,7 +3,7 @@
 #include "Object.h"
 #include "RuntimeException.h"
 
-namespace bluemei{
+namespace blib{
 
 template<typename Type>
 class BLUEMEILIB_TEMPLATE DataBuffer : public Object//BLUEMEILIB_API
@@ -49,4 +49,4 @@ protected:
 	Type* m_buffer;
 };
 
-}//end of namespace bluemei
+}//end of namespace blib

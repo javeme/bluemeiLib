@@ -1,6 +1,6 @@
 #include "ByteBuffer.h"
 
-namespace bluemei{
+namespace blib{
 
 ByteBuffer::ByteBuffer(unsigned int maxSize,unsigned int size):DataBuffer(maxSize,size)
 {
@@ -61,4 +61,4 @@ String ByteBuffer::readString()
 	return str;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

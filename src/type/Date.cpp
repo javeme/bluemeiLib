@@ -3,7 +3,7 @@
 #include "Util.h"
 #include "Exception.h"
 
-namespace bluemei{
+namespace blib{
 
 //解析时间的宏替换
 #define PARSE_TIME()																				\
@@ -340,4 +340,4 @@ date_info di;
 memset(&di,0,len);
 */
 
-}//end of namespace bluemei
+}//end of namespace blib

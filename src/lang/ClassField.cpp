@@ -2,7 +2,7 @@
 #include "BString.h"
 #include "RuntimeException.h"
 
-namespace bluemei{
+namespace blib{
 
 void registerFieldCheck(bool success, cstring name)
 {

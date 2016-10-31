@@ -2,7 +2,7 @@
 #include "ErrorHandler.h"
 #include <process.h>
 
-namespace bluemei{
+namespace blib{
 
 //创建线程后回调,表示开始执行新线程了
 unsigned int WINAPI callBackOfStartThread(void* pVoid)
@@ -220,4 +220,4 @@ unsigned int Thread::mainThreadId()
 }
 
 
-}//end of namespace bluemei
+}//end of namespace blib

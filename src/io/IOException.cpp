@@ -1,6 +1,6 @@
 #include "IOException.h"
 
-namespace bluemei{
+namespace blib{
 
 IOException::IOException()
 {
@@ -17,4 +17,4 @@ String IOException::name() const
 	return "IOException";
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

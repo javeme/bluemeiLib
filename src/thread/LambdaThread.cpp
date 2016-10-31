@@ -1,6 +1,6 @@
 #include "LambdaThread.h"
 
-namespace bluemei{
+namespace blib{
 
 LambdaThread::LambdaThread(const ThreadFunction& f,void* pUserParameter)
 	:Thread(pUserParameter), m_lambdaFun(f)
@@ -21,4 +21,4 @@ void LambdaThread::run()
 	m_lambdaFun();
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

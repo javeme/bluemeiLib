@@ -2,7 +2,7 @@
 #include "SocketException.h"
 #include "ErrorHandler.h"
 
-namespace bluemei{
+namespace blib{
 
 ServerSocket::ServerSocket()
 {
@@ -119,4 +119,4 @@ void ServerSocket::destroy(ClientSocket*& pClientSocket)
 	pClientSocket=NULL;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

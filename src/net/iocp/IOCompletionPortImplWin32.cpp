@@ -4,7 +4,7 @@
 #include "IOCompletionPortImplWin32.h"
 #include <mswsock.h> //Œ¢»Ì¿©’πµƒ¿‡ø‚
 
-namespace bluemei{
+namespace blib{
 
 IOCompletionPortImpl::IOCompletionPortImpl()
 {
@@ -282,4 +282,4 @@ void IOCompletionPortImpl::releaseEventBuffer(IOEvent* event)
 }
 
 
-}//end of namespace bluemei
+}//end of namespace blib

@@ -1,6 +1,6 @@
 #include "FtpException.h"
 
-namespace bluemei{
+namespace blib{
 
 FtpException::FtpException(int type,cstring msg):Exception(msg)
 {
@@ -22,4 +22,4 @@ String FtpException::name() const
 	return "FtpException";
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

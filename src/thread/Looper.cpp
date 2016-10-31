@@ -1,6 +1,6 @@
 #include "Looper.h"
 
-namespace bluemei{
+namespace blib{
 
 ////////////////////////////////////////////////////////////////////////
 // class RunnableMessage
@@ -97,4 +97,4 @@ void Looper::onMessage(Message* msg)
 	}
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

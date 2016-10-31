@@ -1,6 +1,6 @@
 #include "TypeManager.h"
 
-namespace bluemei{
+namespace blib{
 
 CriticalLock TypeManager::lock;
 TypeManager* TypeManager::thisInstance=nullptr;
@@ -44,4 +44,4 @@ void TypeManager::destroy()
 	m_typeMap.clear();
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

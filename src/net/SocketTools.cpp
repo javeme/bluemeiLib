@@ -5,7 +5,7 @@
 #include "SocketTools.h"
 #include "SocketException.h"
 
-namespace bluemei{
+namespace blib{
 
 //初始socket环境
 int SocketTools::initSocketContext()
@@ -35,7 +35,7 @@ int SocketTools::cleanUpSocketContext()
 }
 
 //显示错误
-#ifndef WIN32
+#ifdef WIN32
 String SocketTools::getWinsockErrorMsg(int errCode)
 {
 	String str;
@@ -142,4 +142,4 @@ String SocketTools::getWinsockErrorMsg(int errCode)
 }
 #endif
 
-}//end of namespace bluemei
+}//end of namespace blib

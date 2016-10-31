@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "TemplateParser.h"
 
-namespace bluemei{
+namespace blib{
 
 /////////////////////////////////////////////////////////////////////
 //Tokenizer

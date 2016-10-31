@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "Session.h"
 
-namespace bluemei{
+namespace blib{
 
 Session::Session(void)
 {
@@ -11,4 +11,4 @@ Session::~Session(void)
 {
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

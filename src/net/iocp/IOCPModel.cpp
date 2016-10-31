@@ -6,7 +6,7 @@
 #include "IOCPException.h"
 #include <memory>
 
-namespace bluemei{
+namespace blib{
 
 
 class IOTask : public Task
@@ -375,4 +375,4 @@ void IOCPModel::closeAllClients()
 }
 
 
-}//end of namespace bluemei
+}//end of namespace blib

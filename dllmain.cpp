@@ -9,7 +9,7 @@
 #include "DataBuffer.cpp"
 #include "ByteBuffer.h"
 #include "AccurateTimeTicker.h"
-using namespace bluemei;
+using namespace blib;
 
 BOOL APIENTRY DllMain( HMODULE hModule,
 					   DWORD  ul_reason_for_call,

@@ -1,7 +1,7 @@
 #pragma once
 #include "TemplateExpr.h"
 
-namespace bluemei{
+namespace blib{
 
 class BLUEMEILIB_API Template : public Object
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include "IOCompletionPort.h"
 
-namespace bluemei{
+namespace blib{
 
 
 IOCompletionPort::IOCompletionPort()
@@ -26,4 +26,4 @@ void IOCompletionPort::close()
 	return m_impl->close();
 }
 
-}//end of namespace bluemei
+}//end of namespace blib

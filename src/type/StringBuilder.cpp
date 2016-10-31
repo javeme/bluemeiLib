@@ -1,6 +1,6 @@
 #include "StringBuilder.h"
 
-namespace bluemei{
+namespace blib{
 
 StringBuilder::StringBuilder(unsigned int capacity/*=DEFAULT_CAPACITY*/)
 {
@@ -337,4 +337,4 @@ bool StringBuilder::regionMatches(unsigned int offset, const String& other) cons
 	return result==0;
 }
 
-}//end of namespace bluemei
+}//end of namespace blib
