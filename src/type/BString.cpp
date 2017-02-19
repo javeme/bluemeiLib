@@ -430,7 +430,7 @@ ArrayList<String> String::splitWith(const String& separator,
 			list.size() < max - 1 &&
 			start < m_nLength)
 		{
-			if(end > start)
+			if(end >= start)
 				list.add(substring(start, end - start));
 
 			start = end + separator.length();
