@@ -16,6 +16,19 @@ Vector<T>::~Vector(void)
 }
 
 template <class T>
+Vector<T>::Vector(Vector&& other)
+{
+	*this=std::move(other);
+}
+
+template <class T>
+Vector<T>& Vector<T>::operator=(Vector&& other)
+{
+	this->m_dataArray=std::move(other.m_dataArray);
+	return *this;
+}
+
+template <class T>
 unsigned int Vector<T>::add(const T& ele)
 {
 	m_dataArray.push_back(ele);

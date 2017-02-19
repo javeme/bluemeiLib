@@ -12,6 +12,9 @@ class BLUEMEILIB_TEMPLATE Vector : public Object// : public vector<T>
 public:
 	Vector(void);
 	virtual ~Vector(void);
+public:
+	Vector(Vector&& other);
+	Vector& operator=(Vector&& other);
 private:
 	std::vector<T> m_dataArray;
 public:
