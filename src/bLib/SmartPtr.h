@@ -252,6 +252,18 @@ template<typename S, typename T>
 SmartPtr<S> ptr_dynamic_cast(SmartPtr<T> ptr) { return ptr.dynamicCast<S>(); }
 
 
+template <typename Type>
+class BLUEMEILIB_TEMPLATE Value2String<SmartPtr<Type>>
+{
+protected:
+	const SmartPtr<Type>& value;
+public:
+	Value2String(const SmartPtr<Type>& v):value(v){}
+	operator String() const{
+		return Value2String<Type>(*value);
+	}
+};
+
 template<> Value2String<SmartPtr<Object>>::operator String() const{
 	if(value==nullptr)
 		return "<null>";
