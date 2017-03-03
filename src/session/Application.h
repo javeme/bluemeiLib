@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Application_H_H
+#define Application_H_H
+
 #include "BeanContainer.h"
 
 namespace blib{
@@ -13,6 +15,6 @@ protected:
 	Application& operator=(const Application& other){return *this;};
 };
 
-
-
 }//end of namespace blib
+
+#endif

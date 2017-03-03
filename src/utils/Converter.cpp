@@ -1,4 +1,3 @@
-#pragma once
 #include "Converter.h"
 #include "RuntimeException.h"
 
@@ -13,6 +12,11 @@ void throwTypeException(const Object* instance, cstring cls)
 {
 	checkNullPtr(instance);
 	throwpe(TypeException(instance->toString(), cls));
+}
+
+void checkNullObject(Object* obj)
+{
+	checkNullPtr(obj);
 }
 
 }//end of namespace blib

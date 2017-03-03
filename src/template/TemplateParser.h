@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ParseTemplateException_H_H
+#define ParseTemplateException_H_H
+
 #include "Object.h"
 #include "TemplateExpr.h"
 #include "CodeUtil.h"
@@ -145,4 +147,6 @@ private:
 	Tokenizer tokenizer;
 };
 
-}
+}//namespace blib
+
+#endif

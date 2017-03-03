@@ -1,10 +1,14 @@
 #ifndef ArrayList_H_H
 #define ArrayList_H_H
+
 #include "bluemeiLib.h"
 #include "Object.h"
 #include "RuntimeException.h"
 
 namespace blib{
+
+template< class T >
+class BLUEMEILIB_TEMPLATE resetMemory;
 
 template< class T >
 class BLUEMEILIB_TEMPLATE ArrayList : public Object
@@ -259,16 +263,16 @@ public:
 };
 
 //基本数据类型复制的优化
-#define LIST_COPY_BASE_TYPE(t)\
-template<> copyData<t>::copyData(t* to, const t* from, unsigned int count){\
-	memcpy(to,from,count*sizeof(t));/*只能用于基本数据类型的复制*/\
-}\
-template class BLUEMEILIB_API copyData<t>;\
-template<> resetMemory<t>::resetMemory(t* buf, unsigned int count){\
-	memset(buf,0,count*sizeof(t));/*只能用于基本数据类型的清零*/\
-}\
+#define LIST_COPY_BASE_TYPE(t)                                                \
+template<> copyData<t>::copyData(t* to, const t* from, unsigned int count){   \
+    memcpy(to,from,count*sizeof(t));/*只能用于基本数据类型的复制*/                 \
+}                                                                             \
+template class BLUEMEILIB_API copyData<t>;                                    \
+template<> resetMemory<t>::resetMemory(t* buf, unsigned int count){           \
+    memset(buf,0,count*sizeof(t));/*只能用于基本数据类型的清零*/                   \
+}                                                                             \
 template class BLUEMEILIB_API resetMemory<t>;
-//////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 template< class T >
 void ArrayList<T>::copy( const ArrayList<T>& list, unsigned int to, unsigned int num)
@@ -292,9 +296,10 @@ void ArrayList<T>::copy( const ArrayList<T>& list, unsigned int to, unsigned int
 /*
 //优化基本数据类型的拷贝(貌似要放在cpp中去才行,暂时不用)
 #define LIST_COPY_BASE_TYPE(t)\
-	template<> void ArrayList<t>::copy(const ArrayList<t>& list, unsigned int to, unsigned int num){\
+template<>\
+void ArrayList<t>::copy(const ArrayList<t>& list, unsigned int to, unsigned int num){\
 	if(to+num>m_nSize)\
-	this->resize((to+num)*1.2);\
+		this->resize((to+num)*1.2);\
 	memcpy(m_pData+to,list.m_pData,num*sizeof(t));\
 	m_nCurrent=to+num;\
 }
@@ -374,19 +379,19 @@ String ArrayList<T>::toString() const
 	return str;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 #define EXPORT_LIST_OF(t) \
-	template class BLUEMEILIB_API ArrayList<t>
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template class BLUEMEILIB_API ArrayList<t>
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define EXPORT_LIST_OF_BASE_TYPE(t) \
-	LIST_COPY_BASE_TYPE(t);\
-	template class BLUEMEILIB_API ArrayList<t>;
-#define EXPORT_LIST_OF2(t) \
-	EXPORT_LIST_OF_BASE_TYPE(t); EXPORT_LIST_OF_BASE_TYPE(unsigned t)
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+    LIST_COPY_BASE_TYPE(t);\
+    template class BLUEMEILIB_API ArrayList<t>;
 
+#define EXPORT_LIST_OF2(t) \
+    EXPORT_LIST_OF_BASE_TYPE(t); EXPORT_LIST_OF_BASE_TYPE(unsigned t)
+///////////////////////////////////////////////////////////////////////////////
+
+#ifdef WIN32
 EXPORT_LIST_OF2(char);
 EXPORT_LIST_OF2(short);
 EXPORT_LIST_OF2(int);
@@ -395,7 +400,8 @@ EXPORT_LIST_OF2(long long);
 EXPORT_LIST_OF_BASE_TYPE(bool);
 EXPORT_LIST_OF_BASE_TYPE(float);
 EXPORT_LIST_OF_BASE_TYPE(double);
-
+#endif
 
 }//end of namespace blib
+
 #endif

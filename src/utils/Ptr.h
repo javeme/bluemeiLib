@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _Ptr_H_H
+#define _Ptr_H_H
+
 #include "bluemeiLib.h"
 #include "Object.h"
 
@@ -10,12 +12,26 @@ class BLUEMEILIB_API PointerReference : virtual public Object
 public:
 	PointerReference(void);
 	virtual ~PointerReference(void);
+
+public:
+	PointerReference(PointerReference&& other) {
+		*this = std::move(other);
+	}
+
+	PointerReference& operator=(PointerReference&& other) {
+		this->m_nPtrRefCount = other.m_nPtrRefCount;
+		other.m_nPtrRefCount = 0;
+		return *this;
+	}
+
 private:
-	PointerReference(const PointerReference&);
+	explicit PointerReference(const PointerReference&);
 	PointerReference&  operator=(const PointerReference&);
+
 public:
 	void attach();
 	PointerReference* disattach();
+
 protected:
 	int m_nPtrRefCount;
 };
@@ -27,6 +43,23 @@ class BLUEMEILIB_TEMPLATE Pointer : public Object
 public:
 	Pointer(T* target=null) : m_target(target) {}
 	Pointer(const Pointer& other) : m_target(other.m_target) {}
+
+public:
+	Pointer(Pointer&& other) {
+		*this = std::move(other);
+	}
+
+	Pointer& operator=(Pointer&& other) {
+		this->m_target = other.m_target;
+		other.m_target = null;
+		return *this;
+	}
+
+protected:
+	Pointer& operator=(const Pointer& other) {
+		this->m_target = other.m_target;
+		return *this;
+	}
 
 public:
 	virtual bool operator==(T* target) const {
@@ -69,27 +102,39 @@ template<typename T>
 class BLUEMEILIB_TEMPLATE RefPointer : public Pointer<T>
 {
 public:
-	RefPointer(T* target) : Pointer(target) {
-		if(m_target != null)
-			m_target->attach();
+	RefPointer(T* target) : Pointer<T>(target) {
+		if(this->m_target != null)
+		    this->m_target->attach();
 	}
 
-	RefPointer(const RefPointer& other) : Pointer(other) {
-		if(m_target != null)
-			m_target->attach();
+	RefPointer(const RefPointer& other) : Pointer<T>(other) {
+		if(this->m_target != null)
+		    this->m_target->attach();
 	}
 
 	virtual ~RefPointer() {
-		if(m_target != null)
-			m_target->disattach();
+		if(this->m_target != null)
+		    this->m_target->disattach();
 	}
 
 	RefPointer& operator=(const RefPointer& other) {
-		if(m_target != null)
-			m_target->disattach();
-		m_target = other.m_target;
-		if (m_target != null)
-			m_target->attach();
+		if(this->m_target != null)
+			this->m_target->disattach();
+		Pointer<T>::operator=(other);
+		if (this->m_target != null)
+			this->m_target->attach();
+		return *this;
+	}
+
+public:
+	RefPointer(RefPointer&& other) {
+		*this = std::move(other);
+	}
+
+	RefPointer& operator=(RefPointer&& other) {
+		if(this->m_target != null)
+			this->m_target->disattach();
+		Pointer<T>::operator=(std::move(other));
 		return *this;
 	}
 };
@@ -99,20 +144,34 @@ template<typename T>
 class BLUEMEILIB_TEMPLATE ScopePointer : public Pointer<T>
 {
 public:
-	ScopePointer(T* target=null) : Pointer(target) {}
+	ScopePointer(T* target=null) : Pointer<T>(target) {}
 
 	virtual ~ScopePointer(void) {
-		delete m_target;
+		delete this->m_target;
 	}
 
 	ScopePointer& operator=(T* target) {
-		delete m_target;
-		m_target = target;
+		delete this->m_target;
+		this->m_target = target;
 		return *this;
 	}
+
+public:
+	ScopePointer(ScopePointer&& other) {
+		*this = std::move(other);
+	}
+
+	ScopePointer& operator=(ScopePointer&& other) {
+		delete this->m_target;
+		Pointer<T>::operator=(std::move(other));
+		return *this;
+	}
+
 private:
-	ScopePointer(const ScopePointer& other);
+	explicit ScopePointer(const ScopePointer& other);
 	ScopePointer& operator=(const ScopePointer& other) const;
 };
 
 }//end of namespace blib
+
+#endif

@@ -1,9 +1,11 @@
-#pragma once
+#ifndef TemplateLoader_H_H
+#define TemplateLoader_H_H
+
 #include "Template.h"
 
 namespace blib{
 
-class BLUEMEILIB_API TemplateLoader
+class BLUEMEILIB_API TemplateLoader : public Object
 {
 public:
 	TemplateLoader(void);
@@ -21,4 +23,6 @@ public:
 	}
 };
 
-}
+}//namespace blib
+
+#endif

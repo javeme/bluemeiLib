@@ -52,6 +52,6 @@ private:
 	bool m_bCloseAble;
 };
 
-
 }//end of namespace blib
+
 #endif

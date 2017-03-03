@@ -1,5 +1,6 @@
 #ifndef Object_H_H
 #define Object_H_H
+
 #include "bluemeiLib.h"
 
 namespace blib{
@@ -39,4 +40,5 @@ public:
 
 
 }//end of namespace blib
+
 #endif

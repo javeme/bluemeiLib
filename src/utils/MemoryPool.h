@@ -1,7 +1,9 @@
 #ifndef MemoryPool_H_H
 #define MemoryPool_H_H
+
 #include "Object.h"
 #include "CriticalLock.h"
+#include "RuntimeException.h"
 #include <list>
 #include <vector>
 #include <map>
@@ -277,4 +279,5 @@ protected:
 };
 
 }//end of namespace blib
+
 #endif

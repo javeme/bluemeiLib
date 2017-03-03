@@ -10,25 +10,28 @@
 ************************************************************************/
 #include "SmartPtrManager.h"
 #include "System.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <new.h>
-#include <set>
-#include <vector>
+
 
 namespace blib{
 
 ///////////////////////////////////////////////////////////////////////
 // new handler
 
-//static variable
 #ifdef WIN32
+
+#include <new.h>
+
 static _PNH old_new_handler;
 static int old_new_mode;
+
 #else
+
+#include <new>
+
 typedef void (*_PNH)(void);
 static _PNH old_new_handler;
-#define _set_new_handler set_new_handler
+#define _set_new_handler std::set_new_handler
+
 #endif
 
 //分配内存出错时调用的函数

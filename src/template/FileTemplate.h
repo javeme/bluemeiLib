@@ -1,4 +1,6 @@
-#pragma once
+#ifndef FileTemplate_H_H
+#define FileTemplate_H_H
+
 #include "StringTemplate.h"
 
 namespace blib{
@@ -14,4 +16,6 @@ private:
 	StringTemplate* m_tpl;
 };
 
-}
+}//namespace blib
+
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef TemplateExpr_H_H
+#define TemplateExpr_H_H
+
 #include "HashMap.h"
 
 namespace blib{
@@ -81,4 +83,6 @@ private:
 	TemplateExpr* m_rightExpr;
 };
 
-}
+}//namespace blib
+
+#endif

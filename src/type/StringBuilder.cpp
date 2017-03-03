@@ -285,7 +285,7 @@ int StringBuilder::indexOf(const String& str, unsigned int fromIndex) const
 
 int StringBuilder::lastIndexOf(const String& str, unsigned int fromIndex) const
 {
-	int index = min(fromIndex, avail - str.length());
+	int index = std::min(fromIndex, avail - str.length());
 	for (; index >= 0; index--)
 		if (regionMatches(index, str))
 			return index;

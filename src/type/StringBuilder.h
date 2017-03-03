@@ -38,7 +38,9 @@ exception statement from your version. */
 
 //package java.lang;
 //import java.io.Serializable;
-#pragma once
+#ifndef StringBuilder_H_H
+#define StringBuilder_H_H
+
 #include "RuntimeException.h"
 #include "ArrayList.h"
 #include "BString.h"
@@ -253,7 +255,7 @@ public:
 	 */
 	StringBuilder& append(Object* obj)
 	{
-		return append(obj==nullptr?"null":obj->toString());
+		return append(obj==nullptr?String("null"):obj->toString());
 	}
 
 	/**
@@ -756,6 +758,9 @@ String s=sb.substring(2,4);
 sb.replace(0,4,"You are");
 sb.deleteSub(8,9);
 sb.insert(8,80);
-printf(sb.toString().c_str());//*/
+printf(sb.toString().c_str());
+*/
 
 }//end of namespace blib
+
+#endif

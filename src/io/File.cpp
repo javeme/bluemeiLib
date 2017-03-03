@@ -1,7 +1,4 @@
 #include "File.h"
-
-#include <stdio.h>
-#include <stdlib.h>
 #include "ErrorHandler.h"
 
 namespace blib{

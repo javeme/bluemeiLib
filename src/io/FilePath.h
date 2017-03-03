@@ -39,4 +39,5 @@ protected:
 };
 
 }//end of namespace blib
+
 #endif

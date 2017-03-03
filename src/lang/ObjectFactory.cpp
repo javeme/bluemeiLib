@@ -1,4 +1,3 @@
-#pragma once
 #include "ObjectFactory.h"
 
 namespace blib{
@@ -28,7 +27,7 @@ void ObjectFactory::destroy()
 	delete objectFactory;
 }
 
-Object* ObjectFactory::createObject(cstring className)
+Object* ObjectFactory::createObject(cstring className) throw(ClassNotFoundException)
 {
 	ClassMap::iterator iter=m_classMap.find(className);
 	if(iter!=m_classMap.end())

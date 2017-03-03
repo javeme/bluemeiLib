@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Context_H_H
+#define Context_H_H
+
 #include "bluemeiLib.h"
 #include "Object.h"
 #include "Session.h"
@@ -30,6 +32,6 @@ protected:
 	SessionMap m_sessionMap;
 };
 
-
-
 }//end of namespace blib
+
+#endif

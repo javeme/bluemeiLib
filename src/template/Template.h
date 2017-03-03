@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Template_H_H
+#define Template_H_H
+
 #include "TemplateExpr.h"
 
 namespace blib{
@@ -12,4 +14,6 @@ public:
 	virtual String render(const TemplateCtx& ctx)=0;
 };
 
-}
+}//namespace blib
+
+#endif

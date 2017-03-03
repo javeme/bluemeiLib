@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SortArray_H_H
+#define SortArray_H_H
+
 #include "ArrayList.h"
 
 namespace blib{
@@ -6,6 +8,8 @@ namespace blib{
 template <class T>
 class Compareable
 {
+public:
+	virtual ~Compareable() {}
 public:
 	virtual bool compare(T& elem1,T& elem2) const{
 		return elem1<elem2;
@@ -68,3 +72,5 @@ public:
 };
 
 }//end of namespace blib
+
+#endif

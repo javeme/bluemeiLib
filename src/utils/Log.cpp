@@ -1,10 +1,10 @@
-#include "time.h"
 #include "Log.h"
 #include "ErrorHandler.h"
 #include "Thread.h"
 #include "CodeUtil.h"
 #include "FilePath.h"
-#include "template/TemplateLoader.h"
+#include "../template/TemplateLoader.h"
+#include "time.h"
 
 namespace blib{
 
