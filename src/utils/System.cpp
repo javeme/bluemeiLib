@@ -148,7 +148,7 @@ bool System::isSystemIdle()
 	__int64 idle, kernel, user;
 	if(! GetSystemTimes((LPFILETIME)&idle,(LPFILETIME)&kernel,(LPFILETIME)&user))
 	{
-		printf("fail to call GetSystemTimes\r\n");
+		Log::getLogger()->warn("fail to call GetSystemTimes()");
 		return false;
 	}
 	//PdhOpenQuery
