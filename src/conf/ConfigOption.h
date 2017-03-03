@@ -1,7 +1,9 @@
-#pragma once
+#ifndef ConfigOption_H_H
+#define ConfigOption_H_H
 #include "bluemeiLib.h"
 #include "BString.h"
 #include "RuntimeException.h"
+#include <limits>
 
 namespace blib{
 
@@ -50,7 +52,7 @@ public:
 	StringOption(const String& name, const String& value,
 		const String& description)
 		: ConfigOption(OPTION_TYPE, name, description),
-		m_value(value) {}
+		  m_value(value) {}
 
 	String value() const { return m_value; }
 	void setValue(const String& val) { m_value = val; }
@@ -69,9 +71,10 @@ public:
 
 	IntOption(const String& name, int value,
 		const String& description,
-		int minVal=MININT, int maxVal=MAXINT)
+		int minVal=std::numeric_limits<int>::min(),
+		int maxVal=std::numeric_limits<int>::max())
 		: ConfigOption(OPTION_TYPE, name, description),
-		m_value(value), m_min(minVal), m_max(maxVal){}
+		  m_value(value), m_min(minVal), m_max(maxVal){}
 
 	int value() const { return m_value; }
 	void setValue(int val);
@@ -97,9 +100,10 @@ public:
 
 	FloatOption(const String& name, double value,
 		const String& description,
-		double minVal=DBL_MIN, double maxVal=DBL_MAX)
+		double minVal=std::numeric_limits<double>::min(),
+		double maxVal=std::numeric_limits<double>::max())
 		: ConfigOption(OPTION_TYPE, name, description),
-		m_value(value), m_min(minVal), m_max(maxVal){}
+		  m_value(value), m_min(minVal), m_max(maxVal){}
 
 	double value() const { return m_value; }
 	void setValue(double val);
@@ -191,29 +195,37 @@ public:
 public:
 	template <typename T>
 	T option(const String& key) const {
-		throw RuntimeException("Not implemented template<T> option()");
+		const static T v;
+		return option(key, v);
 	}
 
 	String operator[] (const String& key) const {
 		return option<String>(key);
 	}
 
+	// gcc-5 errors:
+	// error: explicit specialization in non-namespace scope 'class blib::ConfigGroup'
+	// error: specialization of 'T blib::ConfigGroup::option(const blib::String&) const
+	//        [with T = blib::String]' after instantiation template
+	/*
 	template <>
 	String option(const String& key) const;
-	
 	template <>
 	int option(const String& key) const;
-
 	template <>
 	bool option(const String& key) const;
-
 	template <>
 	double option(const String& key) const;
-
-	/*virtual String option(const String& key, const String& default) const;
-	virtual int option(const String& key, int default) const;
-	virtual bool option(const String& key, bool default) const;
-	virtual double option(const String& key, double default) const;*/
+	*/
+protected:
+	template <typename T>
+	T option(const String& key, const T&) const {
+		throw RuntimeException("Not implemented template<T> option()");
+	}
+	virtual String option(const String& key, const String& dflt) const;
+	virtual int option(const String& key, int dflt) const;
+	virtual bool option(const String& key, bool dflt) const;
+	virtual double option(const String& key, double dflt) const;
 public:
 	virtual bool exists(const String& key) const;
 	virtual bool get(const String& key, ConfigOption*& value) const;
@@ -228,6 +240,7 @@ protected:
 	// options map
 	Map<String, ConfigOption*> m_propertiesMap;
 };
+
 
 /////////////////////////////////////////////////////////////////////
 // class Config
@@ -266,3 +279,5 @@ public:
 };
 
 }//end of namespace blib
+
+#endif

@@ -463,7 +463,7 @@ T getConfigOption(const ConfigGroup* group, const String& key)
 		}
 	}
 
-	if(option) {		
+	if(option) {
 		auto opt = dynamic_cast<O*>(option);
 		if(opt) {
 			return opt->value();
@@ -473,29 +473,26 @@ T getConfigOption(const ConfigGroup* group, const String& key)
 		typeid(T).name(), group->name().c_str(), key.c_str())));
 }
 
-template <>
-String ConfigGroup::option(const String& key) const
+String ConfigGroup::option(const String& key, const String&) const
 {
 	return getConfigOption<String, StringOption>(this, key);
 }
 
-template <>
-int ConfigGroup::option(const String& key) const
+int ConfigGroup::option(const String& key, int) const
 {
 	return getConfigOption<int, IntOption>(this, key);
 }
 
-template <>
-double ConfigGroup::option(const String& key) const
+double ConfigGroup::option(const String& key, double) const
 {
 	return getConfigOption<double, FloatOption>(this, key);
 }
 
-template <>
-bool ConfigGroup::option(const String& key) const
+bool ConfigGroup::option(const String& key, bool) const
 {
 	return getConfigOption<bool, BooleanOption>(this, key);
 }
+
 
 /////////////////////////////////////////////////////////////////////
 // class Config
