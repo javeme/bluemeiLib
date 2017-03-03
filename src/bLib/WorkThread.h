@@ -1,4 +1,6 @@
-#pragma once
+#ifndef WorkThread_H_H
+#define WorkThread_H_H
+
 #include "Thread.h"
 #include "Log.h"
 #include "Task.h"
@@ -26,5 +28,6 @@ public:
 	virtual bool isIdle() const;
 };
 
-
 }//end of namespace blib
+
+#endif

@@ -1,6 +1,5 @@
-
-#ifndef _SocketException_h_
-#define _SocketException_h_
+#ifndef SocketException_H_H
+#define SocketException_H_H
 
 #include "Exception.h"
 
@@ -16,8 +15,8 @@ public:
 	virtual ~SocketException();
 public:
 	virtual String name() const;
-	virtual int getError();
-	virtual void printErrorMsg();
+	virtual int getError() const;
+	virtual String getErrorMsg() const;
 	virtual String toString() const;
 protected:
 	int m_nError;
@@ -30,5 +29,14 @@ public:
 	virtual String name() const { return "SocketClosedException"; }
 };
 
+class BLUEMEILIB_API SocketTryAgainException : public SocketException
+{
+public:
+	SocketTryAgainException(int nError) : SocketException(nError){}
+	virtual String name() const { return "SocketTryAgainException"; }
+};
+
+
 }//end of namespace blib
+
 #endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SimpleCfgFile_H_H
+#define SimpleCfgFile_H_H
 #include "bluemeiLib.h"
 #include "ConfigOption.h"
 #include "File.h"
@@ -24,3 +25,5 @@ private:
 };
 
 }//end of namespace blib
+
+#endif

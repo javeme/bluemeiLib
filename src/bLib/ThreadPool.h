@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ThreadPool_H_H
+#define ThreadPool_H_H
+
 #include "WorkThread.h"
 #include "LinkedList.h"
 #include <queue>
@@ -44,3 +46,5 @@ public:
 };
 
 }//end of namespace blib
+
+#endif

@@ -1,11 +1,10 @@
 #ifndef SmartPtrManager_H
 #define SmartPtrManager_H
+
 #include "bluemeiLib.h"
 #include "Object.h"
 #include "MutexLock.h"
 #include "TypeManager.h"
-
-#include <malloc.h>
 #include <set>
 
 #ifdef WIN32
@@ -14,6 +13,7 @@
 #error To use the util library, please compile the project with "Multithread DLL (/MD)" or "Multithread Debug DLL (/MDd)"
 #endif
 #endif
+
 
 namespace blib{
 
@@ -113,7 +113,7 @@ class BLUEMEILIB_API WrapperPointer : public Object
 public:
 	ObjectWrapper* p;
 	WrapperPointer(ObjectWrapper* p) { this->p = p; }
-	WrapperPointer() {}
+	WrapperPointer() : p(null) {}
 
 	bool operator<(const WrapperPointer& other) const
 	{
@@ -250,4 +250,5 @@ protected:
 
 
 }//end of namespace blib
+
 #endif

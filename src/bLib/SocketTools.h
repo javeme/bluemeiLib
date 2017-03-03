@@ -1,17 +1,10 @@
-#ifndef _SocketTools_h_
-#define _SocketTools_h_
+#ifndef SocketTools_H_H
+#define SocketTools_H_H
 
 #include "bluemeiLib.h"
 #include "CodeUtil.h"
 
 namespace blib{
-
-#define CP_GBK 950
-
-#ifdef WIN32
-# define ioctl ioctlsocket
-#pragma comment(lib,"ws2_32.lib")
-#endif
 
 class BLUEMEILIB_API SocketTools : public CodeUtil
 {
@@ -23,4 +16,5 @@ public:
 };
 
 }//end of namespace blib
+
 #endif

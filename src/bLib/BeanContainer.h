@@ -1,4 +1,6 @@
-#pragma once
+#ifndef BeanContainer_H_H
+#define BeanContainer_H_H
+
 #include "bluemeiLib.h"
 #include "Object.h"
 
@@ -18,7 +20,7 @@ protected:
 		*this=other;
 	};
 	BeanContainer& operator=(const BeanContainer& other){
-		__super::operator=(other);
+		Object::operator=(other);
 		m_beanMap=other.m_beanMap;
 		return *this;
 	};
@@ -42,3 +44,5 @@ protected:
 };
 
 }//end of namespace blib
+
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef LambdaThread_H_H
+#define LambdaThread_H_H
+
 #include "bluemeiLib.h"
 #include "Thread.h"
 #include <functional>
@@ -33,3 +35,5 @@ void download(string url,const function<void (int error)>& f)//f为下载完成后的回
 #endif
 
 }//end of namespace blib
+
+#endif

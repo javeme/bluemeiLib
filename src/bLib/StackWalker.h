@@ -10,11 +10,14 @@
  **********************************************************************/
 // #pragma once is supported starting with _MCS_VER 1000,
 // so we need not to check the version (because we only support _MSC_VER >= 1100)!
-#pragma once
+#ifndef StackWalker_H_H
+#define StackWalker_H_H
 
 #include "bluemeiLib.h"
 #include "Object.h"
-//TODO: to support linux like OS
+
+#ifdef WIN32
+
 #include <windows.h>
 
 namespace blib{
@@ -45,7 +48,7 @@ public:
 private:
 	StackWalker(const StackWalker& other){}
 	StackWalker& operator=(const StackWalker& other){return *this;}
-		/*StackWalker& operator=(const StackWalker& other){
+	/*StackWalker& operator=(const StackWalker& other){
 		this->m_hProcess=other.m_hProcess;
 		this->m_dwProcessId=other.m_dwProcessId;
 		this->m_modulesLoaded=other.m_modulesLoaded;
@@ -99,7 +102,7 @@ public:
 	LPVOID	  pUserData  // optional data, which was passed in "ShowCallstack"
 	);
 
-  BOOL LoadModules();
+  virtual BOOL LoadModules();
 
   virtual BOOL ShowCallstack(
 	HANDLE hThread = GetCurrentThread(),
@@ -207,5 +210,10 @@ protected:
 } while(0);
 #endif
 
-
 }//end of namespace blib
+
+#else // not WIN32
+
+#endif // end of WIN32
+
+#endif

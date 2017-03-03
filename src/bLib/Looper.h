@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Looper_H_H
+#define Looper_H_H
+
 #include "MessageThread.h"
 #include "LambdaThread.h"
 
@@ -33,3 +35,5 @@ protected:
 };
 
 }//end of namespace blib
+
+#endif

@@ -1,7 +1,9 @@
 #ifndef Class_H_H
 #define Class_H_H
+
 #include "bluemeiLib.h"
 #include "ClassField.h"
+
 
 namespace blib{
 
@@ -60,20 +62,20 @@ protected:
 	FieldMap m_fields;
 };
 
+
 //获取反射类
-#define CLASS(className)\
-    Class(_T2STR(className),className::createObject)
-#define NEW_CLASS(className)\
-    new Class(_T2STR(className),className::createObject)
+#define CLASS(Cls) \
+    Class(_T2STR(Cls),Cls::createObject)
+#define NEW_CLASS(Cls) \
+    new Class(_T2STR(Cls),Cls::createObject)
 
 
 //可动态创建类声明宏
-#define DECLARE_DCLASS(className) \
-    typedef className Self;                                                   \
+#define DECLARE_DCLASS(Cls)                                                   \
+    typedef Cls Self;                                                         \
     static Class* thisClass(){                                                \
-        static Class* cls = Class::registerClass(_T2STR(className),           \
-                                                 Self::createObject,          \
-                                                 __super::thisClass());       \
+        static Class* cls = Class::registerClass(_T2STR(Cls),                 \
+                Self::createObject, baseof(Cls)::thisClass());                \
         return cls;                                                           \
     }                                                                         \
     static Object* createObject(){ return new Self();}                        \
@@ -83,7 +85,7 @@ protected:
         if(!cls->isMyObject(this))                                            \
         {                                                                     \
             Class::throwRuntimeException("The object is not an instance of "  \
-              "class '"_T2STR(className)"'(Please implement DECLARE_DCLASS)");\
+                "class '" _T2STR(Cls) "'(Please implement DECLARE_DCLASS)");  \
             return Class::undefined();                                        \
         }                                                                     \
         else                                                                  \

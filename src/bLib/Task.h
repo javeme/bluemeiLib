@@ -1,9 +1,11 @@
-#pragma once
+#ifndef _Task_H_H
+#define _Task_H_H
+
 #include "Runnable.h"
 
 namespace blib{
 
-class BLUEMEILIB_API Task:public Runnable
+class BLUEMEILIB_API Task : public Runnable
 {
 public:
 	virtual void stop()=0;
@@ -16,3 +18,5 @@ public:
 };
 
 }//end of namespace blib
+
+#endif

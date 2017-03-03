@@ -1,14 +1,49 @@
-#ifndef _ClientSocket_h_
-#define _ClientSocket_h_
+#ifndef _ClientSocket_H_H
+#define _ClientSocket_H_H
 
 #include "bluemeiLib.h"
-#include <winsock2.h>
 #include "Object.h"
 #include "BString.h"
 
-namespace blib{
+#ifdef WIN32
+
+#include <winsock2.h>
 
 typedef SOCKET socket_t;
+
+#define ETIMEDOUT      WSAETIMEDOUT
+#define EADDRINUSE     WSAEADDRINUSE
+#define EINTR          WSAEINTR
+#define EAGAIN         WSAEWOULDBLOCK
+#define EINPROGRES     WSAEINPROGRESS
+
+inline int socketError() { return WSAGetLastError(); }
+
+#else // not WIN32
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h>
+#include <netinet/ip.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+
+typedef int socket_t;
+
+#define closesocket ::close
+#define ioctlsocket ::ioctl
+
+#define SOCKET_ERROR -1
+#define INVALID_SOCKET -1
+
+inline int socketError() { return errno; }
+
+#endif //end of #ifdef WIN32
+
+
+namespace blib{
 
 class BLUEMEILIB_API ClientSocket : public Object
 {
@@ -69,6 +104,6 @@ public:
 	const static int LINE_BUFFER_SIZE;
 };
 
-
 }//end of namespace blib
+
 #endif

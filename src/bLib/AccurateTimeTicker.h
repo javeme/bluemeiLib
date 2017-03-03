@@ -1,14 +1,16 @@
-#pragma once
+#ifndef AccurateTimeTicker_H_H
+#define AccurateTimeTicker_H_H
 
 #include "Exception.h"
 
 namespace blib{
 
+#define USECOND_PER_SECOND (1000*1000) //每秒的微秒数
+
 #ifdef WIN32
+
 #include <windows.h>
 #include <winbase.h> //QueryPerformanceFrequency defined in this file
-
-#define USECOND_PER_SECOND (1000*1000) //每秒的微秒数
 
 class BLUEMEILIB_API AccurateTimeTicker : public Object
 {
@@ -41,9 +43,11 @@ public:
 };
 
 #else
+
 /* Linux */
 #include <sys/time.h> // struct timeval
-class AccurateTimeTicker : public Object
+
+class BLUEMEILIB_API AccurateTimeTicker : public Object
 {
 	struct timeval tmStart;
 	struct timeval tmEnd;
@@ -69,3 +73,5 @@ public:
 #endif
 
 }//end of namespace blib
+
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MultiValueHashMap_H_H
+#define MultiValueHashMap_H_H
+
 #include "HashMap.h"
 #include "LinkedList.h"
 
@@ -103,7 +105,12 @@ String MultiValueHashMap<K, V>::toString() const
 	return sb.toString();
 }
 
+
+#ifdef WIN32
 template class BLUEMEILIB_API MultiValueHashMap<String,int>;
 template class BLUEMEILIB_API MultiValueHashMap<String,Object*>;
+#endif
 
 }//end of namespace blib
+
+#endif

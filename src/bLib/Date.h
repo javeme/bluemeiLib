@@ -1,15 +1,26 @@
-#pragma once
-#include "bluemeiLib.h"
+#ifndef Date_H_H
+#define Date_H_H
 
-#include <stdlib.h>
-#include <stdio.h>
+#include "bluemeiLib.h"
 #include <locale.h>
-#include <sys/timeb.h>
 #include <time.h>
+#include <sys/timeb.h>
 #include "Object.h"
 #include "BString.h"
 
 namespace blib{
+
+#ifdef WIN32
+
+typedef _timeb timeb;
+#define ftime(tb) _ftime_s(tb)
+
+#else // not WIN32
+
+#define localtime_s(l, c) localtime_r(c, l)
+
+#endif //end of #ifdef WIN32
+
 
 typedef tm DateInfo;
 
@@ -55,7 +66,7 @@ public:
 private:
 	void initDate();
 private:
-	_timeb m_time;//用于存放时间
+	timeb m_time;//用于存放时间
 	//DateInfo m_dateInfo;//用于存放设置
 };
 
@@ -85,3 +96,5 @@ private:
 }
 
 }//end of namespace blib
+
+#endif
