@@ -170,29 +170,45 @@ void testString()
 	assert(String("123456789efg") == stra2);
 
 	// splitWith
-	String strb = "123,456,789,,abc;,,.";
+	String strb = ",123,456,789,,abc;,,.";
 	ArrayList<String> listb = strb.splitWith(",");
-	assert(5 == listb.size());
-	assert(String("123") == listb[0]);
-	assert(String("456") == listb[1]);
-	assert(String("789") == listb[2]);
-	assert(String("abc;") == listb[3]);
-	assert(String(".") == listb[4]);
+	assert(8 == listb.size());
+	assert(String("") == listb[0]);
+	assert(String("123") == listb[1]);
+	assert(String("456") == listb[2]);
+	assert(String("789") == listb[3]);
+	assert(String("") == listb[4]);
+	assert(String("abc;") == listb[5]);
+	assert(String("") == listb[6]);
+	assert(String(".") == listb[7]);
+
+	assert(1 == (String("").splitWith(",").size()));
+	assert(3 == (String(",,").splitWith(",").size()));
+
+	String strb1 = ",123,456,789,,abc;,,.";
+	ArrayList<String> listb1 = strb1.splitWith(",", -1, false);
+	assert(5 == listb1.size());
+	assert(String("123") == listb1[0]);
+	assert(String("456") == listb1[1]);
+	assert(String("789") == listb1[2]);
+	assert(String("abc;") == listb1[3]);
+	assert(String(".") == listb1[4]);
 
 	String strb2 = "--123--456----789----";
-	ArrayList<String> listb2 = strb2.splitWith("--");
+	ArrayList<String> listb2 = strb2.splitWith("--", -1, false);
 	assert(3 == listb2.size());
 	assert(String("123") == listb2[0]);
 	assert(String("456") == listb2[1]);
 	assert(String("789") == listb2[2]);
 
-	ArrayList<String> listb3 = strb2.splitWith("--", 3);
+	ArrayList<String> listb3 = strb2.splitWith("--", 3, false);
 	assert(3 == listb3.size());
 	assert(String("123") == listb3[0]);
 	assert(String("456") == listb3[1]);
 	assert(String("--789----") == listb3[2]);
 
 	// join
+	listb = listb1;
 	String strc = String("-").join(listb);
 	assert(String("123-456-789-abc;-.") == strc);
 
@@ -299,4 +315,6 @@ void testString()
 	String tmp = String(" ") + str + " " + sub + "  ";
 	tmp = tmp.trim();
 	assert(String("Hello.test hello.test") == tmp);
+
+	printf("string unit test passed successfully!\n");
 }

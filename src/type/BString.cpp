@@ -1,12 +1,8 @@
-#pragma once
-#include <stdlib.h>
-#include <stdio.h>
 #include "BString.h"
 #include "Object.h"
 #include "ArrayList.h"
 #include "RuntimeException.h"
 #include "StringBuilder.h"
-#include <assert.h>
 
 namespace blib{
 
@@ -28,7 +24,7 @@ String::String(cstring src, unsigned int len)
 	if(len == -1)
 		len = strlen(src);
 	init(len);
-	memcpy(data(), src, min(len, strlen(src)));
+	memcpy(data(), src, std::min(len, (unsigned int)strlen(src)));
 }
 
 String::String(const std::string &src)
@@ -91,7 +87,8 @@ void String::init(unsigned int len)
 			//static GradeMemoryPools pools(1024*4000);
 			//m_chars.ptr = (char*)pools.alloc(len + 1);
 		} catch(std::exception&) {
-			throw(std::bad_alloc("Can't alloc any memory for String"));
+			// Can't alloc any memory for String::init
+			throw OutOfMemoryException(len);
 		}
 		m_chars.ptr[len] = '\0';
 		m_nSize = m_nLength = len;
@@ -218,10 +215,16 @@ String& String::append(const String &add)
 {
 	unsigned int lenAdd = add.length();
 	unsigned int lenTotal = m_nLength + lenAdd;
+
+	// append empty string
+	if(lenAdd == 0) {
+		// ignore
+	}
 	// append to this buffer if the size is enough
-	if(lenTotal <= m_nSize) {
+	else if(lenTotal <= m_nSize) {
+		// NOTE: copy the end char '\0' by `lenAdd + 1`
 		memcpy(data() + m_nLength, add.data(), lenAdd + 1);
-		return *this;
+		m_nLength = lenTotal;
 	}
 	// alloc a new buffer
 	else {
@@ -229,7 +232,7 @@ String& String::append(const String &add)
 		char *buf = tmp.data();
 		//strcpy(buf, data());
 		memcpy(buf, data(), m_nLength);
-		memcpy(buf + m_nLength, add.data(), lenAdd + 1);
+		memcpy(buf + m_nLength, add.data(), lenAdd);
 		*this = std::move(tmp);
 	}
 	return *this;
@@ -411,7 +414,7 @@ String String::replace(const String& strNeedReplaced,
 
 //将字符串按分隔符拆分为若干段
 ArrayList<String> String::splitWith(const String& separator,
-	unsigned int max/*=-1*/) const
+	unsigned int max/*=-1*/, bool allowEmpty/*=true*/) const
 {
 	ArrayList<String> list;
 
@@ -430,12 +433,13 @@ ArrayList<String> String::splitWith(const String& separator,
 			list.size() < max - 1 &&
 			start < m_nLength)
 		{
-			if(end >= start)
+			if(end > start || (end == start && allowEmpty))
 				list.add(substring(start, end - start));
 
 			start = end + separator.length();
 		}
-		if(m_nLength > start)
+		// the left
+		if(m_nLength > start || (m_nLength == start && allowEmpty))
 			list.add(getRightSub(m_nLength - start));
 	}
 
@@ -484,7 +488,7 @@ bool String::compare(cstring other, bool caseSensitive/*=true*/) const
 		return (0 == strcmp(data(), other));
 	}
 	else
-		return (0 == _stricmp(data(), other));
+		return (0 == stricmp(data(), other));
 }
 
 bool String::operator< (cstring str) const
@@ -518,16 +522,20 @@ String String::format(cstring frmt, ...)
 	String str;
 	va_list arg_ptr;
 	verdictNull(frmt);
-	va_start(arg_ptr, frmt);
 	int size = strlen(frmt) + 32 + STR_SMALL_SIZE;
 
 	while(true)
 	{
 		str.resize(size);
 		char* buf = str.data();
-		//int result = _snprintf(buf, size, frmt, *arg_ptr);
+		// NOTE: arg_ptr will be changed after calling vsnprintf()!
+		// and the meaning of return value are different between win and linux:
+		// http://china.ygw.blog.163.com/blog/static/68719746201342210148468/
+		va_start(arg_ptr, frmt);
 		int len = vsnprintf(buf, size ,frmt, arg_ptr);
-		if(len < 0) {
+		va_end(arg_ptr);
+		if(len < 0 || len >= size) {
+			//printf("format len: %d, size: %d, buf: %s", len, size, buf);
 			size <<= 2;
 		}
 		else {
@@ -541,6 +549,7 @@ String String::format(cstring frmt, ...)
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
 #define IMPL_APPEND2STRING(Type)\
 	BLUEMEILIB_API String operator+(const Type& str1,const String& str2){\
 		return ((String)Value2String<Type>(str1))+(str2);\
