@@ -2,15 +2,34 @@
 *edit by blib
 *write for java-users
 */
-#pragma once
-#ifndef _Thread_h_
-#define _Thread_h_
+#ifndef Thread_H_H
+#define Thread_H_H
 
 #include "bluemeiLib.h"
 #include "Runnable.h"
 #include "ThreadException.h"
 #include "ResourceLock.h"
 #include "CriticalLock.h"
+
+#ifdef WIN32
+
+#include <process.h>
+
+typedef HANDLE thread_handle;
+
+#define THREAD_CALLBACK WINAPI
+
+#else // not WIN32
+
+#include <thread>
+
+//typedef pthread_t ThreadHandle;
+typedef std::thread thread_handle;
+
+#define THREAD_CALLBACK
+
+#endif //end of #ifdef WIN32
+
 
 namespace blib{
 
@@ -25,10 +44,10 @@ private:
 	Thread& operator=(const Thread& other);
 public:
 	virtual void start() throw(Exception);
-	virtual void stop();
-	virtual void attach();
-	virtual void detach();
-	virtual void wait() throw(ThreadException);
+	virtual void stop() throw(Exception);
+	virtual void attach() throw(Exception);
+	virtual void detach() throw(Exception);
+	virtual void wait() throw(Exception);
 	static void sleep(unsigned int msecond);
 
 	void setAutoDestroy(bool bAutoDestroy);
@@ -37,25 +56,28 @@ public:
 public:
 	virtual void run();
 	virtual bool isRunning() const;
-	virtual unsigned int getThreadId() const;
-	static unsigned int currentThreadId();
-	static unsigned int mainThreadId();
+
+	virtual unsigned long getThreadId() const;
+	static unsigned long currentThreadId();
+	static unsigned long mainThreadId();
 public:
 	int callBackStartThread();
 protected:
 	virtual void init();
-	virtual void destroy();
+	virtual void destroy() throw(Exception);
+	virtual void join() throw(Exception);
+	virtual void terminate() throw(Exception);
 protected:
 	Runnable* m_pObject;
 	void* m_pUserParameter;
-	unsigned int m_threadId;
-	static unsigned int s_mainThreadId;
+	unsigned long m_threadId;
+	static unsigned long s_mainThreadId;
 
 	SyncLock m_lock;
 	bool m_bAutoDestroyObj;
 	volatile bool m_bRunning,m_bDetached;
 private:
-	HANDLE m_hThread;
+	thread_handle m_hThread;
 };
 
 }//end of namespace blib

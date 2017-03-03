@@ -1,6 +1,5 @@
-#pragma once
-#ifndef _ThreadException_h_
-#define _ThreadException_h_
+#ifndef ThreadException_H_H
+#define ThreadException_H_H
 
 #include "Exception.h"
 
@@ -22,4 +21,5 @@ private:
 };
 
 }//end of namespace blib
+
 #endif

@@ -1,6 +1,28 @@
 #include "Timer.h"
 #include "RuntimeException.h"
 
+#ifdef WIN32
+
+inline unsigned int getTimeTick() { return GetTickCount(); }
+
+#else
+
+#include "AccurateTimeTicker.h"
+
+inline unsigned int getTimeTick()
+{
+	static blib::AccurateTimeTicker ticker;
+	static bool started = false;
+	if(!started) {
+		ticker.start();
+		started=true;
+	}
+	return (ticker.getIntevalUSecond() / 1000); // ms
+}
+
+#endif
+
+
 namespace blib{
 
 Timer::Timer()
@@ -38,7 +60,7 @@ void Timer::schedule(Runnable* pTask,unsigned long delay,
 	if(pTask==nullptr)
 		throw Exception("task object can't be null");
 	m_pTask=pTask;
-	m_nextTime=GetTickCount()+delay;
+	m_nextTime=getTimeTick()+delay;
 	m_nPeriod=period;
 	//执行线程
 	Thread *pThread=new LambdaThread([&,autoDestroyTask](){
@@ -65,7 +87,7 @@ void Timer::cancel()
 
 void Timer::executeTask()
 {
-	unsigned long currentTime=GetTickCount();
+	unsigned long currentTime=getTimeTick();
 	long delay=m_nextTime-currentTime;
 	bool isTimeout=true;
 	if(delay>0){//时间未到
@@ -82,7 +104,7 @@ void Timer::executeTask()
 
 void Timer::reset()//如何与定时器线程同步??? 待改进!!!
 {
-	unsigned long currentTime=GetTickCount();
+	unsigned long currentTime=getTimeTick();
 	if(m_lock.getWaitCount()==1)
 	{
 		m_nextTime=currentTime+m_nPeriod;
@@ -94,7 +116,7 @@ void Timer::reset()//如何与定时器线程同步??? 待改进!!!
 
 long Timer::getRemainderTime()
 {
-	unsigned long currentTime=GetTickCount();
+	unsigned long currentTime=getTimeTick();
 	return m_nextTime-currentTime;
 }
 
