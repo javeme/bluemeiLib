@@ -38,7 +38,7 @@ int ServerSocket::createSocket(int nPort)
 	m_socket=socket(AF_INET,SOCK_STREAM,0);
 	if(m_socket==INVALID_SOCKET)
 	{
-		return WSAGetLastError();
+		return socketError();
 	}
 	//填充地址
 	sockaddr_in serverAddr;
@@ -46,20 +46,20 @@ int ServerSocket::createSocket(int nPort)
 	memset(&serverAddr,0,lenOfServerAddr);
 	serverAddr.sin_family=AF_INET;
 	serverAddr.sin_port=htons(m_sPort);
-	serverAddr.sin_addr.S_un.S_addr=htonl(INADDR_ANY);
+	serverAddr.sin_addr={htonl(INADDR_ANY)};
 
 	//绑定
 	int nRetCode=::bind(m_socket,(sockaddr*)&serverAddr,lenOfServerAddr);
 	if(nRetCode==SOCKET_ERROR)
 	{
-		return WSAGetLastError();
+		return socketError();
 	}
 	//监听
 	int maxWaitCon = SOMAXCONN-1;
 	nRetCode=::listen(m_socket,maxWaitCon);
 	if(nRetCode==SOCKET_ERROR)
 	{
-		return WSAGetLastError();
+		return socketError();
 	}
 	m_bClose=false;
 	return 0;
@@ -76,11 +76,11 @@ ClientSocket* ServerSocket::accept()
 
 	//接受连接请求
 	sockaddr_in clientAddr;
-	int lenOfClientAddr=sizeof(clientAddr);
-	SOCKET sockC=::accept(m_socket,(sockaddr*)&clientAddr,&lenOfClientAddr);
+	unsigned int lenOfClientAddr=sizeof(clientAddr);
+	socket_t sockC=::accept(m_socket,(sockaddr*)&clientAddr,&lenOfClientAddr);
 	if(sockC==INVALID_SOCKET)
 	{
-		throw SocketException(WSAGetLastError());
+		throw SocketException(socketError());
 	}
 	else
 	{
@@ -104,7 +104,7 @@ void ServerSocket::close()
 	int nReturnCode=closesocket(this->m_socket);
 	if(nReturnCode==SOCKET_ERROR)
 	{
-		throw SocketException(::WSAGetLastError());
+		throw SocketException(socketError());
 	}
 	m_bClose=true;
 }

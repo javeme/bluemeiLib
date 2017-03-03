@@ -102,7 +102,7 @@ void IOCompletionPortImpl::accept(socket_t socket)
 			&dwBytes,NULL,NULL)==INVALID_SOCKET)
 		{
 			m_pPoolIOCPData->release(pPerIOData);
-			throw IOCPException(::WSAGetLastError());
+			throw IOCPException(socketError());
 		}
 	}
 
@@ -117,7 +117,7 @@ void IOCompletionPortImpl::accept(socket_t socket)
 
 	if(!succes)
 	{
-		int errorCode=::WSAGetLastError();
+		int errorCode=socketError();
 		if(errorCode!=ERROR_IO_PENDING)
 		{
 			m_pPoolIOCPData->release(pPerIOData);
@@ -137,7 +137,7 @@ void IOCompletionPortImpl::receive(socket_t socket)
 	int rt=::WSARecv(socket, &buf, 1, &pPerIOData->lengthReceived, &pPerIOData->flags, &pPerIOData->ol, NULL);
 	if(rt==SOCKET_ERROR)
 	{
-		int errorCode=::WSAGetLastError();
+		int errorCode=socketError();
 		if(errorCode!=ERROR_IO_PENDING){
 			m_pPoolIOCPData->release(pPerIOData);
 			throw IOCPException("Failed to receive data", errorCode);
@@ -161,7 +161,7 @@ void IOCompletionPortImpl::send(const byte* buffer, unsigned int len, socket_t s
 	int rt=::WSASend(sock, &buf, 1, &pPerIOData->lengthSended, pPerIOData->flags, &pPerIOData->ol, NULL);
 	if(rt==SOCKET_ERROR)
 	{
-		int errorCode=::WSAGetLastError();
+		int errorCode=socketError();
 		if(errorCode!=ERROR_IO_PENDING)
 		{
 			m_pPoolIOCPData->release(pPerIOData);
@@ -200,8 +200,8 @@ int IOCompletionPortImpl::waitEvent(IOEvent* events,int maxEvents,int timeout)
 	//在此套接字上有错误发生
 	if(!bOK || pPerData==nullptr)//失败
 	{
-		int errorCode=GetLastError();//WSAGetLastError
-		if (errorCode==WAIT_TIMEOUT){//超时 WSAETIMEDOUT
+		int errorCode=GetLastError();//socketError
+		if (errorCode==WAIT_TIMEOUT){//超时 ETIMEDOUT
 			//释放pPerData?
 			throw TimeoutException(timeout);
 		}
@@ -244,7 +244,7 @@ int IOCompletionPortImpl::waitEvent(IOEvent* events,int maxEvents,int timeout)
 				(char*)&listenSock, sizeof(listenSock))==SOCKET_ERROR)
 			{
 				//如何处理???
-				int errorCode=::WSAGetLastError();
+				int errorCode=socketError();
 				if(errorCode!=0){
 					::closesocket(clientSock);
 					m_pPoolIOCPData->release(pPerData);

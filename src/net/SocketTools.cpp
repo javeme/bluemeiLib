@@ -1,18 +1,20 @@
-
-#include <stdio.h>
-#include <winsock2.h>
-
 #include "SocketTools.h"
 #include "SocketException.h"
 
 namespace blib{
+
+#define CP_GBK 950
+
+#ifdef WIN32
+#pragma comment(lib,"ws2_32.lib")
+#endif
 
 //初始socket环境
 int SocketTools::initSocketContext()
 {
 #ifndef WIN32
 	return 0;
-#endif
+#else
 	WSADATA wsad;
 	WORD ver;
 	//使用2.0的库函数
@@ -20,9 +22,10 @@ int SocketTools::initSocketContext()
 	int nRetCode=WSAStartup(ver,&wsad);
 	if(nRetCode)
 	{
-		throw SocketException(::WSAGetLastError());
+		throw SocketException(socketError());
 	}
 	return nRetCode;
+#endif
 }
 
 //清除socket环境
@@ -30,12 +33,14 @@ int SocketTools::cleanUpSocketContext()
 {
 #ifndef WIN32
 	return 0;
-#endif
+#else
 	return WSACleanup();
+#endif
 }
 
-//显示错误
 #ifdef WIN32
+
+//显示错误
 String SocketTools::getWinsockErrorMsg(int errCode)
 {
 	String str;
@@ -138,8 +143,9 @@ String SocketTools::getWinsockErrorMsg(int errCode)
 
 String SocketTools::getWinsockErrorMsg(int errCode)
 {
-	return Util::int2Str(errCode);
+	return strerror(errCode);
 }
+
 #endif
 
 }//end of namespace blib

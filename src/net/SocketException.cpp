@@ -4,6 +4,7 @@
 namespace blib{
 
 SocketException::SocketException(int nError)
+	: Exception(Util::int2Str(nError).c_str())
 {
 	//this->SocketException::SocketException(nError,"Socket Exception");
 	this->m_nError=nError;
@@ -12,7 +13,6 @@ SocketException::SocketException(int nError)
 SocketException::SocketException(const String& strError)
 	: Exception(strError)
 {
-	//this->SocketException::SocketException(0,strError);
 	this->m_nError=0;
 }
 
@@ -20,7 +20,6 @@ SocketException::SocketException(int nError,const String& strError)
 	: Exception(strError)
 {
 	this->m_nError=nError;
-	//this->m_strLastError=strError;
 }
 
 SocketException::~SocketException()
@@ -33,23 +32,22 @@ String SocketException::name() const
 	return "SocketException";
 }
 
-//获取错误id
-int SocketException::getError()
+int SocketException::getError() const
 {
 	return this->m_nError;
 }
 
-//打印错误休息
-void SocketException::printErrorMsg()
+String SocketException::getErrorMsg() const
 {
-	printf(SocketTools::getWinsockErrorMsg(m_nError));
+	return SocketTools::getWinsockErrorMsg(m_nError);
 }
 
 String SocketException::toString() const
 {
 	return String::format("%s: %s(%s)",
-		name().c_str(), m_strLastError.c_str(),
-		SocketTools::getWinsockErrorMsg(m_nError).c_str());
+		this->name().c_str(),
+		this->m_strLastError.c_str(),
+		this->getErrorMsg().c_str());
 }
 
 }//end of namespace blib

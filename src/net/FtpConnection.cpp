@@ -1,12 +1,12 @@
 #include "FtpConnection.h"
-#include <time.h>
-
 #include "SocketException.h"
 #include "File.h"
 #include "ErrorHandler.h"
+#include "Date.h"
+#include "Thread.h"
+#include <time.h>
 
 namespace blib{
-
 
 FtpConnection::FtpConnection(const char *ip,int port)
 {
@@ -47,7 +47,7 @@ bool FtpConnection::connectServer(const char *username,const char *password)
 
 	char buff[BUF_SIZE];
 	memset(buff, 0, sizeof(buff));
-	int recvedLen=0,pos=0;
+	int pos=0;
 	String line;
 
 	//recvedLen=m_cmdSocket.readBytes(buff, sizeof(buff));
@@ -58,7 +58,7 @@ bool FtpConnection::connectServer(const char *username,const char *password)
 	}
 	//验证用户名,密码
 	m_cmdSocket.skip(m_cmdSocket.availableBytes());//清空接收队列
-	sprintf_s(buff, "USER %s\r\n", username);
+	snprintf(buff, sizeof(buff), "USER %s\r\n", username);
 	m_cmdSocket.writeBytes(buff,strlen(buff));
 
 	line=m_cmdSocket.readLine();
@@ -67,7 +67,7 @@ bool FtpConnection::connectServer(const char *username,const char *password)
 		throw FtpException(REFUSE,"connection refused by remote ftp server,cause:"+line);
 	}
 	//密码
-	sprintf_s(buff, "PASS %s\r\n", password);
+	snprintf(buff, sizeof(buff), "PASS %s\r\n", password);
 	m_cmdSocket.writeBytes(buff,strlen(buff));
 
 	line=m_cmdSocket.readLine();
@@ -76,12 +76,12 @@ bool FtpConnection::connectServer(const char *username,const char *password)
 		throw FtpException(PASSWORD_EEROR,"username and password not matched");
 	}
 	//获取系统信息
-	sprintf_s(buff, "SYST\r\n");
+	snprintf(buff, sizeof(buff), "SYST\r\n", "");
 	m_cmdSocket.writeBytes(buff,strlen(buff));
 	m_cmdSocket.readBytes(buff,sizeof(buff));
 
 	//设置传输类型
-	sprintf_s(buff, "TYPE I\r\n");
+	snprintf(buff, sizeof(buff), "TYPE I\r\n");
 	m_cmdSocket.writeBytes(buff,strlen(buff));
 	line=m_cmdSocket.readLine();
 	pos=line.find("200");
@@ -129,11 +129,11 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 		//随机休眠一段时间,防止多线程同时连接
 		srand((unsigned int)time(NULL));
 		int randTime= (rand() % 1000) + 10;
-		Sleep(randTime);
+		Thread::sleep(randTime);
 		//清空接收缓存
 		m_cmdSocket.skip(m_cmdSocket.availableBytes());
 		//请求被动模式
-		sprintf_s(buff, "PASV \r\n");
+		snprintf(buff, sizeof(buff), "PASV \r\n");
 		m_cmdSocket.writeBytes(buff,strlen(buff));
 		line=m_cmdSocket.readLine();
 		pos=line.find("227");
@@ -182,14 +182,14 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 				dataLisenSocket.listen(listenDataPort);//服务端口绑定
 				isSuccess=true;
 			}catch(SocketException& e){
-				if(e.getError()!=WSAEADDRINUSE)
+				if(e.getError()!=ETIMEDOUT)
 					break;
 			}
 		}
 
 		m_cmdSocket.skip(m_cmdSocket.availableBytes());//清空接收缓存
-		sprintf_s(buff, "PORT %s,%d,%d\r\n", "127,0,0,1",listenDataPort/256, listenDataPort%256);
-		//sprintf(buff, "PORT %d,%d\r\n", localport / 256, localport % 256);
+		snprintf(buff, sizeof(buff), "PORT %s,%d,%d\r\n", "127,0,0,1",listenDataPort/256, listenDataPort%256);
+		//snprintf(buff, sizeof(buff), "PORT %d,%d\r\n", localport / 256, localport % 256);
 		m_cmdSocket.writeBytes(buff,strlen(buff));
 		line=m_cmdSocket.readLine();
 		pos=line.find("200");
@@ -201,7 +201,7 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 	if(uploadSize>0)
 	{
 		//发送上传命令
-		sprintf_s(buff, "REST %d\r\n", uploadSize);
+		snprintf(buff, sizeof(buff), "REST %d\r\n", uploadSize);
 		m_cmdSocket.writeBytes(buff,strlen(buff));
 		line=m_cmdSocket.readLine();
 		pos=line.find("350");
@@ -211,7 +211,7 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 		}
 	}
 	//发送上传命令
-	sprintf_s(buff, "STOR %s\r\n", savePath);
+	snprintf(buff, sizeof(buff), "STOR %s\r\n", savePath);
 	m_cmdSocket.writeBytes(buff,strlen(buff));
 	line=m_cmdSocket.readLine();
 	pos=line.find("150");
