@@ -1,7 +1,7 @@
-// stdafx.h : 标准系统包含文件的包含文件，
-// 或是经常使用但不常更改的
-// 特定于项目的包含文件
-#pragma once
+#ifndef BLIB_STDAFX_H_H
+#define BLIB_STDAFX_H_H
+
+#ifdef WIN32
 
 #include "targetver.h"
 
@@ -21,3 +21,7 @@
 //屏蔽内部成员无导出警告
 //(http://blog.csdn.net/sky101010ws/article/details/6780854)
 #pragma warning(disable : 4251)
+
+#endif
+
+#endif

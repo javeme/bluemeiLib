@@ -1,13 +1,14 @@
-#pragma once
-//#include "stdafx.h"
+#ifndef BLIB_H_H
+#define BLIB_H_H
 
 #ifdef WIN32
 
-// 从 Windows 头中排除极少使用的资料
+///////////////////////////////////////////////////////////////////////////////
 #define WIN32_LEAN_AND_MEAN
 
 // Windows 头文件:
 #include <windows.h>
+#include <xutility>
 
 
 /************************************************************************/
@@ -21,12 +22,7 @@
 #pragma warning(disable : 4251)
 
 
-// 下列 ifdef 块是创建使从 DLL 导出更简单的
-// 宏的标准方法。此 DLL 中的所有文件都是用命令行上定义的 BLUEMEILIB_EXPORTS
-// 符号编译的。在使用此 DLL 的
-// 任何其他项目上不应定义此符号。这样，源文件中包含此文件的任何其他项目都会将
-// BLUEMEILIB_API 函数视为是从 DLL 导入的，而此 DLL 则将用此宏定义的
-// 符号视为是被导出的。
+///////////////////////////////////////////////////////////////////////////////
 #ifdef BLUEMEILIB_EXPORTS
 #define BLUEMEILIB_API __declspec(dllexport)
 #define BLUEMEILIB_TEMPLATE BLUEMEILIB_API
@@ -35,14 +31,79 @@
 #define BLUEMEILIB_TEMPLATE
 #endif // BLUEMEILIB_EXPORTS
 
-#endif // WIN32
+
+///////////////////////////////////////////////////////////////////////////////
+#define msleep Sleep
+#define stricmp _stricmp
+
+// get the first super type of a class
+#define baseof(CLS) __super
+
+#else // not WIN32
+
+///////////////////////////////////////////////////////////////////////////////
+#include <atomic>
+#include <cstring>
+#include <new>
+#include <typeinfo>
+
+#include <limits.h>
+#include <pthread.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+///////////////////////////////////////////////////////////////////////////////
+#define BLUEMEILIB_API
+#define BLUEMEILIB_TEMPLATE
+
+#define __int64 __INT64_TYPE__
+
+#define msleep(ms) usleep((ms) * 1000)
+#define stricmp strcasecmp
 
 
-#include <xutility>
+///////////////////////////////////////////////////////////////////////////////
+#ifdef __APPLE__
+#define malloc_usable_size malloc_size
+#endif
+
+
+///////////////////////////////////////////////////////////////////////////////
+// get the first super type of a class
+// http://stackoverflow.com/questions/15158458/
+//   using-tr2direct-bases-get-nth-element-of-result
+#include <tr2/type_traits>
+#include <tuple>
+
+template<typename T>
+struct dbc_as_tuple { };
+
+template<typename... Ts>
+struct dbc_as_tuple<std::tr2::__reflection_typelist<Ts...>>
+{
+    typedef std::tuple<Ts...> type;
+};
+
+#define baseof(CLS) std::tuple_element<0, \
+    dbc_as_tuple<std::tr2::direct_bases<CLS>::type>::type>::type
+
+#endif // end of #ifdef WIN32
+
+
+///////////////////////////////////////////////////////////////////////////////
+#include <assert.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <iostream>
 #include <string>
-#include <vector>
 #include <map>
+#include <set>
+#include <vector>
 //using namespace std;
 
 #define List vector
@@ -54,8 +115,11 @@ namespace blib{
 using std::vector;
 using std::map;
 using std::move;
+using std::type_info;
 
-#define CODE2STRING(code) _CODE2STRING(code)//可以替换普通代码和宏展开代码
-#define _CODE2STRING(code) #code//可以替换普通代码和宏展开代码
+#define _CODE2STRING(code) #code //可以替换普通代码和宏展开代码
+#define CODE2STRING(code) _CODE2STRING(code) //可以替换普通代码和宏展开代码
 
 }//end of namespace blib
+
+#endif
