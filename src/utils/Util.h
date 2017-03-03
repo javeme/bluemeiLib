@@ -1,12 +1,29 @@
 #ifndef Util_H_H
 #define Util_H_H
+
 #include "bluemeiLib.h"
 #include "Object.h"
 
 namespace blib{
 
 using std::string;
-#define PropertiesMap map<string,string>
+using std::wstring;
+
+#define PropertiesMap std::map<string,string>
+
+typedef char		int8 ;
+typedef short		int16;
+typedef int			int32;
+typedef __int64		int64;
+
+typedef unsigned char		uint8 ;
+typedef unsigned short		uint16;
+typedef unsigned int		uint32;
+typedef unsigned __int64	uint64;
+
+typedef uint16		word ;
+typedef uint32		dword;
+
 
 class BLUEMEILIB_API Util : public Object
 {
@@ -28,6 +45,9 @@ public:
 	static int str2Int(cstring str);
 	static string int2Str(int i);
 
+	static int64 str2Int64(cstring str);
+	static string int642Str(int64 i);
+
 	static double str2Float(cstring str);
 	static string float2Str(double f);
 
@@ -46,6 +66,8 @@ public:
 	static string uuid4();
 	static string uuid1();
 	static string guid();
+public:
+	static void dumpStack();
 };
 
 template<class CharType>
@@ -86,4 +108,5 @@ bool Util::isFloatNumber(const CharType* str,int len)
 }
 
 }//end of namespace blib
+
 #endif
