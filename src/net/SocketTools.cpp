@@ -1,9 +1,8 @@
 #include "SocketTools.h"
 #include "SocketException.h"
+#include "ClientSocket.h"
 
 namespace blib{
-
-#define CP_GBK 950
 
 #ifdef WIN32
 #pragma comment(lib,"ws2_32.lib")

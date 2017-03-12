@@ -26,7 +26,7 @@ void ConditionLock::init() {
 		throw Exception(str);
 	}
 
-	m_condition.mutex = ::CreateMutexA(NULL, initialOwner, name);
+	m_condition.mutex = ::CreateMutexA(NULL, FALSE, NULL);
 	if (m_condition.mutex == 0) {
 		int error = ::GetLastError();
 		String str = String::format("ConditionLock: failed to init mutex: %d",
@@ -51,7 +51,7 @@ void ConditionLock::destroy() {
 
 //类似条件变量的等待： http://blog.csdn.net/metasearch/article/details/18677193
 bool ConditionLock::wait(unsigned long ms) throw (Exception) {
-	m_waitCount++;
+	++m_waitCount;
 
 	//解锁mutex,等待信号semaphoreHandle（原子操作）
 	unsigned long result = ::SignalObjectAndWait(m_condition.mutex,
@@ -59,7 +59,7 @@ bool ConditionLock::wait(unsigned long ms) throw (Exception) {
 	//重新锁定mutex
 	this->getLock();
 
-	m_waitCount--;
+	--m_waitCount;
 
 	//错误检测
 	//SignalObjectAndWait bAlertable为TRUE时可能发生错误WAIT_IO_COMPLETION
@@ -73,10 +73,11 @@ bool ConditionLock::wait(unsigned long ms) throw (Exception) {
 	return result != WAIT_TIMEOUT; //没有超时
 }
 
-void ResourceLock::wakeup() throw (Exception) {
+void ConditionLock::wakeup() throw (Exception) {
 	long previousCount = 0;
 	//增加一个信号
-	BOOL success = ::ReleaseSemaphore(m_semaphore, count, &previousCount);
+	BOOL success = ::ReleaseSemaphore(m_condition.semaphore, 1,
+		&previousCount);
 	if (!success) {
 		int error = ::GetLastError();
 		String str = String::format(

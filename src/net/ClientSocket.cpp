@@ -47,8 +47,10 @@ void ClientSocket::connect(cstring ip,unsigned short port)
 	memset(&serverAddr,0,lenOfServerAddr);
 	serverAddr.sin_family=AF_INET;
 	serverAddr.sin_port=htons(port);
-	serverAddr.sin_addr=in_addr{ ::inet_addr(ip) };
+	serverAddr.sin_addr=ip_to_in_addr(ip);
+
 	setPeerAddr(serverAddr);
+
 	int nReturnCode=::connect(m_hSocket,(sockaddr*)&serverAddr,lenOfServerAddr);
 	if(nReturnCode==SOCKET_ERROR)
 	{
@@ -157,18 +159,18 @@ int ClientSocket::readBytes(char buffer[],int maxLength,int flags)
 	{
 		int error=socketError();
 		// interrupted
-		if(error==EINTR)
+		if(error==SOCKET_ERR_INTR)
 		{
 			return 0; // try later
 		}
 		// NOTE: EAGAIN if timeout(which set by SO_RCVTIMEO) -- Mac
-		else if(error==EAGAIN || error==EWOULDBLOCK)
+		else if(error==SOCKET_ERR_AGAIN || error==SOCKET_ERR_WOULDBLOCK)
 		{
 			// TODO: return 0 or throw a exception?
 			throw SocketTryAgainException(error);
 		}
 		// timeout
-		else if(error==ETIMEDOUT)
+		else if(error==SOCKET_ERR_TIMEDOUT)
 		{
 			throw TimeoutException(m_nTimeout);
 		}
@@ -337,16 +339,16 @@ int ClientSocket::writeBytes(const char buffer[],int length,int flags)
 	if(size==SOCKET_ERROR)
 	{
 		int error=socketError();
-		if(error==EINTR /* ||error==EAGAIN || error==EWOULDBLOCK*/)
+		if(error==SOCKET_ERR_INTR)
 		{
 			; // try later
 		}
-		else if(error==EAGAIN || error==EWOULDBLOCK)
+		else if(error==SOCKET_ERR_AGAIN || error==SOCKET_ERR_WOULDBLOCK)
 		{
 			// TODO: return 0 or throw a exception?
 			throw SocketTryAgainException(error);
 		}
-		else if(error==ETIMEDOUT)
+		else if(error==SOCKET_ERR_TIMEDOUT)
 		{
 			// TODO: how to deal with send timeout(which set by SO_SNDTIMEO)?
 			throw TimeoutException(m_nTimeout);

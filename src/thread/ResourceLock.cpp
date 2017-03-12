@@ -7,7 +7,6 @@ namespace blib {
 #ifdef WIN32
 
 ResourceLock::ResourceLock(unsigned int count,cstring name)
-	: m_semaphore( {NULL, 0})
 {
 	this->init(count,DEFAULT_MAX_COUNT,name);
 }
@@ -26,7 +25,8 @@ ResourceLock& ResourceLock::operator=(ResourceLock&& other)
 {
 	this->destroy();
 	this->m_semaphore=std::move(other.m_semaphore);
-	other.m_semaphore={NULL, 0};
+	other.m_semaphore.handle=NULL;
+	other.m_semaphore.waitcount=0;
 
 	return *this;
 }
@@ -48,7 +48,7 @@ void ResourceLock::init(unsigned int count,unsigned int maxCount,cstring name)
 	m_semaphore.waitcount=0;
 
 	m_semaphore.handle=::CreateSemaphoreA(NULL,count,maxCount,name);
-	if(m_semaphore==0)
+	if(m_semaphore.handle==NULL)
 	{
 		int error=::GetLastError();
 		String str=String::format("ResourceLock: failed to init semaphore: %d",error);
@@ -69,9 +69,9 @@ void ResourceLock::destroy()
 bool ResourceLock::wait(unsigned long ms/*=INFINITE*/)
 {
 	//TODO: 等待的线程数(跨进程时如何保证wait count共享???)
-	m_semaphore.waitcount++; //原子操作
+	++m_semaphore.waitcount; //原子操作
 
-	unsigned long result=::WaitForSingleObject(m_semaphore,ms);
+	unsigned long result=::WaitForSingleObject(m_semaphore.handle,ms);
 	if(result==WAIT_FAILED || result==WAIT_ABANDONED)
 	{
 		int error=::GetLastError();
@@ -79,7 +79,7 @@ bool ResourceLock::wait(unsigned long ms/*=INFINITE*/)
 		throw Exception(str);
 	}
 
-	m_semaphore.waitcount--;
+	--m_semaphore.waitcount;
 
 	return result!=WAIT_TIMEOUT; //没有超时
 }
@@ -88,7 +88,7 @@ unsigned int ResourceLock::signal(unsigned int count) throw(Exception)
 {
 	long previousCount=0;
 	//增加一个信号
-	BOOL success=::ReleaseSemaphore(m_semaphore,count,&previousCount);
+	BOOL success=::ReleaseSemaphore(m_semaphore.handle,count,&previousCount);
 	if(!success)
 	{
 		int error=::GetLastError();
@@ -100,7 +100,7 @@ unsigned int ResourceLock::signal(unsigned int count) throw(Exception)
 
 unsigned int ResourceLock::getWaitCount() const
 {
-	return m_semaphore.waitcount.load();
+	return m_semaphore.waitcount;
 	//long count=0;
 	//bool isSuccess=::ReleaseSemaphore(m_semaphore,0,&count);
 	//return count;

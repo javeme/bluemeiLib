@@ -46,7 +46,7 @@ int ServerSocket::createSocket(int nPort)
 	memset(&serverAddr,0,lenOfServerAddr);
 	serverAddr.sin_family=AF_INET;
 	serverAddr.sin_port=htons(m_sPort);
-	serverAddr.sin_addr={htonl(INADDR_ANY)};
+	serverAddr.sin_addr=ip_to_in_addr("0.0.0.0");
 
 	//绑定
 	int nRetCode=::bind(m_socket,(sockaddr*)&serverAddr,lenOfServerAddr);
@@ -68,15 +68,12 @@ int ServerSocket::createSocket(int nPort)
 //接收连接
 ClientSocket* ServerSocket::accept()
 {
-	//监听套接字设置为异步模式
-	//ioctlsocket(m_serverSocket,FIONBIO,&arg);
-	//关闭监控线程句柄
-	//ResumeThread(hComm);
-	//CloseHandle(hComm);
-
-	//接受连接请求
 	sockaddr_in clientAddr;
+#ifdef WIN32
+	int lenOfClientAddr=sizeof(clientAddr);
+#else
 	unsigned int lenOfClientAddr=sizeof(clientAddr);
+#endif
 	socket_t sockC=::accept(m_socket,(sockaddr*)&clientAddr,&lenOfClientAddr);
 	if(sockC==INVALID_SOCKET)
 	{

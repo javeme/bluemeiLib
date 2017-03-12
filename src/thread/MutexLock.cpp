@@ -8,7 +8,7 @@ namespace blib {
 
 MutexLock::MutexLock(bool initialOwner,cstring name)
 {
-	m_waitCount.counter = 0;
+	m_waitCount = 0;
 	//初始化临界区
 	m_mutex = ::CreateMutexA(NULL, initialOwner, name);
 	if(m_mutex==0)
@@ -31,7 +31,7 @@ MutexLock::~MutexLock(void)
 void MutexLock::getLock()
 {
 	//自增(原子操作)
-	unsigned int count=InterlockedIncrement(&m_waitCount.counter);
+	++m_waitCount;
 
 	//进入临界区
 	unsigned long result=::WaitForSingleObject(m_mutex, INFINITE);
@@ -44,12 +44,15 @@ void MutexLock::getLock()
 		throw Exception(str);
 	}
 
-	InterlockedDecrement(&m_waitCount.counter);
+	++m_recursiveCount;
+
+	--m_waitCount;
 }
 
 void MutexLock::releaseLock()
 {
 	//离开临界区
+	--m_recursiveCount;
 	BOOL success = ::ReleaseMutex(m_mutex);
 	if(!success)
 	{
@@ -62,7 +65,11 @@ void MutexLock::releaseLock()
 
 unsigned int MutexLock::getWaitCount() const
 {
-	return m_waitCount.counter;
+	return m_waitCount;
+}
+
+unsigned int MutexLock::getMyThreadEnteredCount() const {
+	return m_recursiveCount;
 }
 
 // Linux MutexLock
@@ -83,11 +90,11 @@ MutexLock::MutexLock(bool initialOwner, cstring name) :
 			throw Exception(String("MutexLock: failed to open mmap file"
 					"for mutex: ") + name);
 		}
-		m_mutex = (mutex_t*) mmap(NULL, sizeof(mutex_t),
+		m_mutex = (mutex_t) mmap(NULL, sizeof(*m_mutex),
 				PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 		close(fd);
 	} else {
-		m_mutex = (mutex_t*) mmap(NULL, sizeof(mutex_t),
+		m_mutex = (mutex_t) mmap(NULL, sizeof(*m_mutex),
 				PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 	}
 
@@ -146,7 +153,7 @@ unsigned int MutexLock::getWaitCount() const {
 }
 
 unsigned int MutexLock::getMyThreadEnteredCount() const {
-	return m_recursiveCount.load();;
+	return m_recursiveCount;
 }
 
 #endif

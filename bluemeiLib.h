@@ -39,10 +39,16 @@
 // get the first super type of a class
 #define baseof(CLS) __super
 
+// avoid warning C4003
+#undef max
+#undef min
+
+// no noexcept in MSVC
+#define noexcept
+
 #else // not WIN32
 
 ///////////////////////////////////////////////////////////////////////////////
-#include <atomic>
 #include <cstring>
 #include <new>
 #include <typeinfo>

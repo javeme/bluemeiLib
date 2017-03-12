@@ -11,13 +11,22 @@
 
 typedef SOCKET socket_t;
 
-#define ETIMEDOUT      WSAETIMEDOUT
-#define EADDRINUSE     WSAEADDRINUSE
-#define EINTR          WSAEINTR
-#define EAGAIN         WSAEWOULDBLOCK
-#define EINPROGRES     WSAEINPROGRESS
+#define SOCKET_ERR_TIMEDOUT      WSAETIMEDOUT
+#define SOCKET_ERR_ADDRINUSE     WSAEADDRINUSE
+#define SOCKET_ERR_INTR          WSAEINTR
+#define SOCKET_ERR_AGAIN         WSAEWOULDBLOCK
+#define SOCKET_ERR_WOULDBLOCK    WSAEWOULDBLOCK
+#define SOCKET_ERR_INPROGRES     WSAEINPROGRESS
 
-inline int socketError() { return WSAGetLastError(); }
+inline int socketError() {
+	return WSAGetLastError();
+}
+
+inline in_addr ip_to_in_addr(const char* ip) {
+	in_addr addr;
+	addr.s_addr=::inet_addr(ip);
+	return addr;
+}
 
 #else // not WIN32
 
@@ -38,7 +47,20 @@ typedef int socket_t;
 #define SOCKET_ERROR -1
 #define INVALID_SOCKET -1
 
-inline int socketError() { return errno; }
+#define SOCKET_ERR_TIMEDOUT      ETIMEDOUT
+#define SOCKET_ERR_ADDRINUSE     EADDRINUSE
+#define SOCKET_ERR_INTR          EINTR
+#define SOCKET_ERR_AGAIN         EAGAIN
+#define SOCKET_ERR_WOULDBLOCK    EWOULDBLOCK
+#define SOCKET_ERR_INPROGRES     EINPROGRESS
+
+inline int socketError() {
+	return errno;
+}
+
+inline in_addr ip_to_in_addr(const char* ip) {
+	return in_addr { ::inet_addr(ip) };
+}
 
 #endif //end of #ifdef WIN32
 

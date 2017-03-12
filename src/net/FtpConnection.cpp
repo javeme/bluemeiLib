@@ -182,7 +182,7 @@ bool FtpConnection::upload(const char *filePath,const char *savePath,unsigned in
 				dataLisenSocket.listen(listenDataPort);//服务端口绑定
 				isSuccess=true;
 			}catch(SocketException& e){
-				if(e.getError()!=ETIMEDOUT)
+				if(e.getError()!=SOCKET_ERR_TIMEDOUT)
 					break;
 			}
 		}

@@ -155,10 +155,13 @@ void Thread::init() {
 	m_bDetached = false;
 	m_bAutoDestroyObj = false;
 	m_bRunning = false;
+
+	unsigned int threadId = 0;
 	//m_hThread=::CreateThread(NULL,0,CallBackOfCreateThread,(LPVOID)this,
 	//	CREATE_SUSPENDED,&m_threadId);
 	m_hThread = (HANDLE) _beginthreadex(NULL, 0, callBackOfStartThread,
-			(LPVOID)this, CREATE_SUSPENDED, &m_threadId);
+			(LPVOID)this, CREATE_SUSPENDED, &threadId);
+	m_threadId = threadId;
 }
 
 //¿ªÊ¼Ö´ÐÐ

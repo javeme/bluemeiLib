@@ -4,6 +4,7 @@
 #include "bluemeiLib.h"
 #include "Exception.h"
 #include "Object.h"
+#include "Atomic.h"
 
 namespace blib{
 
