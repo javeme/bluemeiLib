@@ -102,9 +102,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="src\bLib\DataBuffer.cpp" />
-    <ClCompile Include="src\bLib\KVPairTree.cpp" />
-    <ClCompile Include="src\bLib\Vector.cpp" />
     <ClCompile Include="src\conf\ConfigOption.cpp" />
     <ClCompile Include="src\conf\SimpleCfgFile.cpp" />
     <ClCompile Include="src\io\File.cpp" />
@@ -134,6 +131,7 @@
     <ClCompile Include="src\template\StringTemplate.cpp" />
     <ClCompile Include="src\template\TemplateLoader.cpp" />
     <ClCompile Include="src\template\TemplateParser.cpp" />
+    <ClCompile Include="src\thread\ConditionLock.cpp" />
     <ClCompile Include="src\thread\CriticalLock.cpp" />
     <ClCompile Include="src\thread\LambdaThread.cpp" />
     <ClCompile Include="src\thread\Looper.cpp" />
@@ -147,11 +145,8 @@
     <ClCompile Include="src\thread\WorkThread.cpp" />
     <ClCompile Include="src\type\BString.cpp" />
     <ClCompile Include="src\type\ByteBuffer.cpp" />
-    <ClCompile Include="src\type\DataBuffer.cpp" />
     <ClCompile Include="src\type\Date.cpp" />
-    <ClCompile Include="src\type\KVPairTree.cpp" />
     <ClCompile Include="src\type\StringBuilder.cpp" />
-    <ClCompile Include="src\type\Vector.cpp" />
     <ClCompile Include="src\utils\CallStackUtil.cpp" />
     <ClCompile Include="src\utils\CodeUtil.cpp" />
     <ClCompile Include="src\utils\Converter.cpp" />
@@ -179,6 +174,7 @@
     <ClInclude Include="src\bLib\ClassField.h" />
     <ClInclude Include="src\bLib\ClientSocket.h" />
     <ClInclude Include="src\bLib\CodeUtil.h" />
+    <ClInclude Include="src\bLib\ConditionLock.h" />
     <ClInclude Include="src\bLib\ConfigOption.h" />
     <ClInclude Include="src\bLib\Context.h" />
     <ClInclude Include="src\bLib\Converter.h" />
@@ -190,6 +186,7 @@
     <ClInclude Include="src\bLib\Exceptions.h" />
     <ClInclude Include="src\bLib\File.h" />
     <ClInclude Include="src\bLib\FilePath.h" />
+    <ClInclude Include="src\bLib\FileTemplate.h" />
     <ClInclude Include="src\bLib\FileUtil.h" />
     <ClInclude Include="src\bLib\FtpConnection.h" />
     <ClInclude Include="src\bLib\FtpException.h" />
@@ -232,8 +229,12 @@
     <ClInclude Include="src\bLib\SortArray.h" />
     <ClInclude Include="src\bLib\StackWalker.h" />
     <ClInclude Include="src\bLib\StringBuilder.h" />
+    <ClInclude Include="src\bLib\StringTemplate.h" />
     <ClInclude Include="src\bLib\System.h" />
     <ClInclude Include="src\bLib\Task.h" />
+    <ClInclude Include="src\bLib\Template.h" />
+    <ClInclude Include="src\bLib\TemplateExpr.h" />
+    <ClInclude Include="src\bLib\TemplateLoader.h" />
     <ClInclude Include="src\bLib\TemplateParser.h" />
     <ClInclude Include="src\bLib\Thread.h" />
     <ClInclude Include="src\bLib\ThreadException.h" />
@@ -279,6 +280,8 @@
     <ClInclude Include="src\template\TemplateExpr.h" />
     <ClInclude Include="src\template\TemplateLoader.h" />
     <ClInclude Include="src\template\TemplateParser.h" />
+    <ClInclude Include="src\thread\Atomic.h" />
+    <ClInclude Include="src\thread\ConditionLock.h" />
     <ClInclude Include="src\thread\CriticalLock.h" />
     <ClInclude Include="src\thread\LambdaThread.h" />
     <ClInclude Include="src\thread\Looper.h" />

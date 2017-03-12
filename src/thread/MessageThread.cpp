@@ -35,7 +35,7 @@ void MessageThread::postMessage(Message* msg)
 	//通知有消息了
 	if(needNofity) {
 		// to ensure that notify someone to get a msg if it's waiting for one
-		m_messageLock.notify();
+		m_queueLock.wakeup();
 	}
 }
 
@@ -87,7 +87,7 @@ Message* MessageThread::waitMessage()
 		//如果根据m_messageLock.getWaitCount()>0来判断是否notify, 那么
 		//不锁m_queueLock的话,可能会在上述判断与等待之间插入了一条数据,而不会再notify!
 		//这里wait那一刻才释放m_queueLock,可确保不会出现上述情况(此语句处时刻插入数据)
-		m_messageLock.wait(m_queueLock);
+		m_queueLock.wait();
 
 		//当wait到信号后, m_queueLock可能被其它线程获得而取走Message, 导致本处取不到
 		//或者也有可能是虚假唤醒
@@ -127,13 +127,13 @@ void MessageThread::doMessageLoop()
 	}
 }
 
-void MessageThread::stop()
+void MessageThread::stop() throw(Exception)
 {
 	if(isRunning())
 	{
 		m_bRunning=false;
-		while(m_messageLock.getWaitCount()>0)
-			m_messageLock.notifyAll();
+		while(m_queueLock.getWaitCount()>0)
+			m_queueLock.wakeup();
 		wait();
 	}
 }

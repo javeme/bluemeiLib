@@ -173,19 +173,10 @@
     <ClCompile Include="src\type\ByteBuffer.cpp">
       <Filter>type</Filter>
     </ClCompile>
-    <ClCompile Include="src\type\DataBuffer.cpp">
-      <Filter>type</Filter>
-    </ClCompile>
     <ClCompile Include="src\type\Date.cpp">
       <Filter>type</Filter>
     </ClCompile>
-    <ClCompile Include="src\type\KVPairTree.cpp">
-      <Filter>type</Filter>
-    </ClCompile>
     <ClCompile Include="src\type\StringBuilder.cpp">
-      <Filter>type</Filter>
-    </ClCompile>
-    <ClCompile Include="src\type\Vector.cpp">
       <Filter>type</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\Converter.cpp">
@@ -227,14 +218,8 @@
     <ClCompile Include="src\conf\ConfigOption.cpp">
       <Filter>conf</Filter>
     </ClCompile>
-    <ClCompile Include="src\bLib\DataBuffer.cpp">
-      <Filter>include</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bLib\KVPairTree.cpp">
-      <Filter>include</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bLib\Vector.cpp">
-      <Filter>include</Filter>
+    <ClCompile Include="src\thread\ConditionLock.cpp">
+      <Filter>thread</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -723,6 +708,30 @@
     </ClInclude>
     <ClInclude Include="src\bLib\TemplateParser.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\ConditionLock.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\FileTemplate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\StringTemplate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\Template.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\TemplateExpr.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bLib\TemplateLoader.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\Atomic.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread\ConditionLock.h">
+      <Filter>thread</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

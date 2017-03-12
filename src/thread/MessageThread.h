@@ -1,6 +1,9 @@
-#pragma once
+#ifndef MessageThread_H_H
+#define MessageThread_H_H
+
 #include "bluemeiLib.h"
 #include "Thread.h"
+#include "ConditionLock.h"
 #include "Date.h"
 #include "PriorityQueue.h"
 #include <functional>
@@ -111,7 +114,7 @@ public:
 	virtual Message* waitMessage();
 	virtual bool hasMessage() const;
 
-	virtual void stop();
+	virtual void stop() throw(Exception);
 	virtual void run();
 protected:
 	virtual void doMessageLoop();
@@ -126,8 +129,10 @@ protected:
 	PriorityQueue<Message*,GetKey> m_messageQueue;
 	MessageFunction m_msgFun;
 private:
-	MutexLock m_queueLock;
-	ResourceLock m_messageLock;
+	ConditionLock m_queueLock;
+	//ResourceLock m_messageLock;
 };
 
 }//end of namespace blib
+
+#endif

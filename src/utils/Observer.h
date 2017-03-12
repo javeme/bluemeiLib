@@ -1,5 +1,6 @@
 #ifndef Observer_H_H
 #define Observer_H_H
+
 #include "Object.h"
 #include "Exception.h"
 #include "LinkedList.h"
@@ -81,4 +82,5 @@ protected:
 };
 
 }//end of namespace blib
+
 #endif

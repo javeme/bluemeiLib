@@ -1,5 +1,5 @@
-#ifndef _Runnable_h_
-#define _Runnable_h_
+#ifndef _Runnable_H_H
+#define _Runnable_H_H
 
 #include "bluemeiLib.h"
 #include "Object.h"
@@ -15,4 +15,5 @@ public:
 
 
 }//end of namespace blib
+
 #endif

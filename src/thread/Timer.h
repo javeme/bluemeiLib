@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Timer_H_H
+#define Timer_H_H
+
 #include "Class.h"
 #include "ResourceLock.h"
 #include "LambdaThread.h"
@@ -44,3 +46,5 @@ private:
 };
 
 }//end of namespace blib
+
+#endif

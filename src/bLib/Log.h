@@ -1,5 +1,5 @@
-#ifndef _Log_h_
-#define _Log_h_
+#ifndef _Log_H_H
+#define _Log_H_H
 
 #include "File.h"
 #include "HashMap.h"
@@ -131,4 +131,5 @@ private:
 };
 
 }//end of namespace blib
+
 #endif

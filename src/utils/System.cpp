@@ -1,9 +1,10 @@
 #include "System.h"
-#include "smartptr.h"
+#include "SmartPtr.h"
 #include "LambdaThread.h"
 #include "ObjectFactory.h"
 #include "Log.h"
 #include <algorithm>
+#include <malloc.h>
 
 namespace blib{
 
@@ -147,7 +148,7 @@ bool System::isSystemIdle()
 	__int64 idle, kernel, user;
 	if(! GetSystemTimes((LPFILETIME)&idle,(LPFILETIME)&kernel,(LPFILETIME)&user))
 	{
-		ptrTrace("fail to call GetSystemTimes\r\n");
+		Log::getLogger()->warn("fail to call GetSystemTimes()");
 		return false;
 	}
 	//PdhOpenQuery
@@ -164,12 +165,12 @@ bool System::isSystemIdle()
 	int f=open("/proc/loadavg", O_RDONLY);
 	if(f<0)
 	{
-		ptrTrace("fail to open file /proc/loadavg");
+		Log::getLogger()->warn("fail to open file /proc/loadavg");
 		return false;
 	}
 	if (read(f, buf, 4)!=4)
 	{
-		ptrTrace("fail to read file /proc/loadavg");
+		Log::getLogger()->warn("fail to read file /proc/loadavg");
 		close(f);
 		return false;
 	}
@@ -210,19 +211,13 @@ void System::idleCollect()
 	while(!m_bQuit)
 	{
 		//quit of the appclication will delay at most 1 second
-#ifdef WIN32
-		Sleep(1000);//there's no sleep in MSVC? how strange!
-#else
-		sleep(1000); //nanosleep also available on Linux platform
-#endif
+		Thread::sleep(1000);
 		++count;
 		if(count == GC_INTERVAL)
 		{
 			count = 0;
 			if(isSystemIdle())
-			{
 				gc();
-			}
 		}
 	}
 }
@@ -334,7 +329,7 @@ void System::gc()
 		WrapperPointer wp = *i;
 		if(!wp.p->isInUse)
 		{
-			m_nGcCount ++;
+			m_nGcCount++;
 			//后创建先释放的顺序-wrappers[0]最后创建(地址最大)放到最前面	(经过实验wrappers顺序是无任何规律)
 			//garbageList.push_back(wp);
 			//先创建先释放(析构时需要调用成员变量,所以成员变量应该后释放,成员变量肯定后创建)(假设成员变量地址大--假设如果不成立时将出错)
@@ -459,6 +454,7 @@ void System::destroy()
 
 void System::debugInfo(const char* str, ...)
 {
+#ifdef WIN32
 	va_list vlist;
 	//可变参数起始位置
 	va_start(vlist, str);
@@ -468,6 +464,7 @@ void System::debugInfo(const char* str, ...)
 	OutputDebugStringA(buf);
 	//fwrite(file, buf);
 	va_end(vlist);
+#endif // end of #ifdef WIN32
 }
 
 

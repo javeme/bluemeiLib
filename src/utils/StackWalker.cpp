@@ -23,6 +23,8 @@
  *  2005-08-05   v5	- Removed most Lint (http://www.gimpel.com/) errors... thanks to Okko Willeboordse!
  *
  **********************************************************************/
+#ifdef WIN32
+
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
@@ -1223,3 +1225,7 @@ void StackWalker::OnOutput(LPCSTR buffer)
 
 
 }//end of namespace blib
+
+#else // not WIN32
+
+#endif //end of #ifdef WIN32

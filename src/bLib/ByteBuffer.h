@@ -1,5 +1,7 @@
-#pragma once
-#include "DataBuffer.cpp"
+#ifndef ByteBuffer_H_H
+#define ByteBuffer_H_H
+
+#include "DataBuffer.h"
 #include "CodeUtil.h"
 
 namespace blib{
@@ -120,3 +122,5 @@ public:
 
 
 }//end of namespace blib
+
+#endif

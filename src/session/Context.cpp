@@ -26,7 +26,7 @@ Application& Context::getApplication()
 
 Session& Context::getSession(const string& name)
 {
-	auto& itor=m_sessionMap.find(name);
+	const auto& itor=m_sessionMap.find(name);
 	if(itor!=m_sessionMap.end())
 		return *itor->second;
 	String str="there is no session named :"+name;
@@ -35,7 +35,7 @@ Session& Context::getSession(const string& name)
 
 bool Context::removeSession(const string& name)
 {
-	auto& itor=m_sessionMap.find(name);
+	const auto& itor=m_sessionMap.find(name);
 	if(itor!=m_sessionMap.end()){
 		m_sessionMap.erase(itor);
 		return true;

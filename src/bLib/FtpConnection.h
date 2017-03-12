@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FtpConnection_H_H
+#define FtpConnection_H_H
 
 #include "bluemeiLib.h"
 #include "ServerSocket.h"
@@ -35,5 +36,6 @@ public:
 	void stop();
 };
 
-
 }//end of namespace blib
+
+#endif

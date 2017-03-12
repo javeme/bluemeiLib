@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FtpException_H_H
+#define FtpException_H_H
 
 #include "bluemeiLib.h"
 #include "Exception.h"
@@ -29,5 +30,6 @@ private:
 	int m_nErrorType;
 };
 
-
 }//end of namespace blib
+
+#endif

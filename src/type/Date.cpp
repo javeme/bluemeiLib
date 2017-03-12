@@ -220,7 +220,7 @@ String Date::formatDate(const char* format) const
 	if(pos>=0)
 	{
 		char msec[5];
-		sprintf_s(msec,"%d",m_time.millitm);
+		snprintf(msec,sizeof(msec),"%d",m_time.millitm);
 		str.replace("%i",msec);
 	}
 	DateInfo m_dateInfo=getDateInfo();
@@ -242,8 +242,7 @@ String Date::toString() const
 
 void Date::setToCurrentTime()
 {
-	//ftime(&m_time);
-	_ftime_s(&m_time);
+	ftime(&m_time);
 
 	//m_dateInfo=*localtime(&m_time.time);
 }

@@ -15,7 +15,7 @@ void ErrorHandler::handleErrorOfHandler(const Exception& e,
 }
 
 // handle error (don't throw any Exception)
-void ErrorHandler::handle(Exception& e)
+void ErrorHandler::handle(const Exception& e)
 {
 	try{
 		if(!(s_errorHandler != nullptr && s_errorHandler->handle(e))){

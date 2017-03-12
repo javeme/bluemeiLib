@@ -1,5 +1,5 @@
-#ifndef LinkedList_H
-#define LinkedList_H
+#ifndef LinkedList_H_H
+#define LinkedList_H_H
 
 #include "bluemeiLib.h"
 #include "Iterator.h"
@@ -546,4 +546,5 @@ String LinkedList<EleType>::toString() const
 }
 
 }//end of namespace blib
+
 #endif

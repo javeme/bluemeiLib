@@ -3,14 +3,30 @@
 #include "Date.h"
 #include "HashCoder.h"
 #include "CriticalLock.h"
+#include "CallStackUtil.h"
+#include "StringBuilder.h"
+#include <algorithm>
 
 #ifdef WIN32
+
 #include <winsock.h>
 #include <ShellApi.h>
 #include <objbase.h>
+
+#define atoi64 _atoi64
+
 #else
+
+#include <limits.h>
 #include <uuid/uuid.h>
-#endif
+
+#define sprintf_s(buffer, frmt, ...) \
+    snprintf(buffer, sizeof(buffer), frmt, __VA_ARGS__)
+
+#define atoi64 atoll
+
+#endif // end of #ifdef WIN32
+
 
 namespace blib{
 
@@ -167,6 +183,7 @@ bool Util::simpleDecode(string& cipher,const string& code)//密码->明文
 //获取当前目录的路径
 bool Util::getSelfPath(string& path)
 {
+#ifdef WIN32
 	char strModulePath[MAX_PATH];
 	//::GetCurrentDirectory(MAX_PATH,strModulePath.GetBuffer(MAX_PATH));
 	DWORD dwResult = ::GetModuleFileNameA(NULL,strModulePath,MAX_PATH);
@@ -179,19 +196,30 @@ bool Util::getSelfPath(string& path)
 		return false;
 	path=path.substr(0,pos+1);
 	return true;
+#else
+	char result[PATH_MAX];
+	ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+	bool success = (count > 0);
+	path = std::string(result, success ? count : 0);
+	return success;
+#endif
 }
 
 //打开可执行文件
 bool Util::open(const string& name,const string& arg)
 {
+#ifdef WIN32
 	/*wstring op,uStrName,uStrArg;
 	SocketTools::gbkToUnicode(op,"open");
 	SocketTools::gbkToUnicode(uStrName,name.c_str());
 	SocketTools::gbkToUnicode(uStrArg,arg.c_str());
 	const wchar_t *pArg=uStrArg.length()==0?NULL:uStrArg.c_str();
-	ShellExecute(NULL,op.c_str() ,uStrName.c_str(),pArg,NULL,SW_SHOW); */
-	HINSTANCE h=ShellExecuteA(NULL,"open" ,name.c_str(),arg.c_str(),NULL,SW_SHOW);
+	ShellExecute(NULL,op.c_str(),uStrName.c_str(),pArg,NULL,SW_SHOW); */
+	HINSTANCE h=ShellExecuteA(NULL,"open",name.c_str(),arg.c_str(),NULL,SW_HIDE);
 	return (int)h>32;
+#else
+	return execl(name.c_str(), arg.c_str()) == 0;
+#endif
 }
 
 int Util::str2Int(cstring str)
@@ -206,6 +234,22 @@ string Util::int2Str(int i)
 {
 	char buf[64];
 	sprintf_s(buf,"%d",i);
+	return buf;
+}
+
+int64 Util::str2Int64(cstring str)
+{
+	if(!isIntNumber(str,strlen(str))){
+		throw BadCastException(String::format("string '%s' can not be converted to an integer",str));
+	}
+	return atoi64(str);
+}
+
+string Util::int642Str(int64 i)
+{
+	char buf[64];
+	//_i64toa(i,buf,10);
+	sprintf_s(buf,"%lld",i);
 	return buf;
 }
 
@@ -409,22 +453,48 @@ string Util::uuid1()
 //generate a guid
 blib::string Util::guid()
 {
-	GUID guid = {0};
+    const static unsigned int UUID_BUF_SIZE = 40;
+    char strUuid[UUID_BUF_SIZE] = {0};
 
 #ifdef WIN32
+    GUID guid = {0};
 	CoCreateGuid(&guid);//::UuidCreate(&guid);
-#else
-	uuid_generate(reinterpret_cast<unsigned char *>(&guid));
-#endif
-	char strUuid[40] = {0};
 	sprintf_s(strUuid, "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-		guid.Data1, guid.Data2, guid.Data3,
-		guid.Data4[0], guid.Data4[1],
-		guid.Data4[2], guid.Data4[3],
-		guid.Data4[4], guid.Data4[5],
-		guid.Data4[6], guid.Data4[7]);
+        guid.Data1, guid.Data2, guid.Data3,
+        guid.Data4[0], guid.Data4[1],
+        guid.Data4[2], guid.Data4[3],
+        guid.Data4[4], guid.Data4[5],
+        guid.Data4[6], guid.Data4[7]);
+#else
+	uuid_t uuid;
+	uuid_generate(reinterpret_cast<unsigned char *>(&uuid));
+	unsigned char *p = (unsigned char *)&uuid;
+	for (unsigned int i = 0; i < sizeof(uuid_t); i++)
+	{
+		unsigned long off = 2 * i;
+		snprintf(strUuid + off, UUID_BUF_SIZE - off, "%02x", *p++);
+	}
+#endif
 
 	return strUuid;
+}
+
+void Util::dumpStack()
+{
+	// dump stack
+	List<String> list;
+	CallStackUtil::inscance()->obtainCallStack(list);
+
+	StringBuilder sb(32 + list.size() * 128);
+	sb.append("Call Stack:\n");
+
+	std::for_each(list.begin(),list.end(),[&](const String& msg){
+		sb.append("  ");
+		sb.append(msg);
+		sb.append('\n');
+	});
+
+	printf("%s", sb.toString().c_str());
 }
 
 }//end of namespace blib

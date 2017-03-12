@@ -46,7 +46,10 @@ Temporary Items
 *.pdb
 *.idb
 *.log
-Release/bluemeiLib.dll.intermediate.manifest
-Release/bluemeiLib.lastbuildstate
-Release/bluemeiLib.vcxprojResolveAssemblyReference.cache
+[Rr]elease
+[Dd]ebug
 *.cache
+.settings
+libso-debug
+libso-release
+

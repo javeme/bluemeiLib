@@ -1,8 +1,10 @@
 #include "CallStackUtil.h"
 
+#ifdef WIN32
+
 namespace blib{
 
-CallStackUtil::CallStackUtil() : StackWalker()
+CallStackUtil::CallStackUtil() : StackWalker(), m_pListCallStackMsg(NULL)
 {
 	LoadModules();
 }
@@ -19,12 +21,12 @@ CallStackUtil* CallStackUtil::inscance()
 	return &staticCallStackUtil;
 }
 
-void CallStackUtil::OnCallstackEntry( CallstackEntryType eType, CallstackEntry &entry )
+void CallStackUtil::OnCallstackEntry(CallstackEntryType eType, CallstackEntry &entry)
 {
 	//__super::OnCallstackEntry(eType,entry);
 
 	char buffer[STACKWALK_MAX_NAMELEN];
-	if ( (eType != lastEntry) && (entry.offset != 0) )
+	if ((eType != lastEntry) && (entry.offset != 0))
 	{
 		if (entry.name[0] == 0)
 			strcpy_s(entry.name, "(function-name not available)");
@@ -53,7 +55,7 @@ void CallStackUtil::OnCallstackEntry( CallstackEntryType eType, CallstackEntry &
 	}
 }
 
-void CallStackUtil::OnOutput( LPCSTR szText )
+void CallStackUtil::OnOutput(LPCSTR szText)
 {
 	//StackWalker::OnOutput(szText);
 }
@@ -71,7 +73,7 @@ List<String> CallStackUtil::obtainCallStack()
 	return list;
 }*/
 
-bool CallStackUtil::obtainCallStack( List<String>& list )
+bool CallStackUtil::obtainCallStack(List<String>& list)
 {
 	m_lock.getLock();
 	m_pListCallStackMsg=&list;
@@ -83,3 +85,59 @@ bool CallStackUtil::obtainCallStack( List<String>& list )
 }
 
 }//end of namespace blib
+
+#else // not WIN32
+
+//TODO: to support dump trace on Linux
+#include <execinfo.h>
+
+
+namespace blib{
+
+#define DUMP_STACK_DEPTH_MAX 256
+
+static inline bool dump_trace(List<String>& list)
+{
+    void *stack_trace[DUMP_STACK_DEPTH_MAX] = { 0 };
+    char **stack_strings = NULL;
+    int stack_depth = 0;
+
+    /* 获取栈中各层调用函数地址 */
+    stack_depth = backtrace(stack_trace, DUMP_STACK_DEPTH_MAX);
+
+    /* 查找符号表将函数调用地址转换为函数名称 */
+    stack_strings = (char **) backtrace_symbols(stack_trace, stack_depth);
+    if (NULL == stack_strings) {
+        //printf("Memory is not enough while dump Stack Trace! \r\n");
+        return false;
+    }
+
+    /* 打印调用栈 */
+    const int IGNORE = 1;
+    for (int i = IGNORE; i < stack_depth; ++i) {
+        list.push_back(stack_strings[i]);
+    }
+
+    /* 获取函数名称时申请的内存需要自行释放 */
+    free(stack_strings);
+    stack_strings = NULL;
+
+    return true;
+}
+
+CallStackUtil CallStackUtil::staticCallStackUtil;
+
+CallStackUtil* CallStackUtil::inscance()
+{
+    //static CallStackUtil csu;
+    return &staticCallStackUtil;
+}
+
+bool CallStackUtil::obtainCallStack(List<String>& list)
+{
+    return dump_trace(list);
+}
+
+}//end of namespace blib
+
+#endif // end of WIN32

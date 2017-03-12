@@ -1,12 +1,12 @@
 #include "Class.h"
-#include "blib/Object.h"
-#include "blib/BString.h"
-#include "blib/RuntimeException.h"
-#include "blib/ClassField.h"
-#include "blib/ObjectFactory.h"
-#include "blib/ArrayList.h"
-#include "blib/HashMap.h"
-#include "blib/Ptr.h"
+#include "Object.h"
+#include "BString.h"
+#include "RuntimeException.h"
+#include "ClassField.h"
+#include "ObjectFactory.h"
+#include "ArrayList.h"
+#include "HashMap.h"
+#include "Ptr.h"
 
 
 namespace blib{
@@ -208,7 +208,7 @@ Class* Class::registerClass(cstring name,CreateFun* pFun,const Class* superClass
 {
 	if(!ObjectFactory::instance().exist(name))
 	{
-		ScopePointer<Class> cls = new Class(name, pFun, superClass);
+		ScopePointer<Class> cls(new Class(name, pFun, superClass));
 		registerClass(cls);
 		return cls.detach();
 	}
@@ -225,7 +225,7 @@ Class* Class::registerClassIfNotExist(cstring name,CreateFun* pFun,
 	Class* exist = ObjectFactory::instance().exist(name);
 	if(!exist)
 	{
-		ScopePointer<Class> cls = new Class(name, pFun, superClass);
+		ScopePointer<Class> cls(new Class(name, pFun, superClass));
 		registerClass(cls);
 		return cls.detach();
 	}

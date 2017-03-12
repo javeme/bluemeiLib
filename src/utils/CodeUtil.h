@@ -1,25 +1,11 @@
 #ifndef CodeUtil_H_H
 #define CodeUtil_H_H
+
 #include "Util.h"
 #include "BString.h"
 
 namespace blib{
 
-using std::string;
-using std::wstring;
-
-typedef char		int8 ;
-typedef short		int16;
-typedef int			int32;
-typedef __int64		int64;
-
-typedef unsigned char		uint8 ;
-typedef unsigned short		uint16;
-typedef unsigned int		uint32;
-typedef unsigned __int64	uint64;
-
-typedef uint16		word ;
-typedef uint32		dword;
 
 /*
 * 字符及其编码工具类
@@ -43,27 +29,32 @@ public:
 	static Type bytesToBigInt(byte *buf, bool bigEndian=false);
 	template<typename Type>
 	static void bigIntToBytes(byte *buf, Type value, bool bigEndian=false);
+
 public:
-	//static char* gbkToUtf8(const char *strGBK);
-	//static void utf8ToGbk(string& szstr);
-
-	static int gbkToUtf8(string& strUtf8,const char *strGBK);
-	static int utf8ToGbk(string& strGbk,const char* strUtf8);
-
-	static int utf8ToUnicode(wstring& strUnicode,const char *strUtf8);//返回字节数(unicode字符串长度的2倍)
+#ifdef WIN32
+	static int utf8ToUnicode(wstring& strUnicode,const char *strUtf8);
 	static int unicodeToUtf8(string& strUtf8,const wstring& strUnicode);
 
 	static int gbkToUnicode(wstring& strUnicode,const char *strGBK);
-	static int gb2312ToUnicode(wstring& result,const char *strGb2312);
 	static int unicodeToGbk(string& result,const wstring& uStr);
 
+	static int gbkToUtf8(string& strUtf8,const char *strGBK);
+	static int utf8ToGbk(string& strGbk,const char* strUtf8);
+#endif
+
+	static String unicodeToUtf8(const wstring& uStr);
+	static wstring utf8ToUnicode(const String& strUtf8);
+
 	static String unicodeToGbk(const wstring& uStr);
-	static String utf8ToGbk(const char* strUtf8);
-	static String gbkToUtf8(const char *strGBK);
+	static wstring gbkToUnicode(const String& strGBK);
+
+	static String utf8ToGbk(const String& strUtf8);
+	static String gbkToUtf8(const String& strGBK);
 
 public:
 	static string base64Encode(const unsigned char* src, int srcLen);
 	static string base64Decode(const char* str);
+
 public:
 	static unsigned char char2hexChar(unsigned char x);
 	static bool isAlpha(int c);
@@ -75,6 +66,7 @@ public:
 
 	static string urlEncode(const char* src);
 	static string urlDecode(const char* src);
+
 public:
 	static String bytesToHexString(const byte buffer[], int len);
 };
@@ -117,10 +109,10 @@ void blib::CodeUtil::bigIntToBytes(byte *buf, Type value, bool bigEndian)
 
 
 struct BLUEMEILIB_API CONVWSTR{
-	string str;
-	CONVWSTR(const wchar_t* cstr)
+	String str;
+	CONVWSTR(const wstring& cstr)
 	{
-		CodeUtil::unicodeToGbk(str,(const wchar_t*)cstr);
+		str = CodeUtil::unicodeToGbk(cstr);
 	}
 	operator const char*(){
 		return str.c_str();
@@ -130,7 +122,7 @@ struct BLUEMEILIB_API CONVSTR{
 	wstring wstr;
 	CONVSTR(const String& str)
 	{
-		CodeUtil::gb2312ToUnicode(wstr,str);
+		wstr = CodeUtil::gbkToUnicode(str);
 	}
 	operator const wchar_t*(){
 		return wstr.c_str();
@@ -138,4 +130,5 @@ struct BLUEMEILIB_API CONVSTR{
 };
 
 }//end of namespace blib
+
 #endif

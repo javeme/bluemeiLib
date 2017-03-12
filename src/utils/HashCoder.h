@@ -1,9 +1,12 @@
-#pragma once
+#ifndef HashCoder_H_H
+#define HashCoder_H_H
+
 #include "Object.h"
 #include "BString.h"
 
 namespace blib{
 
+///////////////////////////////////////////////////////////////////////////////
 template<class T>
 class BLUEMEILIB_TEMPLATE hashCode{
 public:
@@ -17,6 +20,8 @@ protected:
 	unsigned int hash;
 };
 
+
+///////////////////////////////////////////////////////////////////////////////
 class BLUEMEILIB_API StringHashCoder : public Object
 {
 public:
@@ -39,35 +44,48 @@ public:
 	}
 };
 
+
+///////////////////////////////////////////////////////////////////////////////
 template<> BLUEMEILIB_API
-hashCode<cstring>::hashCode(const cstring& str)
+inline hashCode<cstring>::hashCode(const cstring& str)
 {
 	static StringHashCoder shc;
 	hash=shc.hashCode(str);
 }
+
 template<> BLUEMEILIB_API
-hashCode<std::string>::hashCode(const std::string& str)
+inline hashCode<std::string>::hashCode(const std::string& str)
 {
 	static StringHashCoder shc;
 	hash=shc.hashCode(str.c_str());
 }
+
 template<> BLUEMEILIB_API
-hashCode<String>::hashCode(const String& str)
+inline hashCode<String>::hashCode(const String& str)
 {
 	static StringHashCoder shc;
 	hash=shc.hashCode(str);
 }
+
 template<> BLUEMEILIB_API
-hashCode<int>::hashCode(const int& i)
+inline hashCode<int>::hashCode(const int& i)
 {
 	hash=i;
 }
 
-template<> Value2String<Object*>::operator String() const{
+
+///////////////////////////////////////////////////////////////////////////////
+template<>
+inline Value2String<Object*>::operator String() const{
 	if(value==nullptr)
 		return "<null>";
 	return value->toString();
-}template class BLUEMEILIB_API Value2String<Object*>;
+}
 
+#ifdef WIN32
+template class BLUEMEILIB_API Value2String<Object*>;
+#endif
 
 }//end of namespace blib
+
+#endif

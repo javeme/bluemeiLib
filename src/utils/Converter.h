@@ -1,5 +1,6 @@
 #ifndef Converter_H_H
 #define Converter_H_H
+
 #include "bluemeiLib.h"
 #include "Object.h"
 
@@ -16,6 +17,7 @@ namespace blib{
 
 BLUEMEILIB_API void throwBadCastException(cstring from, cstring to);
 BLUEMEILIB_API void throwTypeException(const Object* instance, cstring cls);
+BLUEMEILIB_API void checkNullObject(Object* obj);
 
 
 template <typename From, typename To>
@@ -23,10 +25,10 @@ static To throwConversionException(){
 	cstring from = typeid(From).name();
 	cstring to = typeid(To).name();
 	throwBadCastException(from, to);
-	throw Exception("Conversion Exception");//no exeute
+	throw("Conversion Exception"); // will not exeute
 }
 
-template <typename Type, typename bool>
+template <typename Type, bool castable>
 struct static_caster;
 
 template <typename Type>
@@ -46,14 +48,14 @@ struct static_caster<Type, false>
 };
 
 
-template <typename Type, typename bool>
+template <typename Type, bool castable>
 struct dynamic_caster;
 
 template <typename Type>
 struct dynamic_caster<Type, true>
 {
 	static Type toType(Object* obj){
-		checkNullPtr(obj);
+		checkNullObject(obj);
 		if (dynamic_cast<Type>(obj))
 			return dynamic_cast<Type>(obj);
 		return throwConversionException<Object*, Type>();
@@ -150,4 +152,5 @@ struct BLUEMEILIB_TEMPLATE Converter
 };
 
 }//end of namespace blib
+
 #endif

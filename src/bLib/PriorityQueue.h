@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PriorityQueue_H_H
+#define PriorityQueue_H_H
 
 #include "bluemeiLib.h"
 #include "Exceptions.h"
@@ -94,3 +95,5 @@ protected:
 };
 
 }//end of namespace blib
+
+#endif

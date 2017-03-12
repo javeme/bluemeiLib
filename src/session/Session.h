@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Session_H_H
+#define Session_H_H
+
 #include "BeanContainer.h"
 
 namespace blib{
@@ -14,9 +16,11 @@ public:
 protected:
 	Session(const Session& other){*this=other;};
 	Session& operator=(const Session& other){
-		__super::operator=(other);
+		BeanContainer::operator=(other);
 		return *this;
 	};
 };
 
 }//end of namespace blib
+
+#endif

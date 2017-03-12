@@ -1,4 +1,3 @@
-#pragma once
 #include "MemoryPool.h"
 #include "RuntimeException.h"
 

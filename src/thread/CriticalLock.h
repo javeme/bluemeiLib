@@ -1,8 +1,11 @@
-#ifndef _CriticalLock_h_
-#define _CriticalLock_h_
+#ifndef CriticalLock_H_H
+#define CriticalLock_H_H
 
 #include "bluemeiLib.h"
 #include "UniqueLock.h"
+
+
+#ifdef WIN32
 
 namespace blib{
 
@@ -11,15 +14,6 @@ class BLUEMEILIB_API CriticalLock : public UniqueLock
 public:
 	CriticalLock();
 	virtual ~CriticalLock(void);
-public:
-	CriticalLock(const CriticalLock& other){
-		m_waitCount=0;
-		::InitializeCriticalSection(&m_critialSection);
-		this->operator=(other);
-	};
-	CriticalLock& operator=(const CriticalLock& other){
-		return *this;
-	};
 private:
 	CRITICAL_SECTION m_critialSection;
 	volatile unsigned int m_waitCount;//等待的线程数
@@ -27,9 +21,25 @@ public:
 	virtual void getLock();
 	virtual void releaseLock();
 	void notify(){ return releaseLock();}
-	virtual long getWaitCount() const;
-	virtual long getMyThreadEnteredCount() const;
+	virtual unsigned int getWaitCount() const;
+	virtual unsigned int getMyThreadEnteredCount() const;
 };
 
-}//end of namespace blib
-#endif
+} //end of namespace blib
+
+#else // not WIN32
+
+// TODO: implement
+#include "MutexLock.h"
+
+namespace blib{
+
+class BLUEMEILIB_API CriticalLock : public MutexLock
+{
+};
+
+} //end of namespace blib
+
+#endif //end of #ifdef WIN32
+
+#endif //end of header guards

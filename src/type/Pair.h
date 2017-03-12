@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Pair_H_H
+#define Pair_H_H
+
 #include "bluemeiLib.h"
 #include "Object.h"
 
@@ -24,3 +26,5 @@ public:
 };
 
 }//end of namespace blib
+
+#endif

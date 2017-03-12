@@ -1,12 +1,8 @@
-#ifndef _ServerSocket_h_
-#define _ServerSocket_h_
-
-#include <winsock2.h>
-#include <string>
+#ifndef _ServerSocket_H_H
+#define _ServerSocket_H_H
 
 #include "bluemeiLib.h"
 #include "ClientSocket.h"
-
 
 namespace blib{
 
@@ -34,4 +30,5 @@ protected:
 };
 
 }//end of namespace blib
+
 #endif

@@ -1,5 +1,5 @@
-#ifndef _UniqueLock_h_
-#define _UniqueLock_h_
+#ifndef UniqueLock_H_H
+#define UniqueLock_H_H
 
 #include "bluemeiLib.h"
 #include "Object.h"
@@ -37,6 +37,6 @@ private:
 	ScopedLock& operator = (const ScopedLock&);
 };
 
-
 }//end of namespace blib
+
 #endif

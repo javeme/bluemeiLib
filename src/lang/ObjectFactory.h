@@ -1,5 +1,6 @@
 #ifndef ObjectFactory_H_H
 #define ObjectFactory_H_H
+
 #include "bluemeiLib.h"
 #include "Class.h"
 #include "Object.h"

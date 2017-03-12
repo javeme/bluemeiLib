@@ -246,10 +246,10 @@ protected:
 };
 
 template<typename S, typename T>
-SmartPtr<S> ptr_static_cast(SmartPtr<T> ptr) { return ptr.staticCast<S>(); }
+SmartPtr<S> ptr_static_cast(SmartPtr<T> ptr) { return ptr.template staticCast<S>(); }
 
 template<typename S, typename T>
-SmartPtr<S> ptr_dynamic_cast(SmartPtr<T> ptr) { return ptr.dynamicCast<S>(); }
+SmartPtr<S> ptr_dynamic_cast(SmartPtr<T> ptr) { return ptr.template dynamicCast<S>(); }
 
 
 template <typename Type>
@@ -264,15 +264,20 @@ public:
 	}
 };
 
-template<> Value2String<SmartPtr<Object>>::operator String() const{
+template<>
+inline Value2String<SmartPtr<Object>>::operator String() const{
 	if(value==nullptr)
 		return "<null>";
 	return value->toString();
-}template class BLUEMEILIB_API Value2String<SmartPtr<Object>>;
+}
 
+#ifdef WIN32
+template class BLUEMEILIB_API Value2String<SmartPtr<Object>>;
 
 template class BLUEMEILIB_API HashMap<String,SmartPtr<Object>>;
 template class BLUEMEILIB_API MultiValueHashMap<String,SmartPtr<Object>>;
+#endif
 
 }//end of namespace blib
+
 #endif //__SMARTPTR_H__

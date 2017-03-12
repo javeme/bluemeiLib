@@ -1,4 +1,3 @@
-#pragma once
 #include "Ptr.h"
 
 namespace blib{
@@ -21,7 +20,8 @@ void PointerReference::attach()
 PointerReference* PointerReference::disattach()
 {
 	m_nPtrRefCount--;
-	if(m_nPtrRefCount <= 0)
+	assert(m_nPtrRefCount >= 0);
+	if(m_nPtrRefCount == 0)
 	{
 		delete this;
 		return NULL;

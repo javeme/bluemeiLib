@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Iterator_H_H
+#define Iterator_H_H
+
 #include "bluemeiLib.h"
 #include "Ptr.h"
 
@@ -15,3 +17,5 @@ public:
 };
 
 }//end of namespace blib
+
+#endif

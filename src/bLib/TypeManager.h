@@ -1,4 +1,6 @@
-#pragma once
+#ifndef TypeManager_H_H
+#define TypeManager_H_H
+
 #include "Object.h"
 #include "HashMap.h"
 #include "MultiValueHashMap.h"
@@ -157,11 +159,11 @@ protected:
 	HashMap<TypeInfo,Conver*> m_typeMap;
 };
 
-template<bool T>
-struct typeinfo;
+template<bool convertible>
+struct typeinfo_same;
 
 template<>
-struct typeinfo<true>{
+struct typeinfo_same<true>{
 	template<typename T1, typename T2>
 	static bool is_same(T1* obj){
 		return TypeManager::getTypeInfo(obj) == TypeManager::getTypeInfo<T2>();
@@ -169,7 +171,7 @@ struct typeinfo<true>{
 };
 
 template<>
-struct typeinfo<false>{
+struct typeinfo_same<false>{
 	template<typename T1, typename T2>
 	static bool is_same(T1* obj){
 		return std::is_same<T1, T2>::value;
@@ -182,7 +184,7 @@ static bool isItselfType(T1* p){
 	if (p==nullptr)
 		return false;
 	const bool convertible = is_convertible<T1*, Object*>::value;
-	typeinfo<convertible>::is_same<T1, T2>(p);
+	typeinfo_same<convertible>::template is_same<T1, T2>(p);
 }
 
 //p当前类型是否为该指针本身的类型
@@ -195,3 +197,5 @@ static bool objectIsItselfType(T* p){
 }
 
 }//end of namespace blib
+
+#endif

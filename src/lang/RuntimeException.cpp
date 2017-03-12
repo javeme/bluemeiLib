@@ -5,7 +5,7 @@ namespace blib{
 
 ///////////////////////////////////////////////////////////////////////
 //RuntimeException
-RuntimeException::RuntimeException(cstring str):Exception(str)
+RuntimeException::RuntimeException(cstring str) : Exception(str)
 {
 }
 
@@ -37,7 +37,7 @@ String TypeException::name() const
 
 ///////////////////////////////////////////////////////////////////////
 //BadCastException
-BadCastException::BadCastException(cstring str):RuntimeException(str)
+BadCastException::BadCastException(cstring str) : RuntimeException(str)
 {
 }
 
@@ -70,7 +70,8 @@ String NotFoundException::name() const
 
 ///////////////////////////////////////////////////////////////////////
 //ClassNotFoundException
-ClassNotFoundException::ClassNotFoundException(cstring msg) : NotFoundException(msg)
+ClassNotFoundException::ClassNotFoundException(cstring msg)
+	: NotFoundException(msg)
 {
 }
 
@@ -182,12 +183,21 @@ TimeoutException::TimeoutException(long long time)
 		ftime /= DAY_MSECOND;
 		unit = "day";
 	}
-	this->setExceptionMsg(String::format("%0.2f %s", ftime, unit));
+	this->setExceptionMsg(String::format("%0.2f%s", ftime, unit));
 }
 
 String TimeoutException::name() const
 {
 	return "TimeoutException";
 }
+
+
+///////////////////////////////////////////////////////////////////////
+//CharsetConvertionException
+CharsetConvertionException::CharsetConvertionException(cstring src, cstring from, cstring to)
+	: RuntimeException(String::format("Can't convert \"%s\" from %s to %s", src, from, to))
+{
+}
+
 
 }//end of namespace blib

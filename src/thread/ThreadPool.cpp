@@ -60,8 +60,8 @@ Task* ThreadPool::getTask()
 		return NULL;
 
 	//if(m_taskQueue.empty()) //如果在此时插入了一个任务,可能wait错过时机,没有通知到
-	//	m_taskLock.waitTask();//等待
-	m_taskLock.waitTask();
+	//	m_taskLock.wait();//等待
+	m_taskLock.wait();
 
 	Task* pTask=NULL;
 	if(!m_bIsStop){

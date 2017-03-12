@@ -10,25 +10,30 @@
 ************************************************************************/
 #include "SmartPtrManager.h"
 #include "System.h"
-#include <stdio.h>
-#include <stdlib.h>
+
+#ifdef WIN32
 #include <new.h>
-#include <set>
-#include <vector>
+#else
+#include <new>
+#endif
+
 
 namespace blib{
 
 ///////////////////////////////////////////////////////////////////////
 // new handler
 
-//static variable
 #ifdef WIN32
+
 static _PNH old_new_handler;
 static int old_new_mode;
+
 #else
+	
 typedef void (*_PNH)(void);
 static _PNH old_new_handler;
-#define _set_new_handler set_new_handler
+#define _set_new_handler std::set_new_handler
+
 #endif
 
 //分配内存出错时调用的函数
@@ -58,9 +63,9 @@ void gc_new_handler()
 static void initNewHandler()
 {
 	//set new handler, so gc runs when there's no sufficient memory
-	old_new_handler = ::_set_new_handler(gc_new_handler);
+	old_new_handler = _set_new_handler(gc_new_handler);
 #ifdef WIN32
-	old_new_mode = ::_set_new_mode(1);
+	old_new_mode = _set_new_mode(1);
 #endif
 }
 
@@ -68,7 +73,7 @@ static void restoreNewHandler()
 {
 	_set_new_handler(old_new_handler); //restore new handler
 #ifdef WIN32
-	_set_new_mode(old_new_mode);	   //and new mode
+	_set_new_mode(old_new_mode); //and new mode
 #endif
 }
 

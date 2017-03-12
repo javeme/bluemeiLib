@@ -1,7 +1,8 @@
-#include "StdAfx.h"
 #include "BeanContainer.h"
 
 namespace blib{
+
+using namespace std;
 
 BeanContainer::BeanContainer(void)
 {
@@ -19,7 +20,7 @@ bool BeanContainer::put(const string& key,Object* pBean)
 
 Object* BeanContainer::get(const string& key) const
 {
-	auto& itor=m_beanMap.find(key);
+	const auto& itor=m_beanMap.find(key);
 	if(itor!=m_beanMap.end())
 		return itor->second;
 	return nullptr;
@@ -28,7 +29,7 @@ Object* BeanContainer::get(const string& key) const
 Object* BeanContainer::remove(const string& key)
 {
 	Object* obj=nullptr;
-	auto& itor=m_beanMap.find(key);
+	const auto& itor=m_beanMap.find(key);
 	if(itor!=m_beanMap.end()){
 		obj=itor->second;
 		m_beanMap.erase(itor);
@@ -38,7 +39,7 @@ Object* BeanContainer::remove(const string& key)
 
 bool BeanContainer::remove(Object* pBean)
 {
-	auto& itor=m_beanMap.begin();
+	auto itor=m_beanMap.begin();
 	for(;itor!=m_beanMap.end();itor++){
 		if(itor->second==pBean){
 			m_beanMap.erase(itor);

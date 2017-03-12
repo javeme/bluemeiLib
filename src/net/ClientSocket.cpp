@@ -34,7 +34,7 @@ void ClientSocket::createSocket()
 	int nReturn=m_hSocket;
 	if(nReturn==SOCKET_ERROR)
 	{
-		throw SocketException(WSAGetLastError(),"Failed to init socket");
+		throw SocketException(socketError(),"Failed to init socket");
 	}
 }
 
@@ -47,12 +47,14 @@ void ClientSocket::connect(cstring ip,unsigned short port)
 	memset(&serverAddr,0,lenOfServerAddr);
 	serverAddr.sin_family=AF_INET;
 	serverAddr.sin_port=htons(port);
-	serverAddr.sin_addr.S_un.S_addr=::inet_addr(ip);
+	serverAddr.sin_addr=ip_to_in_addr(ip);
+
 	setPeerAddr(serverAddr);
+
 	int nReturnCode=::connect(m_hSocket,(sockaddr*)&serverAddr,lenOfServerAddr);
 	if(nReturnCode==SOCKET_ERROR)
 	{
-		int err=WSAGetLastError();
+		int err=socketError();
 		if(err==0)
 		{
 			throw SocketException(err,"connect failed,"+toString());
@@ -94,17 +96,18 @@ void ClientSocket::setTimeout(int ms)//毫秒
 #else
 	struct timeval timeout={ms/1000,ms%1000};
 #endif
-	//设置发送超时 当短时间内大量发送数据时,不设置超时send函数可能阻塞住;	
+	//设置发送超时 当短时间内大量发送数据时,不设置超时send函数可能阻塞住;
 	//而设置超时后会阻塞timeout毫秒后会返回超时错误.那么,如何处理上述情况?
 	int ret=setsockopt(m_hSocket,SOL_SOCKET,SO_SNDTIMEO,
 		(char*)&timeout,sizeof(timeout));
 	if(ret==SOCKET_ERROR)
-		throw SocketException(WSAGetLastError(),toString());
+		throw SocketException(socketError(),toString());
+
 	//设置接收超时
 	ret=setsockopt(m_hSocket,SOL_SOCKET,SO_RCVTIMEO,
 		(char*)&timeout,sizeof(timeout));
 	if(ret==SOCKET_ERROR)
-		throw SocketException(WSAGetLastError(),toString());
+		throw SocketException(socketError(),toString());
 }
 
 void ClientSocket::setNoDelay(bool noDelay)
@@ -113,7 +116,7 @@ void ClientSocket::setNoDelay(bool noDelay)
 	 int ret = setsockopt(m_hSocket,IPPROTO_TCP,TCP_NODELAY,
 		 (char*)&flag,sizeof(flag));
 	 if(ret==SOCKET_ERROR)
-		 throw SocketException(WSAGetLastError(),toString());
+		 throw SocketException(socketError(),toString());
 }
 
 
@@ -121,9 +124,9 @@ void ClientSocket::setNoDelay(bool noDelay)
 unsigned long ClientSocket::availableBytes()
 {
 	unsigned long length=0;
-	int ret=ioctl(m_hSocket,FIONREAD,&length);
+	int ret=ioctlsocket(m_hSocket,FIONREAD,&length);
 	if(ret==SOCKET_ERROR)
-		throw SocketException(WSAGetLastError(),toString());
+		throw SocketException(socketError(),toString());
 	return length;
 }
 
@@ -151,15 +154,28 @@ int ClientSocket::readBytes(char buffer[],int maxLength,int flags)
 
 	int length=::recv(this->m_hSocket,buffer,maxLength,flags);
 	//printf("==========ClientSocket::readBytes,len=%d\n", length);
+
 	if(length==SOCKET_ERROR)
 	{
-		int errorCode=WSAGetLastError();
-		if (errorCode==WSAETIMEDOUT)
+		int error=socketError();
+		// interrupted
+		if(error==SOCKET_ERR_INTR)
+		{
+			return 0; // try later
+		}
+		// NOTE: EAGAIN if timeout(which set by SO_RCVTIMEO) -- Mac
+		else if(error==SOCKET_ERR_AGAIN || error==SOCKET_ERR_WOULDBLOCK)
+		{
+			// TODO: return 0 or throw a exception?
+			throw SocketTryAgainException(error);
+		}
+		// timeout
+		else if(error==SOCKET_ERR_TIMEDOUT)
 		{
 			throw TimeoutException(m_nTimeout);
 		}
 		else
-			throw SocketException(errorCode,toString());
+			throw SocketException(error,toString());
 	}
 	else if(length==0)
 	{
@@ -195,7 +211,7 @@ int ClientSocket::readInt()
 	this->readEnoughBytes(buf,sizeOfInt);//读取指定长的字节才返回
 
 	int value=SocketTools::bytesToInt((byte*)buf);
-	value=::ntohl(value);
+	value=ntohl(value);
 	return value;
 }
 
@@ -209,7 +225,7 @@ int ClientSocket::readShort()
 
 	int value=SocketTools::bytesToInt((byte*)buf);
 
-	value=::ntohs(value);
+	value=ntohs(value);
 	return value;
 }
 
@@ -254,7 +270,7 @@ String ClientSocket::readLine()
 		// the last char appended to the line is '\r' and current is '\n'?
 		if(eol && buffer[0]=='\n' && line.endWith('\r'))
 			line.pop();
-		else
+		else if(size>0)
 			line.append(buffer, size);
 		// consume the line
 		this->skip(i);
@@ -322,14 +338,23 @@ int ClientSocket::writeBytes(const char buffer[],int length,int flags)
 	size=::send(this->m_hSocket,buffer,length,flags);
 	if(size==SOCKET_ERROR)
 	{
-		int errorCode=::WSAGetLastError();
-		if (errorCode==WSAETIMEDOUT)
+		int error=socketError();
+		if(error==SOCKET_ERR_INTR)
 		{
-			// TODO: how to deal with send timeout?
+			; // try later
+		}
+		else if(error==SOCKET_ERR_AGAIN || error==SOCKET_ERR_WOULDBLOCK)
+		{
+			// TODO: return 0 or throw a exception?
+			throw SocketTryAgainException(error);
+		}
+		else if(error==SOCKET_ERR_TIMEDOUT)
+		{
+			// TODO: how to deal with send timeout(which set by SO_SNDTIMEO)?
 			throw TimeoutException(m_nTimeout);
 		}
 		else
-			throw SocketException(errorCode,toString());
+			throw SocketException(error,toString());
 	}
 #ifdef SEND_LOG
 	FILE *pFile;
@@ -370,7 +395,7 @@ int ClientSocket::writeInt(int value)
 {
 	const int sizeOfInt=sizeof(value);
 	char buf[sizeOfInt];
-	value=::htonl(value);
+	value=htonl(value);
 	SocketTools::intToBytes((byte*)buf,value);
 
 	int len=writeEnoughBytes(buf,sizeOfInt);
@@ -385,7 +410,7 @@ int ClientSocket::writeShort(short value)
 {
 	const int sizeOfInt=sizeof(value);
 	char buf[sizeOfInt];
-	value=::htons(value);
+	value=htons(value);
 	SocketTools::shortToBytes((byte*)buf,value);
 
 	int len=writeEnoughBytes(buf,sizeOfInt);
@@ -426,7 +451,7 @@ void ClientSocket::close()
 	int nReturnCode=closesocket(this->m_hSocket);
 	if(nReturnCode==SOCKET_ERROR)
 	{
-		throw SocketException(::WSAGetLastError(),toString());
+		throw SocketException(socketError(),toString());
 	}
 }
 

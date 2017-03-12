@@ -2,10 +2,11 @@
 #define CallStackUtil_H_H
 
 #include "bluemeiLib.h"
-#include "Object.h"
-#include "StackWalker.h"
 #include "CriticalLock.h"
 #include "BString.h"
+
+#ifdef WIN32
+#include "StackWalker.h"
 
 namespace blib{
 
@@ -30,4 +31,26 @@ protected:
 };
 
 }//end of namespace blib
+
+#else // not WIN32
+
+namespace blib{
+
+class BLUEMEILIB_API CallStackUtil : public Object
+{
+public:
+    static CallStackUtil* inscance();
+protected:
+    CallStackUtil() {}
+    virtual ~CallStackUtil() {}
+public:
+    bool obtainCallStack(List<String>& list);
+protected:
+    static CallStackUtil staticCallStackUtil;
+};
+
+}//end of namespace blib
+
+#endif //end of #ifdef WIN32
+
 #endif

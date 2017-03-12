@@ -1,4 +1,6 @@
-#pragma once
+#ifndef HashMap_H_H
+#define HashMap_H_H
+
 #include "HashCoder.h"
 #include "StringBuilder.h"
 #include "Iterator.h"
@@ -6,12 +8,15 @@
 
 namespace blib{
 
-template<class K,class V>
+template<typename K,typename V>
+class BLUEMEILIB_TEMPLATE HashMap;
+
+template<typename K,typename V>
 class BLUEMEILIB_TEMPLATE Entry : public Object
 {
-	template<class K,class V> friend class HashMap;
+	friend class HashMap<K,V>;
 public:
-	Entry(){ hash=0; next=nullptr; }
+	Entry(){ hashcode=0; next=nullptr; }
 	Entry(const K& k,const V& v,unsigned int h=0,Entry<K,V>* next=nullptr){
 		key=k;
 		value=v;
@@ -36,7 +41,7 @@ protected:
 	Entry<K,V>* next;
 };
 
-template<class K,class V>
+template<typename K,typename V>
 class BLUEMEILIB_TEMPLATE IMap : public Object
 {
 public:
@@ -68,7 +73,7 @@ public:
 	}
 };
 
-template<class K,class V>
+template<typename K,typename V>
 class BLUEMEILIB_TEMPLATE HashMap : public IMap<K,V>
 {
 	typedef Entry<K,V> HashEntry;
@@ -226,7 +231,7 @@ public:
 };
 
 
-template<class K,class V>
+template<typename K,typename V>
 void HashMap<K, V>::addEntry(const K& k,const V& v,unsigned int h,
 	unsigned int index)
 {
@@ -237,7 +242,7 @@ void HashMap<K, V>::addEntry(const K& k,const V& v,unsigned int h,
 		resize(2*m_nMaxSize);//未考虑溢出
 }
 
-template<class K,class V>
+template<typename K,typename V>
 void HashMap<K, V>::resize(unsigned int newCapacity)
 {
 	ArrayList<HashEntry*> newTable(newCapacity,1.0);
@@ -248,7 +253,7 @@ void HashMap<K, V>::resize(unsigned int newCapacity)
 	m_nThreshold=(unsigned int)(m_nMaxSize * m_fLoadFactor);
 }
 
-template<class K,class V>
+template<typename K,typename V>
 void HashMap<K, V>::transfer(ArrayList<HashEntry*>& newTable) const
 {
 	const ArrayList<HashEntry*>& src=m_entryTable;
@@ -262,7 +267,7 @@ void HashMap<K, V>::transfer(ArrayList<HashEntry*>& newTable) const
 				//保存src节点链的下一个节点
 				HashEntry* next=entry->next;
 				//将entry搭链到新表中去
-				unsigned int i=indexFor(entry->hashcode, newCapacity);
+				unsigned int i=HashMap<K, V>::indexFor(entry->hashcode, newCapacity);
 				entry->next=newTable[i];
 				newTable[i]=entry;
 				//下一个src节点链的节点
@@ -272,7 +277,7 @@ void HashMap<K, V>::transfer(ArrayList<HashEntry*>& newTable) const
 	}
 }
 
-template<class K,class V>
+template<typename K,typename V>
 void HashMap<K, V>::initListNull(ArrayList<HashEntry*>& list)
 {
 	for (unsigned int i=0; i < list.size(); i++)
@@ -281,13 +286,13 @@ void HashMap<K, V>::initListNull(ArrayList<HashEntry*>& list)
 	}
 }
 
-template<class K,class V>
+template<typename K,typename V>
 bool HashMap<K, V>::put(const K& k,const V& v)
 {
 	if(m_nSize>=m_nMaxSize)
 		return false;
 	unsigned int h=hashCode<K>(k);
-	unsigned int index=indexFor(h,m_nMaxSize);
+	unsigned int index=HashMap<K, V>::indexFor(h,m_nMaxSize);
 
 	for(HashEntry* entry=m_entryTable[index]; entry!=nullptr; entry=entry->next)
 	{
@@ -300,10 +305,10 @@ bool HashMap<K, V>::put(const K& k,const V& v)
 	return true;
 }
 
-template<class K,class V>
+template<typename K,typename V>
 V* HashMap<K, V>::get(const K& key) const
 {
-	unsigned int index=indexFor(hashCode<K>(key),m_nMaxSize);
+	unsigned int index=HashMap<K, V>::indexFor(hashCode<K>(key),m_nMaxSize);
 	for(HashEntry* entry=m_entryTable[index]; entry!=nullptr; entry=entry->next)
 	{
 		if(key==entry->key){
@@ -313,7 +318,7 @@ V* HashMap<K, V>::get(const K& key) const
 	return nullptr;
 }
 
-template<class K,class V>
+template<typename K,typename V>
 bool HashMap<K, V>::get(const K& k,V& v) const
 {
 	const V* pValue=get(k);
@@ -325,7 +330,7 @@ bool HashMap<K, V>::get(const K& k,V& v) const
 	return true;
 }
 
-template<class K,class V>
+template<typename K,typename V>
 V HashMap<K, V>::getDefault(const K& key,const V& defaultVal) const
 {
 	const V* pValue=get(key);
@@ -335,10 +340,10 @@ V HashMap<K, V>::getDefault(const K& key,const V& defaultVal) const
 		return *pValue;
 }
 
-template<class K,class V>
+template<typename K,typename V>
 bool HashMap<K, V>::remove(const K& key,V& v)
 {
-	unsigned int index=indexFor(hashCode<K>(key),m_nMaxSize);
+	unsigned int index=HashMap<K, V>::indexFor(hashCode<K>(key),m_nMaxSize);
 	HashEntry* previous=nullptr;
 	for(HashEntry* entry=m_entryTable[index]; entry!=nullptr;
 		previous=entry,entry=entry->next)
@@ -358,7 +363,7 @@ bool HashMap<K, V>::remove(const K& key,V& v)
 	return false;
 }
 
-template<class K,class V>
+template<typename K,typename V>
 void HashMap<K, V>::clear()
 {
 	//释放table
@@ -374,7 +379,7 @@ void HashMap<K, V>::clear()
 	m_nSize=0;
 }
 
-template<class K,class V>
+template<typename K,typename V>
 String HashMap<K, V>::toString() const
 {
 	StringBuilder sb(32*m_entryTable.size());
@@ -395,25 +400,25 @@ String HashMap<K, V>::toString() const
 	return sb.toString();
 }
 
-template<class K,class V>
+template<typename K,typename V>
 RefPointer<Iterator<Entry<K,V>>> HashMap<K, V>::iterator()
 {
 	return new HashMap::HashMapIterator(*this);
 }
 
-template<class K,class V>
+template<typename K,typename V>
 void HashMap<K, V>::releaseIterator(Iterator<Entry<K,V>>* itor)
 {
 	//delete itor;
 }
 
-template<class K,class V>
+template<typename K,typename V>
 bool HashMap<K, V>::contain(const K& key) const
 {
 	return get(key)!=nullptr;
 }
 
-template<class K,class V>
+template<typename K,typename V>
 unsigned int HashMap<K, V>::size() const
 {
 	return m_nSize;
@@ -494,7 +499,11 @@ bool HashMap<K, V>::HashMapIterator::findNext(unsigned int& index,
 }
 
 
+#ifdef WIN32
 template class BLUEMEILIB_API HashMap<String,int>;
 template class BLUEMEILIB_API HashMap<String,Object*>;
+#endif
 
 }//end of namespace blib
+
+#endif

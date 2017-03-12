@@ -2,6 +2,8 @@
 
 namespace blib{
 
+#ifdef WIN32
+
 CriticalLock::CriticalLock()
 {
 	m_waitCount=0;
@@ -32,10 +34,10 @@ void CriticalLock::releaseLock()
 	::LeaveCriticalSection(&m_critialSection);
 }
 
-long CriticalLock::getWaitCount() const
+unsigned int CriticalLock::getWaitCount() const
 {
 	//return m_waitCount;
-	long wc=0;
+    unsigned int wc=0;
 	//获得操作系统类型
 	OSVERSIONINFO osvi;
 	ZeroMemory(&osvi, sizeof(osvi));
@@ -53,9 +55,13 @@ long CriticalLock::getWaitCount() const
 	return wc;
 }
 
-long CriticalLock::getMyThreadEnteredCount() const
+unsigned int CriticalLock::getMyThreadEnteredCount() const
 {
-	return m_critialSection.RecursionCount;
+	return (unsigned int)m_critialSection.RecursionCount;
 }
+
+#else // not WIN32
+
+#endif //end of #ifdef WIN32
 
 }//end of namespace blib

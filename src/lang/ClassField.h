@@ -1,5 +1,6 @@
 #ifndef ClassField_H_H
 #define ClassField_H_H
+
 #include "bluemeiLib.h"
 #include "Converter.h"
 #include "Object.h"
@@ -10,7 +11,7 @@ namespace blib{
 class BLUEMEILIB_API FieldInfo : public Object
 {
 public:
-	typedef const type_info& TypeInfo;
+	typedef const std::type_info& TypeInfo;
 	FieldInfo() {}
 	virtual ~FieldInfo() {}
 public:
@@ -64,7 +65,7 @@ public:
 		Cls* inst = dynamic_cast<Cls*>(&obj);
 		if (inst == null)
 			throwTypeException(&obj, typeid(Cls*).name());
-		return this->set(*inst, Converter<Var>::valueOf(val));
+		this->set(*inst, Converter<Var>::valueOf(val));
 	}
 	virtual Object* getValue(const Object& obj) const
 	{
@@ -181,8 +182,7 @@ template<typename Type>
 struct BLUEMEILIB_TEMPLATE FieldRegister
 {
 public:
-	FieldRegister::FieldRegister(cstring name, Type fieldType)
-		: field(name, fieldType)
+	FieldRegister(cstring name, Type fieldType) : field(name, fieldType)
 	{
 		registerFieldCheck(FieldType<Type>::registerField(field), name);
 	}
@@ -209,7 +209,7 @@ template<typename Type>
 static FieldType<Type> regFieldWithoutNs(cstring name, Type fieldType)
 {
 	const char* pos = name;
-	while(pos = strstr(pos, "::")) {
+	while((pos = strstr(pos, "::")) != null) {
 		pos += 2;
 		name = pos;
 	}
@@ -234,15 +234,6 @@ static FieldType<Type> regFieldWithoutNs(cstring name, Type fieldType)
     }_instanceOfInerClassForRegField_##name;                              \
 /*end of define a field*/
 
-/*
-template <typename T, const char* name, T fld>
-class RegField
-{
-public:
-	RegField(){
-		regField(name, fld);
-	}
-};*/
-
 }
+
 #endif

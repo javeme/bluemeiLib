@@ -1,5 +1,5 @@
-#ifndef System_H
-#define System_H
+#ifndef System_H_H
+#define System_H_H
 
 #include "bluemeiLib.h"
 #include "Thread.h"
@@ -7,12 +7,6 @@
 
 
 namespace blib{
-
-#ifndef WIN32
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#endif
 
 #ifdef WIN32
 #include "windows.h"
@@ -33,11 +27,11 @@ protected:
 	Thread* m_pGcThread;
 	CriticalLock m_lock;
 
-	bool m_bCollecting;
-	int m_nGcCount;//how many object has freed by gc
-	bool m_bQuit;
+	volatile bool m_bCollecting;
+	volatile int m_nGcCount; // how many object has freed by gc
+	volatile bool m_bQuit;
 
-	bool m_bDestroy;
+	volatile bool m_bDestroy;
 protected:
 	void idleCollect();
 	virtual unsigned int mark(SmartPtr<void>* ptr);
@@ -72,4 +66,5 @@ public:
 
 
 }//end of namespace blib
+
 #endif

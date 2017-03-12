@@ -1,7 +1,10 @@
-#pragma once
+#ifndef RuntimeException_H_H
+#define RuntimeException_H_H
 
 #include "bluemeiLib.h"
 #include "Exception.h"
+#include"Util.h"
+
 
 namespace blib{
 
@@ -103,8 +106,8 @@ public:
 class BLUEMEILIB_API OutOfBoundException : public RuntimeException
 {
 public:
-	OutOfBoundException(cstring str):RuntimeException(str){};
-	OutOfBoundException(int out,int size);
+	OutOfBoundException(cstring str) : RuntimeException(str){};
+	OutOfBoundException(int out, int size);
 	virtual ~OutOfBoundException();
 	virtual String name() const;
 };
@@ -130,7 +133,7 @@ public:
 class BLUEMEILIB_API InvalidArgException : public RuntimeException
 {
 public:
-	InvalidArgException(cstring str):RuntimeException(str){};
+	InvalidArgException(cstring str) : RuntimeException(str){};
 	virtual ~InvalidArgException(void){};
 public:
 	virtual String name() const
@@ -139,5 +142,18 @@ public:
 	}
 };
 
+class CharsetConvertionException : public RuntimeException
+{
+public:
+	CharsetConvertionException(cstring src, cstring from, cstring to);
+public:
+	virtual String name() const
+	{
+		return "CharsetConvertionException";
+	}
+};
+
 
 }//end of namespace blib
+
+#endif
